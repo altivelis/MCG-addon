@@ -1,0 +1,112 @@
+{
+  "format_version": "1.20.60",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "minecraft:bee",
+      "spawn_category": "creature",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "properties": {
+        "minecraft:has_nectar": {
+          "type": "bool",
+          "client_sync": true,
+          "default": "query.had_component_group('has_nectar')"
+        }
+      }
+    },
+    "components": {
+      "minecraft:is_hidden_when_invisible": {
+      },
+      "minecraft:behavior.move_towards_home_restriction": {
+        "priority": 9
+      },
+      "minecraft:behavior.random_hover": {
+        "priority": 12,
+        "xz_dist": 8,
+        "y_dist": 8,
+        "y_offset": -1,
+        "interval": 1,
+        "hover_height": [ 1, 4 ]
+      },
+      "minecraft:leashable": {
+        "soft_distance": 4.0,
+        "hard_distance": 6.0,
+        "max_distance": 10.0
+      },
+      "minecraft:balloonable": {
+        "mass": 0.5
+      },
+      "minecraft:behavior.float": {
+        "priority": 19
+      },
+      "minecraft:type_family": {
+        "family": [ "bee", "mob", "arthropod" ]
+      },
+      "minecraft:breathable": {
+        "totalSupply": 0,
+        "suffocateTime": -1
+      },
+      "minecraft:collision_box": {
+        "width": 0.55,
+        "height": 0.5
+      },
+      "minecraft:conditional_bandwidth_optimization": {
+      },
+      "minecraft:follow_range": {
+        "value": 1024
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "fall",
+            "deals_damage": false
+          },
+          {
+            "on_damage": {
+              "filters": {
+                "test": "is_block", "subject": "block", "value": "minecraft:sweet_berry_bush"
+              }
+            },
+            "deals_damage": false
+          }
+        ]
+      },
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "filters": {
+              "test": "in_lava", "subject": "self", "operator": "==", "value": true
+            },
+            "cause": "lava",
+            "damage_per_tick": 4
+          }
+        ]
+      },
+      "minecraft:movement": {
+        "value": 0.0
+      },
+      "minecraft:flying_speed": {
+        "value": 0.15
+      },
+      "minecraft:movement.hover": {
+      },
+      "minecraft:jump.static": {
+      },
+      "minecraft:can_fly": {
+      },
+      "minecraft:health": {
+        "value": 10,
+        "max": 10
+      },
+      "minecraft:nameable": {
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      }
+    }
+  }
+}

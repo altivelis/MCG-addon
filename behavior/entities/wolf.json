@@ -1,0 +1,175 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "minecraft:wolf",
+      "spawn_category": "creature",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "properties": {
+        "minecraft:is_armorable": {
+          "type": "bool",
+          "client_sync": false,
+          "default": false
+        },
+        "minecraft:has_increased_max_health": {
+          "type": "bool",
+          "client_sync": false,
+          "default": false
+        }
+      }
+    },
+
+    "components": {
+      "minecraft:leashable": {
+        "soft_distance": 4.0,
+        "hard_distance": 6.0,
+        "max_distance": 10.0,
+        "on_leash": {
+          "event": "minecraft:on_leash",
+          "target": "self"
+        },
+        "on_unleash": {
+          "event": "minecraft:on_unleash",
+          "target": "self"
+        }
+      },
+      "minecraft:balloonable": {
+        "mass": 0.8
+      },
+      "minecraft:is_hidden_when_invisible": {
+      },
+      "minecraft:nameable": {
+      },
+      "minecraft:type_family": {
+        "family": [ "wolf", "mob" ]
+      },
+      "minecraft:breathable": {
+        "total_supply": 15,
+        "suffocate_time": 0
+      },
+      "minecraft:collision_box": {
+        "width": 0.6,
+        "height": 0.8
+      },
+      "minecraft:health": {
+        "value": 32,
+        "max": 32
+      },
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+            "cause": "lava",
+            "damage_per_tick": 4
+          }
+        ]
+      },
+      "minecraft:movement": {
+        "value": 0.0
+      },
+      "minecraft:jump.static": {
+      },
+      "minecraft:can_climb": {
+      },
+      "minecraft:healable": {
+        "items": [
+          {
+            "item": "porkchop",
+            "heal_amount": 6
+          },
+          {
+            "item": "cooked_porkchop",
+            "heal_amount": 16
+          },
+          {
+            "item": "fish",
+            "heal_amount": 4
+          },
+          {
+            "item": "salmon",
+            "heal_amount": 4
+          },
+          {
+            "item": "clownfish",
+            "heal_amount": 2
+          },
+          {
+            "item": "pufferfish",
+            "heal_amount": 2
+          },
+          {
+            "item": "cooked_fish",
+            "heal_amount": 10
+          },
+          {
+            "item": "cooked_salmon",
+            "heal_amount": 12
+          },
+          {
+            "item": "beef",
+            "heal_amount": 6
+          },
+          {
+            "item": "cooked_beef",
+            "heal_amount": 16
+          },
+          {
+            "item": "chicken",
+            "heal_amount": 4
+          },
+          {
+            "item": "cooked_chicken",
+            "heal_amount": 12
+          },
+          {
+            "item": "muttonRaw",
+            "heal_amount": 4
+          },
+          {
+            "item": "muttonCooked",
+            "heal_amount": 12
+          },
+          {
+            "item": "rotten_flesh",
+            "heal_amount": 8
+          },
+          {
+            "item": "rabbit",
+            "heal_amount": 6
+          },
+          {
+            "item": "cooked_rabbit",
+            "heal_amount": 10
+          },
+          {
+            "item": "rabbit_stew",
+            "heal_amount": 20
+          }
+        ]
+      },
+      "minecraft:physics": {
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      },
+      "minecraft:conditional_bandwidth_optimization": {
+      },
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:behavior.stay_while_sitting": {
+        "priority": 3
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 6,
+        "target_distance": 6.0,
+        "probability": 0.02
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+	"format_version": 2,
+	"header": {
+		"name": "MCGアドオン",
+		"description": "MinecraftCardGameのスクリプト化用アドオン",
+		"uuid": "9acf4ee1-1ab6-4417-a3de-62c5b43fb03d",
+		"version": [0, 0, 1],
+		"min_engine_version": [1, 21, 0]
+	},
+	"modules": [
+		{
+			"type":"data",
+			"description":"behavior_module",
+			"version":[1, 0, 0],
+			"uuid":"6ce8602a-1b47-47b0-bd2c-47402e0c10c8"
+		},
+		{
+			"description": "Script API module",
+			"language": "javascript",
+			"type": "script",
+			"uuid": "cd73462e-ba38-42c3-bb5f-3bf21dceec17",
+			"version": [0, 0, 1],
+			"entry": "scripts/main.js"
+		}
+	],
+	"dependencies": [
+		{
+			"module_name": "@minecraft/server",
+			"version": "1.15.0"
+		},
+		{
+			"module_name": "@minecraft/server-ui",
+			"version": "1.3.0"
+		},
+		{
+			"uuid":"6d674c77-64b1-422d-b110-b17c9fb995e0",
+			"version":[0, 0, 2]
+		}
+	],
+	"metadata": {
+		"authors": ["altivelis"],
+    "license": "この名前さえ残していれば改造、改変OK"
+	}
+}
