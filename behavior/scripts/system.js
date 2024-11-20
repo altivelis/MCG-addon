@@ -11,13 +11,14 @@ export const mcg = {
         blue: {x:4, y:1, z:6},
         object: {x:10, y:4, z:6}
       },
-      plate:{
+      button:{
         red: {x:13, y:5, z:-2},
         white: {x:13, y:5, z:0},
         blue: {x:13, y:5, z:2},
         pink: {x:16, y:5, z:0},
         orange: {x:16, y:5, z:3}
-      }
+      },
+      lever:{x:15, y:5, z:-5}
     },
     blue:{
       slot:{
@@ -26,13 +27,14 @@ export const mcg = {
         blue: {x:-4, y:1, z:6},
         object: {x:-10, y:4, z:-6}
       },
-      plate:{
+      button:{
         red: {x:-13, y:5, z:-2},
         white: {x:-13, y:5, z:0},
         blue: {x:-13, y:5, z:2},
         pink: {x:-16, y:5, z:0},
         orange: {x:-16, y:5, z:-3}
-      }
+      },
+      lever:{x:-15, y:5, z:-5}
     }
   },
   queue:{
@@ -46,6 +48,8 @@ export const mcg = {
     blue: null
   }
 }
+
+const button_permutation = mc.BlockPermutation.resolve("wooden_button",{"facing_direction":1});
 
 //参加受付
 /**
@@ -99,15 +103,6 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     }
   }
 })
-//ワールドを抜けたときにキューから削除
-mc.world.afterEvents.playerLeave.subscribe(data=>{
-  if(data.playerId == mcg.queue.red.id){
-    mcg.queue.red = null;
-  }
-  else if(data.playerId == mcg.queue.blue.id){
-    mcg.queue.blue = null;
-  }
-})
 //看板の文字を更新
 mc.system.runInterval(()=>{
   setSign("red", mcg.queue.red);
@@ -115,21 +110,38 @@ mc.system.runInterval(()=>{
 })
 
 mc.system.runInterval(()=>{
+  //プレイヤーパーティクル
   if(mcg.queue.red) mcg.queue.red.dimension.spawnParticle("minecraft:raid_omen_emitter",mcg.queue.red.location);
   if(mcg.queue.blue) mcg.queue.blue.dimension.spawnParticle("minecraft:trial_omen_emitter",mcg.queue.blue.location);
+  mc.world.getPlayers({tags:["turn"]}).forEach(tp=>{
+    tp.dimension.spawnParticle("minecraft:heart_particle",{...tp.location, y:tp.location.y+2});
+  })
   //属性パーティクル
   mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
     if(entity.hasTag("pro")){
       entity.dimension.spawnParticle("minecraft:totem_particle",entity.location);
     }
-    if(entity.hasTag("guard")){
-      entity.dimension.spawnParticle("minecraft:trial_omen_single", {...entity.location, y: entity.location.y+1});
-    }
     if(entity.hasTag("fly")){
       entity.dimension.spawnParticle("minecraft:cauldron_explosion_emitter", {...entity.location, y: entity.location.y-1});
     }
+    if(entity.hasTag("guard")){
+      entity.dimension.spawnParticle("minecraft:trial_omen_single", {...entity.location, y: entity.location.y+1});
+      myTimeout(3,()=>{
+        entity.dimension.spawnParticle("minecraft:trial_omen_single", {...entity.location, y: entity.location.y+1});
+      })
+      myTimeout(6,()=>{
+        entity.dimension.spawnParticle("minecraft:trial_omen_single", {...entity.location, y: entity.location.y+1});
+      })
+    }
   })
 },10)
+
+mc.system.runInterval(()=>{
+  mc.world.getAllPlayers().forEach(player=>{
+    player.addEffect(mc.EffectTypes.get("minecraft:saturation"),20,{showParticles:false, amplifier:1});
+    player.setSpawnPoint({dimension:mc.world.getDimension("minecraft:overworld"), x:-66.5, y:-44, z:-20.5});
+  })
+})
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:initialize") return;
@@ -150,11 +162,12 @@ mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
 
 function reset(){
   mc.world.setDynamicProperty("status", 0);
-  mc.world.sendMessage("対戦を強制終了しました。");
+  mc.world.scoreboard.getObjective("act").setScore("timer", 0);
   mc.world.getPlayers({tags:["red"]}).forEach(red=>{
     red.teleport({x:-63, y:-53, z:-13},{dimension:mc.world.getDimension("minecraft:overworld")});
     red.removeTag("red");
     red.removeTag("turn");
+    red.removeTag("nether");
     red.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
     mc.EffectTypes.getAll().forEach(effect=>{
       red.removeEffect(effect);
@@ -165,12 +178,23 @@ function reset(){
     blue.teleport({x:-63, y:-53, z:-13},{dimension:mc.world.getDimension("minecraft:overworld")});
     blue.removeTag("blue");
     blue.removeTag("turn");
+    blue.removeTag("nether");
     blue.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
     mc.EffectTypes.getAll().forEach(effect=>{
       blue.removeEffect(effect);
     })
     blue.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
   })
+  mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
+    entity.kill();
+  })
+  Object.values(mcg.const.red.button).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
+  Object.values(mcg.const.blue.button).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
+  mc.world.sendMessage("対戦を強制終了しました。");
 }
 
 mc.system.runInterval(()=>{
@@ -196,6 +220,8 @@ function start(){
   //タグ付与
   red.addTag("red");
   blue.addTag("blue");
+  red.removeTag("nether");
+  blue.removeTag("nether");
   //ゲームモード変更
   red.setGameMode(mc.GameMode.adventure);
   blue.setGameMode(mc.GameMode.adventure);
@@ -210,6 +236,9 @@ function start(){
   //HPリセット
   red.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
   blue.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
+  //レバーリセット
+  red.dimension.setBlockPermutation(mcg.const.red.lever, mc.BlockPermutation.resolve("minecraft:lever", {"lever_direction":"south"}));
+  blue.dimension.setBlockPermutation(mcg.const.blue.lever, mc.BlockPermutation.resolve("minecraft:lever", {"lever_direction":"south"}));
   //移動禁止
   red.inputPermissions.movementEnabled = false;
   blue.inputPermissions.movementEnabled = false;
@@ -282,21 +311,57 @@ function start(){
               myTimeout(20,()=>{
                 mc.world.setDynamicProperty("status", 2);
                 mc.world.setDynamicProperty("turn", 1);
+                //望遠鏡配布
+                let spyglass = new mc.ItemStack("minecraft:spyglass",1);
+                spyglass.lockMode = mc.ItemLockMode.inventory;
+                giveItem(red, spyglass);
+                giveItem(blue, spyglass);
+                //ウィザー頭蓋骨配布
+                let wither_skull = new mc.ItemStack("minecraft:wither_skeleton_skull",1);
+                wither_skull.lockMode = mc.ItemLockMode.inventory;
+                giveItem(red, wither_skull);
+                giveItem(blue, wither_skull);
+                //コンパス配布
+                let compass = new mc.ItemStack("minecraft:compass",1);
+                compass.lockMode = mc.ItemLockMode.inventory;
                 if(Math.random < 0.5){
                   red.addTag("turn");
                   giveItem(red, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("first_draw")));
                   giveItem(blue, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("second_draw")));
                   red.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   blue.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+                  giveItem(red, compass);
+                  mc.world.scoreboard.getObjective("act").addScore(red,5);
+                  mc.world.scoreboard.getObjective("act").addScore(blue,3);
+                  Object.values(mcg.const.red.button).forEach(pos=>{
+                    red.dimension.setBlockPermutation(pos, button_permutation);
+                  })
+                  Object.values(mcg.const.blue.button).forEach(pos=>{
+                    blue.dimension.setBlockType(pos, "minecraft:air");
+                  })
                 }else{
                   blue.addTag("turn");
                   giveItem(red, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("second_draw")));
                   giveItem(blue, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("first_draw")));
                   blue.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   red.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+                  giveItem(blue, compass);
+                  mc.world.scoreboard.getObjective("act").addScore(blue,5);
+                  mc.world.scoreboard.getObjective("act").addScore(red,3);
+                  Object.values(mcg.const.blue.button).forEach(pos=>{
+                    blue.dimension.setBlockPermutation(pos, button_permutation);
+                  })
+                  Object.values(mcg.const.red.button).forEach(pos=>{
+                    red.dimension.setBlockType(pos, "minecraft:air");
+                  })
                 }
                 red.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
+                blue.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
                 mc.world.scoreboard.getObjective("act").setScore("timer", mc.world.getDynamicProperty("time"));
+                mc.world.getPlayers({excludeTags:["red","blue"]}).forEach(player=>{
+                  player.onScreenDisplay.setTitle("§bDUEL §cSTART",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+                  player.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
+                })
               })
             })
           })
@@ -306,7 +371,169 @@ function start(){
   })
 }
 
+//ターン経過処理
+mc.system.runInterval(()=>{
+  if(mc.world.getDynamicProperty("status") == 2){
+    if(mc.world.scoreboard.getObjective("act").getScore("timer") > 0){
+      //時間切れ前
+      if(mc.world.scoreboard.getObjective("act").getScore("timer") <= 10){
+        mc.world.getPlayers({tags:["turn"]}).forEach(player=>{
+          player.playSound("random.click",{location:player.location});
+        })
+      }
+      mc.world.scoreboard.getObjective("act").addScore("timer", -1);
+    }
+    else{
+      //時間切れ
+      turnChange();
+    }
+  }
+},20)
+
+export function turnChange(){
+  let turnPlayer = mc.world.getPlayers({tags:["turn"]})[0];
+  /**
+   * @type {mc.Player}
+   */
+  let notTurnPlayer;
+  if(turnPlayer.hasTag("red")){
+    notTurnPlayer = mc.world.getPlayers({tags:["blue"]})[0];
+    Object.values(mcg.const.red.button).forEach(pos=>{
+      turnPlayer.dimension.setBlockType(pos, "minecraft:air");
+    })
+    Object.values(mcg.const.blue.button).forEach(pos=>{
+      notTurnPlayer.dimension.setBlockPermutation(pos, button_permutation);
+    })
+  }
+  else{
+    notTurnPlayer = mc.world.getPlayers({tags:["red"]})[0];
+    Object.values(mcg.const.blue.button).forEach(pos=>{
+      turnPlayer.dimension.setBlockType(pos, "minecraft:air");
+    })
+    Object.values(mcg.const.red.button).forEach(pos=>{
+      notTurnPlayer.dimension.setBlockPermutation(pos, button_permutation);
+    })
+  }
+  //ターンタグ切り替え
+  turnPlayer.removeTag("turn");
+  notTurnPlayer.addTag("turn");
+  //act付与
+  mc.world.scoreboard.getObjective("act").addScore(turnPlayer,3);
+  mc.world.scoreboard.getObjective("act").addScore(notTurnPlayer,5);
+  //タイマーリセット
+  mc.world.scoreboard.getObjective("act").setScore("timer", mc.world.getDynamicProperty("time"));
+  mc.world.setDynamicProperty("turn", mc.world.getDynamicProperty("turn")+1);
+  //コンパス交換
+  /**
+    * @type {mc.Container}
+    */
+  let tp_inv = turnPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
+  for(let i=0; i<tp_inv.size; i++){
+    if(tp_inv.getItem(i)?.typeId == "minecraft:compass"){
+      giveItem(notTurnPlayer, tp_inv.getItem(i));
+      tp_inv.setItem(i);
+    }
+  }
+  giveItem(notTurnPlayer, new mc.ItemStack("minecraft:grass_block", 1));
+  //タイトル表示
+  turnPlayer.onScreenDisplay.setTitle("Turn End",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+  notTurnPlayer.onScreenDisplay.setTitle("Your Turn",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+  turnPlayer.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
+  notTurnPlayer.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
+  mc.world.getPlayers({excludeTags:["red","blue"]}).forEach(player=>{
+    player.onScreenDisplay.setTitle((notTurnPlayer.hasTag("red")?"§cRed Turn":"§bBlue Turn"),{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+    player.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
+  })
+  notTurnPlayer.playSound("random.levelup",{location:notTurnPlayer.location});
+  //ドロップアイテム消去
+  turnPlayer.dimension.getEntities({type:"minecraft:item"}).forEach(item=>{
+    item.kill();
+  })
+  //ui削除
+  ui.uiManager.closeAllForms(turnPlayer);
+}
+
+//勝敗判定
+mc.world.afterEvents.entityDie.subscribe(data=>{
+  if(mc.world.getDynamicProperty("status") != 2) return;
+  /**
+   * @type {mc.Player}
+   */
+  const entity = data.deadEntity;
+  if(entity.typeId == "minecraft:player"){
+    if(entity.hasTag("red")){
+      const blue = mc.world.getPlayers({tags:["blue"]})[0];
+      mc.world.setDynamicProperty("status", 3);
+      blue.teleport({x:-62.5, y:-53, z:-12.5});
+      mc.world.sendMessage(`§b${blue.nameTag}§rが勝利しました。`);
+      blue.onScreenDisplay.setTitle("§bYOU WIN!",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+      entity.onScreenDisplay.setTitle("§cYOU LOSE…",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+      mc.world.getPlayers({excludeTags:["red","blue"]}).forEach(player=>{
+        player.onScreenDisplay.setTitle("§bBLUE WIN",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+      })
+      //タグ削除
+      entity.removeTag("red");
+      entity.removeTag("turn");
+      blue.removeTag("blue");
+      blue.removeTag("turn");
+      //アイテム消去
+      entity.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+      blue.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+      //HPリセット
+      blue.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
+      mc.EffectTypes.getAll().forEach(effect=>{
+        blue.removeEffect(effect);
+      })
+      //スコアリセット
+      mc.world.scoreboard.getObjective("act").removeParticipant(entity);
+      mc.world.scoreboard.getObjective("act").removeParticipant(blue);
+      mc.world.scoreboard.getObjective("act").setScore("timer", 0);
+      myTimeout(60,()=>{
+        mc.world.setDynamicProperty("status", 0);
+      })
+    }
+    else if(entity.hasTag("blue")){
+      const red = mc.world.getPlayers({tags:["red"]})[0];
+      mc.world.setDynamicProperty("status", 3);
+      red.teleport({x:-62.5, y:-53, z:-12.5});
+      mc.world.sendMessage(`§c${red.nameTag}§rが勝利しました。`);
+      red.onScreenDisplay.setTitle("§bYOU WIN!",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+      entity.onScreenDisplay.setTitle("§cYOU LOSE…",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+      mc.world.getPlayers({excludeTags:["red","blue"]}).forEach(player=>{
+        player.onScreenDisplay.setTitle("§cRED WIN",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+      })
+      //タグ削除
+      entity.removeTag("blue");
+      entity.removeTag("turn");
+      red.removeTag("red");
+      red.removeTag("turn");
+      //アイテム消去
+      entity.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+      red.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+      //HPリセット
+      red.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
+      mc.EffectTypes.getAll().forEach(effect=>{
+        red.removeEffect(effect);
+      })
+      //スコアリセット
+      mc.world.scoreboard.getObjective("act").removeParticipant(entity);
+      mc.world.scoreboard.getObjective("act").removeParticipant(red);
+      mc.world.scoreboard.getObjective("act").setScore("timer", 0);
+      myTimeout(60,()=>{
+        mc.world.setDynamicProperty("status", 0);
+      })
+    }
+    //ボタン削除
+    Object.values(mcg.const.red.button).forEach(pos=>{
+      mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+    })
+    Object.values(mcg.const.blue.button).forEach(pos=>{
+      mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+    })
+  }
+})
+
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
-  if(data.id != "test:test") return;
-  mc.world.sendMessage("red:"+mcg.queue.red?.nameTag+" blue:"+mcg.queue.blue?.nameTag);
+  if(data.id != "mcg:test") return;
+  giveItem(data.sourceEntity, new mc.ItemStack("minecraft:grass_block"));
 })
