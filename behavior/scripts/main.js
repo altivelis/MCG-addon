@@ -10,8 +10,10 @@ mc.system.runInterval(() => {
   players.forEach(player => {
     //見ているモブの情報表示
     const target = player.getEntitiesFromViewDirection({maxDistance:64, ignoreBlockCollision:true, 
-      excludeTypes:["minecraft:item"], excludeGameModes:[mc.GameMode.spectator]
-    })[0]?.entity;
+      excludeTypes:["minecraft:item"]
+    }).find((e)=>{return (e.entity.typeId != "minecraft:player" || 
+      mc.world.getPlayers().find(p => p.id == e.entity.id)?.getGameMode() != mc.GameMode.spectator
+    )})?.entity;
     if(target){
       const hp = target.getComponent(mc.EntityHealthComponent.componentId);
       if(hp) player.onScreenDisplay.setActionBar([

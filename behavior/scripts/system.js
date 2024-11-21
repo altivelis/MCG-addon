@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, giveSword } from "./lib";
 
 export const mcg = {
   const:{
@@ -162,7 +162,7 @@ mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
 
 function reset(){
   mc.world.setDynamicProperty("status", 0);
-  mc.world.scoreboard.getObjective("act").setScore("timer", 0);
+  setAct("timer", 0);
   mc.world.getPlayers({tags:["red"]}).forEach(red=>{
     red.teleport({x:-63, y:-53, z:-13},{dimension:mc.world.getDimension("minecraft:overworld")});
     red.removeTag("red");
@@ -193,6 +193,9 @@ function reset(){
   })
   Object.values(mcg.const.blue.button).forEach(pos=>{
     mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
+  mc.world.getPlayers().forEach(player=>{
+    player.camera.clear();
   })
   mc.world.sendMessage("対戦を強制終了しました。");
 }
@@ -257,6 +260,7 @@ function start(){
   myTimeout(20,()=>{
     red.teleport({x:15.5, y:5.5, z:0.5},{rotation:{x:0, y:90}});
     blue.teleport({x:-15.5, y:5.5, z:0.5},{rotation:{x:0, y:-90}});
+    mc.world.setDynamicProperty("anim", true);
     red.camera.setCamera("minecraft:free",{
       location:{x:0, y:40, z:0},
       rotation:{x:90, y:90}
@@ -306,6 +310,7 @@ function start(){
             myTimeout(20,()=>{
               red.camera.clear();
               blue.camera.clear();
+              mc.world.setDynamicProperty("anim", false);
               red.inputPermissions.movementEnabled = true;
               blue.inputPermissions.movementEnabled = true;
               myTimeout(20,()=>{
@@ -331,8 +336,8 @@ function start(){
                   red.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   blue.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   giveItem(red, compass);
-                  mc.world.scoreboard.getObjective("act").addScore(red,5);
-                  mc.world.scoreboard.getObjective("act").addScore(blue,3);
+                  setAct(red, 5);
+                  setAct(blue, 3);
                   Object.values(mcg.const.red.button).forEach(pos=>{
                     red.dimension.setBlockPermutation(pos, button_permutation);
                   })
@@ -346,8 +351,8 @@ function start(){
                   blue.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   red.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   giveItem(blue, compass);
-                  mc.world.scoreboard.getObjective("act").addScore(blue,5);
-                  mc.world.scoreboard.getObjective("act").addScore(red,3);
+                  setAct(blue, 5);
+                  setAct(red, 3);
                   Object.values(mcg.const.blue.button).forEach(pos=>{
                     blue.dimension.setBlockPermutation(pos, button_permutation);
                   })
@@ -357,7 +362,7 @@ function start(){
                 }
                 red.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
                 blue.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
-                mc.world.scoreboard.getObjective("act").setScore("timer", mc.world.getDynamicProperty("time"));
+                setAct("timer", mc.world.getDynamicProperty("time"));
                 mc.world.getPlayers({excludeTags:["red","blue"]}).forEach(player=>{
                   player.onScreenDisplay.setTitle("§bDUEL §cSTART",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   player.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
@@ -374,14 +379,15 @@ function start(){
 //ターン経過処理
 mc.system.runInterval(()=>{
   if(mc.world.getDynamicProperty("status") == 2){
-    if(mc.world.scoreboard.getObjective("act").getScore("timer") > 0){
+    if(mc.world.getDynamicProperty("anim") == true) return;
+    if(getAct("timer") > 0){
       //時間切れ前
-      if(mc.world.scoreboard.getObjective("act").getScore("timer") <= 10){
+      if(getAct("timer") <= 10){
         mc.world.getPlayers({tags:["turn"]}).forEach(player=>{
           player.playSound("random.click",{location:player.location});
         })
       }
-      mc.world.scoreboard.getObjective("act").addScore("timer", -1);
+      addAct("timer", -1);
     }
     else{
       //時間切れ
@@ -418,10 +424,10 @@ export function turnChange(){
   turnPlayer.removeTag("turn");
   notTurnPlayer.addTag("turn");
   //act付与
-  mc.world.scoreboard.getObjective("act").addScore(turnPlayer,3);
-  mc.world.scoreboard.getObjective("act").addScore(notTurnPlayer,5);
+  addAct(turnPlayer, 3);
+  addAct(notTurnPlayer, 5);
   //タイマーリセット
-  mc.world.scoreboard.getObjective("act").setScore("timer", mc.world.getDynamicProperty("time"));
+  setAct("timer", mc.world.getDynamicProperty("time"));
   mc.world.setDynamicProperty("turn", mc.world.getDynamicProperty("turn")+1);
   //コンパス交換
   /**
@@ -487,7 +493,7 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
       //スコアリセット
       mc.world.scoreboard.getObjective("act").removeParticipant(entity);
       mc.world.scoreboard.getObjective("act").removeParticipant(blue);
-      mc.world.scoreboard.getObjective("act").setScore("timer", 0);
+      setAct("timer", 0);
       myTimeout(60,()=>{
         mc.world.setDynamicProperty("status", 0);
       })
@@ -518,7 +524,7 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
       //スコアリセット
       mc.world.scoreboard.getObjective("act").removeParticipant(entity);
       mc.world.scoreboard.getObjective("act").removeParticipant(red);
-      mc.world.scoreboard.getObjective("act").setScore("timer", 0);
+      setAct("timer", 0);
       myTimeout(60,()=>{
         mc.world.setDynamicProperty("status", 0);
       })
@@ -530,10 +536,18 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
     Object.values(mcg.const.blue.button).forEach(pos=>{
       mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
     })
+    //エンティティ削除
+    mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
+      entity.kill();
+    })
+    //カメラリセット
+    mc.world.getPlayers().forEach(player=>{
+      player.camera.clear();
+    })
   }
 })
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:test") return;
-  giveItem(data.sourceEntity, new mc.ItemStack("minecraft:grass_block"));
+  giveSword(data.sourceEntity, "15x3");
 })

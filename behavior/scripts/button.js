@@ -2,6 +2,7 @@ import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 import { mcg, turnChange } from "./system";
 import { hasItem, decrementContainer, giveItem, handItem } from "./lib";
+import { useCard } from "./usecard";
 
 //ドロー
 mc.world.afterEvents.buttonPush.subscribe(data=>{
@@ -157,4 +158,5 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     })
   }
   const cardBlock = block.below();
+  useCard(cardBlock, source);
 })
