@@ -143,6 +143,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
   const {source, block, dimension} = data;
   if(block.typeId != "minecraft:wooden_button") return;
   if(source.typeId != "minecraft:player") return;
+  if(!handItem(source)) return;
   if(!(source.hasTag("red") || source.hasTag("blue"))) return;
   if(!source.hasTag("turn")) {
     source.sendMessage("あなたのターンではありません");
@@ -158,5 +159,5 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     })
   }
   const cardBlock = block.below();
-  useCard(cardBlock, source);
+  useCard[handItem(source).typeId.slice(10)]?.run(cardBlock, source);
 })

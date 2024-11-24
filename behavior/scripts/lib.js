@@ -21,6 +21,7 @@ export function giveItem(player, item){
     item.setLore(cardInfo(item.typeId));
   }
   player.getComponent(mc.EntityInventoryComponent.componentId).container.addItem(item);
+  player.playSound("random.pop",{location:player.location, pitch:1.2});
 }
 
 /**
@@ -182,4 +183,22 @@ export function giveSword(player, atk){
     giveItem(player, sword);
   }
   return;
+}
+
+export const swordDamage = {
+  wooden_sword: 5,
+  stone_sword: 15,
+  golden_sword: 20,
+  iron_sword: 30,
+  diamond_sword: 50,
+  netherite_sword: 70
+}
+
+export const swordName = {
+  wooden_sword: "木の剣",
+  stone_sword: "石の剣",
+  golden_sword: "金の剣",
+  iron_sword: "鉄の剣",
+  diamond_sword: "ダイヤモンドの剣",
+  netherite_sword: "ネザライトの剣"
 }

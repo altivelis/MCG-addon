@@ -6,10 +6,10 @@ export const mcg = {
   const:{
     red:{
       slot:{
-        red: {x:4, y:1, z:-6},
-        white: {x:4, y:1, z:0},
-        blue: {x:4, y:1, z:6},
-        object: {x:10, y:4, z:6}
+        red: {x:4.5, y:1, z:-6.5},
+        white: {x:4.5, y:1, z:0.5},
+        blue: {x:4.5, y:1, z:6.5},
+        object: {x:10.5, y:4, z:6.5}
       },
       button:{
         red: {x:13, y:5, z:-2},
@@ -22,10 +22,10 @@ export const mcg = {
     },
     blue:{
       slot:{
-        red: {x:-4, y:1, z:-6},
-        white: {x:-4, y:1, z:0},
-        blue: {x:-4, y:1, z:6},
-        object: {x:-10, y:4, z:-6}
+        red: {x:-4.5, y:1, z:-6.5},
+        white: {x:-4.5, y:1, z:0.5},
+        blue: {x:-4.5, y:1, z:6.5},
+        object: {x:-10.5, y:4.5, z:-6.5}
       },
       button:{
         red: {x:-13, y:5, z:-2},
@@ -118,7 +118,7 @@ mc.system.runInterval(()=>{
   })
   //属性パーティクル
   mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
-    if(entity.hasTag("pro")){
+    if(entity.hasTag("protect")){
       entity.dimension.spawnParticle("minecraft:totem_particle",entity.location);
     }
     if(entity.hasTag("fly")){
@@ -152,6 +152,7 @@ function initialize_config(){
   mc.world.setDynamicProperty("time", 150);
   mc.world.setDynamicProperty("first_draw", 5);
   mc.world.setDynamicProperty("second_draw", 6);
+  mc.world.setDynamicProperty("anim", false);
   mc.world.sendMessage("変数を初期化しました。")
 }
 
@@ -186,7 +187,7 @@ function reset(){
     blue.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
   })
   mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
-    entity.kill();
+    entity.remove();
   })
   Object.values(mcg.const.red.button).forEach(pos=>{
     mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
@@ -329,7 +330,7 @@ function start(){
                 //コンパス配布
                 let compass = new mc.ItemStack("minecraft:compass",1);
                 compass.lockMode = mc.ItemLockMode.inventory;
-                if(Math.random < 0.5){
+                if(Math.floor(Math.random()*2) == 0){
                   red.addTag("turn");
                   giveItem(red, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("first_draw")));
                   giveItem(blue, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("second_draw")));
@@ -437,6 +438,12 @@ export function turnChange(){
   for(let i=0; i<tp_inv.size; i++){
     if(tp_inv.getItem(i)?.typeId == "minecraft:compass"){
       giveItem(notTurnPlayer, tp_inv.getItem(i));
+      tp_inv.setItem(i);
+    }
+    if(tp_inv.getItem(i)?.typeId == "minecraft:wooden_sword" && tp_inv.getItem(i)?.typeId.includes("sword")){
+      tp_inv.setItem(i);
+    }
+    if(tp_inv.getItem(i)?.typeId == "minecraft:arrow"){
       tp_inv.setItem(i);
     }
   }
