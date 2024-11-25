@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, decrementSlot, getAct, getCard, giveItem, handItem, myTimeout, swordDamage, swordName } from "./lib";
+import { addAct, decrementSlot, getAct, getCard, giveItem, giveSword, handItem, myTimeout, swordDamage, swordName } from "./lib";
 import { cardList } from "./cardinfo";
 import { mcg } from "./system";
 
@@ -43,7 +43,7 @@ function summonCard(cardBlock, player, identifier, event){
       mob = mc.world.getDimension("minecraft:overworld").spawnEntity(identifier, (player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
       mob.addTag((player.hasTag("red") ? "red" : "blue"));
       mob.addTag("slotB");
-      event(player);
+      event(mob);
       break;
     case W:
       if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"],tags:[(player.hasTag("red")?"red":"blue"), "slotW"]}).length > 0){
@@ -55,7 +55,7 @@ function summonCard(cardBlock, player, identifier, event){
       mob = mc.world.getDimension("minecraft:overworld").spawnEntity(identifier, (player.hasTag("red") ? mcg.const.red.slot.white : mcg.const.blue.slot.white));
       mob.addTag((player.hasTag("red") ? "red" : "blue"));
       mob.addTag("slotW");
-      event(player);
+      event(mob);
       break;
     case R:
       if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"],tags:[(player.hasTag("red")?"red":"blue"), "slotR"]}).length > 0){
@@ -67,7 +67,7 @@ function summonCard(cardBlock, player, identifier, event){
       mob = mc.world.getDimension("minecraft:overworld").spawnEntity(identifier, (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
       mob.addTag((player.hasTag("red") ? "red" : "blue"));
       mob.addTag("slotR");
-      event(player);
+      event(mob);
       break;
     case P:
     case O:
@@ -460,9 +460,9 @@ export const useCard = {
      * @param {mc.Player} player 
      */
     run: (cardBlock, player) => {
-      summonCard(cardBlock, player, "minecraft:pig", (p)=>{
+      summonCard(cardBlock, player, "minecraft:pig", (mob)=>{
         giveItem(p, new mc.ItemStack("minecraft:porkchop"));
-        mc.world.sendMessage((p.hasTag("red")?"§c":"§b") + p.nameTag + "§r: ブタを召喚しました");
+        mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: ブタを召喚しました");
       });
     }
   },
@@ -473,9 +473,9 @@ export const useCard = {
      * @param {mc.Player} player
      */
     run: (cardBlock, player) => {
-      summonCard(cardBlock, player, "minecraft:villager_v2", (p)=>{
-        giveItem(p, new mc.ItemStack("minecraft:grass_block", 2));
-        mc.world.sendMessage((p.hasTag("red")?"§c":"§b") + p.nameTag + "§r: 村人を召喚しました");
+      summonCard(cardBlock, player, "minecraft:villager_v2", (mob)=>{
+        giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
+        mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: 村人を召喚しました");
       });
     }
   },
@@ -543,6 +543,213 @@ export const useCard = {
           player.sendMessage(error_slot);
           return;
       }
+    }
+  },
+  wolf_spawn_egg: {
+    /**
+     * オオカミ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:wolf", 
+        /**
+         * @param {mc.Entity} mob 
+         */
+        (mob)=>{
+        mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: オオカミを召喚しました");
+        giveSword(player, getCard(mob.typeId).atk);
+      });
+    }
+  },
+  bell: {
+    /**
+     * ベル
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          addAct(player, -parseInt(info.Cact));
+          mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: ベルを使用しました");
+          decrementSlot(player, player.selectedSlotIndex);
+          mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
+            if(entity.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
+              entity.kill();
+            }
+            else{
+              entity.getComponent(mc.EntityHealthComponent.typeId).resetToDefaultValue();
+            }
+          })
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  allay_spawn_egg: {
+    /**
+     * アレイ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:allay", 
+        /**
+         * @param {mc.Entity} mob 
+         */
+        (mob)=>{
+        mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: アレイを召喚しました");
+        mob.addTag("fly");
+        mob.teleport({...mob.location, y: mob.location.y + 2});
+        giveSword(player, getCard(mob.typeId).atk);
+      })
+    }
+  },
+  panda_spawn_egg: {
+    /**
+     * パンダ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:panda", 
+        /**
+         * @param {mc.Entity} mob 
+         */
+        (mob)=>{
+        mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: パンダを召喚しました");
+        mob.addTag("protect");
+      })
+    }
+  },
+  porkchop: {
+    /**
+     * 生の豚肉
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      let wolf;
+      switch(cardBlock.typeId){
+        case B:
+          wolf = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"], type:"minecarft:wolf"});
+          if(wolf.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: 生の豚肉を使用しました");
+          giveSword(player, getCard(wolf[0].typeId).atk);
+          return;
+        case W:
+          wolf = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotW"], type:"minecarft:wolf"});
+          if(wolf.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: 生の豚肉を使用しました");
+          giveSword(player, getCard(wolf[0].typeId).atk);
+          return;
+        case R:
+          wolf = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"], type:"minecarft:wolf"});
+          if(wolf.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: 生の豚肉を使用しました");
+          giveSword(player, getCard(wolf[0].typeId).atk);
+          return;
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  cooked_porkchop: {
+    /**
+     * 焼き豚
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: 焼き豚を使用しました");
+          /**
+           * @type {mc.EntityHealthComponent}
+           */
+          let hp = player.getComponent(mc.EntityHealthComponent.componentId);
+          hp.setCurrentValue((hp.currentValue + 6) > hp.effectiveMax ? hp.effectiveMax : hp.currentValue + 6);
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  snow_golem_spawn_egg: {
+    /**
+     * スノーゴーレム
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:snow_golem",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: スノーゴーレムを召喚しました");
+          mob.addTag("protect");
+        }
+      )
+    }
+  },
+  iron_golem_spawn_egg: {
+    /**
+     * アイアンゴーレム
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:iron_golem",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: アイアンゴーレムを召喚しました");
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue")], type:"minecraft:villager_v2"}).length > 0){
+            addAct(player, 40);
+          }
+        }
+      )
     }
   }
 }
