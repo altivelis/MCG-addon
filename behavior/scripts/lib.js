@@ -20,8 +20,9 @@ export function giveItem(player, item){
   if(cardInfo(item.typeId).length > 0){
     item.setLore(cardInfo(item.typeId));
   }
-  player.getComponent(mc.EntityInventoryComponent.componentId).container.addItem(item);
-  player.playSound("random.pop",{location:player.location, pitch:1.2});
+  //player.getComponent(mc.EntityInventoryComponent.componentId).container.addItem(item);
+  //player.playSound("random.pop",{location:player.location, pitch:1.2});
+  player.dimension.spawnItem(item, player.location);
 }
 
 /**
@@ -38,7 +39,7 @@ export function getCard(name){
  * @returns {String[]} カードテキスト
  */
 export function cardInfo(name){
-  const card = cardList.find((element) => element.name.includes(name));
+  const card = getCard(name);
   if(!card) return [];
   let text = [];
   if(card.type == "entity"){
@@ -102,7 +103,7 @@ export function decrementContainer(player, item){
    */
   const container = player.getComponent(mc.EntityInventoryComponent.componentId).container;
   for(let i=0; i<container.size; i++){
-    if(container.getItem(i).typeId == item){
+    if(container.getItem(i)?.typeId == item){
       decrementSlot(player, i);
       return;
     }
@@ -141,6 +142,11 @@ export function setAct(target, value){
  * @param {Number} value 
  */
 export function addAct(target, value){
+  if(getAct(target) + value < 0){
+    mc.world.sendMessage((target.hasTag("red")?"§c":"§b")+target.nameTag+"§r:[オーバーコストペナルティー]");
+    target.applyDamage(5);
+    return mc.world.scoreboard.getObjective("act").setScore(target, 0);
+  }
   return mc.world.scoreboard.getObjective("act").addScore(target, value);
 }
 
@@ -148,8 +154,9 @@ export function addAct(target, value){
  * atkテキストから剣を渡す関数
  * @param {mc.Player} player 
  * @param {String} atk 
+ * @param {String | mc.RawMessage} name
  */
-export function giveSword(player, atk){
+export function giveSword(player, atk, name){
   if(atk == "-" || atk == "0") return;
   const texts = atk.split("x");
   let sword;
@@ -178,9 +185,15 @@ export function giveSword(player, atk){
   if(texts.length == 2){
     for(let i=0; i<parseInt(texts[1]); i++){
       giveItem(player, sword);
+      mc.world.sendMessage([
+        (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:[", name, "]", {translate:`item.${sword.typeId.slice(10)}.name`}
+      ])
     }
   }else{
     giveItem(player, sword);
+    mc.world.sendMessage([
+      (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:[", name, "]", {translate:`item.${sword.typeId.slice(10)}.name`}
+    ])
   }
   return;
 }
@@ -201,4 +214,20 @@ export const swordName = {
   iron_sword: "鉄の剣",
   diamond_sword: "ダイヤモンドの剣",
   netherite_sword: "ネザライトの剣"
+}
+
+/**
+ * 
+ * @param {mc.Player} player 
+ * @param {(mc.RawMessage | string)[] | mc.RawMessage | string} message 
+ */
+export function sendPlayerMessage(player, message){
+  let text = [(player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:"];
+  if(Array.isArray(message)){
+    text.push(...message);
+  }
+  else{
+    text.push(message);
+  }
+  mc.world.sendMessage(text);
 }

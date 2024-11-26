@@ -3,6 +3,7 @@ import { drawList, cardList } from "./cardinfo";
 import { cardInfo } from "./lib";
 import "./system";
 import "./button";
+import "./craft";
 import { mcg } from "./system";
 
 mc.system.runInterval(() => {
@@ -19,7 +20,7 @@ mc.system.runInterval(() => {
       if(hp) player.onScreenDisplay.setActionBar([
         (target.typeId == "minecraft:player")?target.nameTag:{translate: `entity.${target.typeId.slice(10)}.name`},
         ` ${Math.floor(hp.currentValue*10)/10}/${Math.floor(hp.defaultValue*10)/10} `,
-        (target.hasTag("pro"))?"§2除外無効 ":"",
+        (target.hasTag("protect"))?"§2除外無効 ":"",
         (target.hasTag("guard"))?"§2ガード ":"",
         (target.hasTag("fly"))?"§2浮遊 ":"",
         "\n",

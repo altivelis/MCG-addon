@@ -1,12 +1,13 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem, setAct, getAct, addAct, giveSword } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage } from "./lib";
+import { turnMob, turnObject } from "./turncard";
 
 export const mcg = {
   const:{
     red:{
       slot:{
-        red: {x:4.5, y:1, z:-6.5},
+        red: {x:4.5, y:1, z:-5.5},
         white: {x:4.5, y:1, z:0.5},
         blue: {x:4.5, y:1, z:6.5},
         object: {x:10.5, y:4, z:6.5}
@@ -22,10 +23,10 @@ export const mcg = {
     },
     blue:{
       slot:{
-        red: {x:-4.5, y:1, z:-6.5},
-        white: {x:-4.5, y:1, z:0.5},
-        blue: {x:-4.5, y:1, z:6.5},
-        object: {x:-10.5, y:4.5, z:-6.5}
+        red: {x:-3.5, y:1, z:-5.5},
+        white: {x:-3.5, y:1, z:0.5},
+        blue: {x:-3.5, y:1, z:6.5},
+        object: {x:-9.5, y:4, z:-5.5}
       },
       button:{
         red: {x:-13, y:5, z:-2},
@@ -195,6 +196,8 @@ function reset(){
   Object.values(mcg.const.blue.button).forEach(pos=>{
     mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
   })
+  mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.red.slot.object, "minecraft:air");
+  mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.blue.slot.object, "minecraft:air");
   mc.world.getPlayers().forEach(player=>{
     player.camera.clear();
   })
@@ -241,8 +244,11 @@ function start(){
   red.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
   blue.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
   //レバーリセット
-  red.dimension.setBlockPermutation(mcg.const.red.lever, mc.BlockPermutation.resolve("minecraft:lever", {"lever_direction":"south"}));
-  blue.dimension.setBlockPermutation(mcg.const.blue.lever, mc.BlockPermutation.resolve("minecraft:lever", {"lever_direction":"south"}));
+  mc.world.getDimension("minecraft:overworld").setBlockPermutation(mcg.const.red.lever, mc.BlockPermutation.resolve("minecraft:lever", {"lever_direction":"south"}));
+  mc.world.getDimension("minecraft:overworld").setBlockPermutation(mcg.const.blue.lever, mc.BlockPermutation.resolve("minecraft:lever", {"lever_direction":"south"}));
+  //オブジェクト削除
+  mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.red.slot.object, "minecraft:air");
+  mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.blue.slot.object, "minecraft:air");
   //移動禁止
   red.inputPermissions.movementEnabled = false;
   blue.inputPermissions.movementEnabled = false;
@@ -329,7 +335,6 @@ function start(){
                 giveItem(blue, wither_skull);
                 //コンパス配布
                 let compass = new mc.ItemStack("minecraft:compass",1);
-                compass.lockMode = mc.ItemLockMode.inventory;
                 if(Math.floor(Math.random()*2) == 0){
                   red.addTag("turn");
                   giveItem(red, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("first_draw")));
@@ -339,6 +344,7 @@ function start(){
                   giveItem(red, compass);
                   setAct(red, 5);
                   setAct(blue, 3);
+                  //ボタン設置
                   Object.values(mcg.const.red.button).forEach(pos=>{
                     red.dimension.setBlockPermutation(pos, button_permutation);
                   })
@@ -354,6 +360,7 @@ function start(){
                   giveItem(blue, compass);
                   setAct(blue, 5);
                   setAct(red, 3);
+                  //ボタン設置
                   Object.values(mcg.const.blue.button).forEach(pos=>{
                     blue.dimension.setBlockPermutation(pos, button_permutation);
                   })
@@ -427,17 +434,33 @@ export function turnChange(){
   //act付与
   addAct(turnPlayer, 3);
   addAct(notTurnPlayer, 5);
+  //ドロップアイテム消去
+  turnPlayer.dimension.getEntities({type:"minecraft:item"}).forEach(item=>{
+    item.kill();
+  })
+  //ターン経過時効果
+  mc.world.getDimension("minecraft:overworld").getEntities({families:["mob"], excludeTypes:["minecraft:player"]}).forEach(entity=>{
+    turnMob[entity.typeId.slice(10)]?.run(notTurnPlayer, turnPlayer, entity);
+  })
+  turnObject[mc.world.getDimension("minecraft:overworld").getBlock(mcg.const.red.slot.object).typeId.slice(10)]?.run(notTurnPlayer, turnPlayer, "red");
+  turnObject[mc.world.getDimension("minecraft:overworld").getBlock(mcg.const.blue.slot.object).typeId.slice(10)]?.run(notTurnPlayer, turnPlayer, "blue");
+  mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:item"], tags:[(notTurnPlayer.hasTag("red")?"red":"blue")]}).forEach(entity=>{
+    let info = getCard(entity.typeId);
+    if(info){
+      addAct(notTurnPlayer, parseInt(info.Bact));
+      giveSword(notTurnPlayer, info.atk);
+    }
+  })
   //タイマーリセット
   setAct("timer", mc.world.getDynamicProperty("time"));
   mc.world.setDynamicProperty("turn", mc.world.getDynamicProperty("turn")+1);
   //コンパス交換
   /**
-    * @type {mc.Container}
-    */
+   * @type {mc.Container}
+   */
   let tp_inv = turnPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
   for(let i=0; i<tp_inv.size; i++){
     if(tp_inv.getItem(i)?.typeId == "minecraft:compass"){
-      giveItem(notTurnPlayer, tp_inv.getItem(i));
       tp_inv.setItem(i);
     }
     if(tp_inv.getItem(i)?.typeId == "minecraft:wooden_sword" && tp_inv.getItem(i)?.typeId.includes("sword")){
@@ -447,6 +470,7 @@ export function turnChange(){
       tp_inv.setItem(i);
     }
   }
+  giveItem(notTurnPlayer, new mc.ItemStack("minecraft:compass", 1));
   giveItem(notTurnPlayer, new mc.ItemStack("minecraft:grass_block", 1));
   //タイトル表示
   turnPlayer.onScreenDisplay.setTitle("Turn End",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
@@ -458,10 +482,6 @@ export function turnChange(){
     player.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
   })
   notTurnPlayer.playSound("random.levelup",{location:notTurnPlayer.location});
-  //ドロップアイテム消去
-  turnPlayer.dimension.getEntities({type:"minecraft:item"}).forEach(item=>{
-    item.kill();
-  })
   //ui削除
   ui.uiManager.closeAllForms(turnPlayer);
 }
@@ -543,6 +563,9 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
     Object.values(mcg.const.blue.button).forEach(pos=>{
       mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
     })
+    //オブジェクト削除
+    mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.red.slot.object, "minecraft:air");
+    mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.blue.slot.object, "minecraft:air");
     //エンティティ削除
     mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
       entity.kill();
@@ -556,5 +579,5 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:test") return;
-  giveSword(data.sourceEntity, "15x3");
+  sendPlayerMessage(data.sourceEntity, "test");
 })

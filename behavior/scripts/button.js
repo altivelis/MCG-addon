@@ -1,7 +1,7 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 import { mcg, turnChange } from "./system";
-import { hasItem, decrementContainer, giveItem, handItem } from "./lib";
+import { hasItem, decrementContainer, giveItem, handItem, addAct } from "./lib";
 import { useCard } from "./usecard";
 
 //ドロー
@@ -103,7 +103,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     case "minecraft:netherrack":
       if(!source.hasTag("nether")){
         source.sendMessage("ネザーカードが開放されていません")
-        break;
+        return;
       }
       decrementContainer(source, "minecraft:grass_block");
       switch(Math.floor(Math.random()*4)){
@@ -126,6 +126,11 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
       }
       giveItem(source, item);
       break;
+    default:
+      return;
+  }
+  if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:allay", tags:[(source.hasTag("red")?"red":"blue")]}).length >0){
+    addAct(source, 4);
   }
 })
 

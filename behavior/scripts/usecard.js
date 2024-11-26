@@ -1,6 +1,5 @@
 import * as mc from "@minecraft/server";
 import { addAct, decrementSlot, getAct, getCard, giveItem, giveSword, handItem, myTimeout, swordDamage, swordName } from "./lib";
-import { cardList } from "./cardinfo";
 import { mcg } from "./system";
 
 const error_slot = "§cこのスロットには使用できません",
@@ -167,6 +166,7 @@ export const useCard = {
               `§r[${swordName[sword.slice(10)]}]`
             ])
             target.applyDamage(swordDamage[sword.slice(10)], {cause:mc.EntityDamageCause.entityAttack, damagingEntity: player});
+            target.dimension.playSound("random.glass", target.location, {volume: 3});
           })
           break;
         case W:
@@ -182,6 +182,7 @@ export const useCard = {
               `§r[${swordName[sword.slice(10)]}]`
             ])
             target.applyDamage(swordDamage[sword.slice(10)], {cause:mc.EntityDamageCause.entityAttack, damagingEntity: player});
+            target.dimension.playSound("random.glass", target.location, {volume: 3});
           })
           break;
         case R:
@@ -197,6 +198,7 @@ export const useCard = {
               `§r[${swordName[sword.slice(10)]}]`
             ])
             target.applyDamage(swordDamage[sword.slice(10)], {cause:mc.EntityDamageCause.entityAttack, damagingEntity: player});
+            target.dimension.playSound("random.glass", target.location, {volume: 3});
           })
           break;
         case P:
@@ -213,6 +215,7 @@ export const useCard = {
               `§r[${swordName[sword.slice(10)]}]`
             ])
             enemy.applyDamage(swordDamage[sword.slice(10)] / 5, {cause:mc.EntityDamageCause.entityAttack});
+            enemy.dimension.playSound("random.glass", enemy.location, {volume: 3});
           })
           break;
         case O:
@@ -461,7 +464,7 @@ export const useCard = {
      */
     run: (cardBlock, player) => {
       summonCard(cardBlock, player, "minecraft:pig", (mob)=>{
-        giveItem(p, new mc.ItemStack("minecraft:porkchop"));
+        giveItem(player, new mc.ItemStack("minecraft:porkchop"));
         mc.world.sendMessage((player.hasTag("red")?"§c":"§b") + player.nameTag + "§r: ブタを召喚しました");
       });
     }
