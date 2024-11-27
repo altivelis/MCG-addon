@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage } from "./lib";
 import { turnMob, turnObject } from "./turncard";
 
 export const mcg = {
@@ -120,19 +120,13 @@ mc.system.runInterval(()=>{
   //属性パーティクル
   mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
     if(entity.hasTag("protect")){
-      entity.dimension.spawnParticle("minecraft:totem_particle",entity.location);
+      entity.dimension.spawnParticle("minecraft:trial_spawner_detection",{...entity.location, x:entity.location.x-0.5, z:entity.location.z-0.5});
     }
     if(entity.hasTag("fly")){
       entity.dimension.spawnParticle("minecraft:cauldron_explosion_emitter", {...entity.location, y: entity.location.y-1});
     }
     if(entity.hasTag("guard")){
-      entity.dimension.spawnParticle("minecraft:trial_omen_single", {...entity.location, y: entity.location.y+1});
-      myTimeout(3,()=>{
-        entity.dimension.spawnParticle("minecraft:trial_omen_single", {...entity.location, y: entity.location.y+1});
-      })
-      myTimeout(6,()=>{
-        entity.dimension.spawnParticle("minecraft:trial_omen_single", {...entity.location, y: entity.location.y+1});
-      })
+      entity.dimension.spawnParticle("minecraft:trial_spawner_detection_ominous", {...entity.location, x:entity.location.x-0.5, z:entity.location.z-0.5});
     }
   })
 },10)
@@ -433,9 +427,11 @@ export function turnChange(){
   notTurnPlayer.addTag("turn");
   //act付与
   addAct(turnPlayer, 3);
+  sendPlayerMessage(turnPlayer, "act+3");
   addAct(notTurnPlayer, 5);
+  sendPlayerMessage(notTurnPlayer, "act+5");
   //ドロップアイテム消去
-  turnPlayer.dimension.getEntities({type:"minecraft:item"}).forEach(item=>{
+  turnPlayer.dimension.getEntities({type:"minecraft:item", excludeTags:["give"]}).forEach(item=>{
     item.kill();
   })
   //ターン経過時効果
@@ -579,5 +575,11 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:test") return;
-  sendPlayerMessage(data.sourceEntity, "test");
+  applyDamage(data.sourceEntity, 1);
+  myTimeout(2, ()=>{
+    applyDamage(data.sourceEntity, 1);
+  })
+  myTimeout(4, ()=>{
+    applyDamage(data.sourceEntity, 1);
+  })
 })

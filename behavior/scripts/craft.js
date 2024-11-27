@@ -170,7 +170,7 @@ mc.system.runInterval(()=>{
   let turnPlayer = mc.world.getPlayers({tags:["turn"]})[0];
   if(!turnPlayer) return;
   recipe.forEach(r=>{
-    let items = turnPlayer.dimension.getEntities({type:"minecraft:item", location:turnPlayer.location, minDistance:0, maxDistance:16});
+    let items = turnPlayer.dimension.getEntities({type:"minecraft:item", excludeTags:["give"], location:turnPlayer.location, minDistance:0, maxDistance:16});
     if(items.length == 0) return;
     /**
      * @type {mc.Entity[]}

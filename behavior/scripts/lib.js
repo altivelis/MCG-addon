@@ -23,7 +23,7 @@ export function giveItem(player, item){
   }
   //player.getComponent(mc.EntityInventoryComponent.componentId).container.addItem(item);
   //player.playSound("random.pop",{location:player.location, pitch:1.2});
-  player.dimension.spawnItem(item, player.location);
+  player.dimension.spawnItem(item, player.location).addTag("give");
 }
 
 /**
@@ -145,7 +145,7 @@ export function setAct(target, value){
 export function addAct(target, value){
   if(getAct(target) + value < 0){
     mc.world.sendMessage((target.hasTag("red")?"§c":"§b")+target.nameTag+"§r:[オーバーコストペナルティー]");
-    target.applyDamage(5);
+    target.applyDamage(5, {cause:mc.EntityDamageCause.suicide});
     return mc.world.scoreboard.getObjective("act").setScore(target, 0);
   }
   return mc.world.scoreboard.getObjective("act").addScore(target, value);
@@ -218,7 +218,7 @@ export const swordName = {
 }
 
 /**
- * 
+ * 全体通知ログ関数
  * @param {mc.Player} player 
  * @param {(mc.RawMessage | string)[] | mc.RawMessage | string} message 
  */
@@ -234,10 +234,26 @@ export function sendPlayerMessage(player, message){
 }
 
 /**
- * 
- * @param {mc.Player} player 
- * @param {String} blockid 
+ * オブジェクト設置関数
+ * @param {mc.Player} player 使用者
+ * @param {String} blockid ブロックID
  */
 export function setObject(player, blockid){
   mc.world.getDimension("minecraft:overworld").setBlockPermutation((player.hasTag("red")?mcg.const.red.slot.object:mcg.const.blue.slot.object), mc.BlockPermutation.resolve(blockid));
+}
+
+/**
+ * 無敵時間対策用ダメージ適用関数
+ * @param {mc.Entity | mc.Player} target 
+ * @param {Number} value 
+ * @param {mc.EntityApplyDamageByProjectileOptions | mc.EntityApplyDamageOptions} options
+ */
+export function applyDamage(target, value, options={cause:mc.EntityDamageCause.entityAttack}){
+  let before = target.getComponent(mc.EntityHealthComponent.componentId).currentValue;
+  if(!target.applyDamage(value, options)) return;
+  if(before - value < target.getComponent(mc.EntityHealthComponent.componentId).currentValue){
+    myTimeout(1, ()=>{
+      applyDamage(target, value, options);
+    })
+  }
 }

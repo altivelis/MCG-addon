@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, decrementSlot, getAct, getCard, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setObject, swordDamage, swordName } from "./lib";
+import { addAct, applyDamage, decrementSlot, getAct, getCard, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setObject, swordDamage, swordName } from "./lib";
 import { mcg } from "./system";
 
 const error_slot = "§cこのスロットには使用できません",
@@ -165,7 +165,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               `§r[${swordName[sword.slice(10)]}]`
             ])
-            target.applyDamage(swordDamage[sword.slice(10)], {cause:mc.EntityDamageCause.entityAttack, damagingEntity: player});
+            applyDamage(target,swordDamage[sword.slice(10)]);
             target.dimension.playSound("random.glass", target.location, {volume: 3});
           })
           break;
@@ -181,7 +181,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               `§r[${swordName[sword.slice(10)]}]`
             ])
-            target.applyDamage(swordDamage[sword.slice(10)], {cause:mc.EntityDamageCause.entityAttack, damagingEntity: player});
+            applyDamage(target,swordDamage[sword.slice(10)]);
             target.dimension.playSound("random.glass", target.location, {volume: 3});
           })
           break;
@@ -197,7 +197,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               `§r[${swordName[sword.slice(10)]}]`
             ])
-            target.applyDamage(swordDamage[sword.slice(10)], {cause:mc.EntityDamageCause.entityAttack, damagingEntity: player});
+            applyDamage(target,swordDamage[sword.slice(10)]);
             target.dimension.playSound("random.glass", target.location, {volume: 3});
           })
           break;
@@ -214,7 +214,7 @@ export const useCard = {
               enemy.nameTag,
               `§r[${swordName[sword.slice(10)]}]`
             ])
-            enemy.applyDamage(swordDamage[sword.slice(10)] / 5, {cause:mc.EntityDamageCause.entityAttack});
+            applyDamage(enemy, swordDamage[sword.slice(10)] / 5);
             enemy.dimension.playSound("random.glass", enemy.location, {volume: 3});
           })
           break;
@@ -407,7 +407,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               "§r: [矢]"
             ])
-            target.applyDamage(30, {cause:mc.EntityDamageCause.projectile, damagingEntity: player});
+            applyDamage(target, 30, {cause:mc.EntityDamageCause.projectile});
           })
           break;
         case W:
@@ -423,7 +423,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               "§r: [矢]"
             ])
-            target.applyDamage(30, {cause:mc.EntityDamageCause.projectile, damagingEntity: player});
+            applyDamage(target, 30, {cause:mc.EntityDamageCause.projectile});
           })
           break;
         case R:
@@ -439,7 +439,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               "§r: [矢]"
             ])
-            target.applyDamage(30, {cause:mc.EntityDamageCause.projectile, damagingEntity: player});
+            applyDamage(target, 30, {cause:mc.EntityDamageCause.projectile});
           })
           break;
         case P:
@@ -450,7 +450,7 @@ export const useCard = {
               enemy.nameTag,
               "§r: [矢]"
             ])
-            enemy.applyDamage(1, {cause:mc.EntityDamageCause.projectile, damagingEntity: player});
+            applyDamage(enemy, 1, {cause:mc.EntityDamageCause.projectile});
           })
           break;
         case O:
@@ -628,7 +628,7 @@ export const useCard = {
         (mob)=>{
         sendPlayerMessage(player, "アレイを召喚しました");
         mob.addTag("fly");
-        mob.teleport({...mob.location, y: mob.location.y + 1});
+        mob.teleport({...mob.location, y: mob.location.y + 2});
         giveSword(player, getCard(mob.typeId).atk, "速攻効果");
       })
     }
@@ -766,6 +766,218 @@ export const useCard = {
           }
         }
       )
+    }
+  },
+  zombie_spawn_egg: {
+    /**
+     * ゾンビ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:zombie",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ゾンビを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
+          player.sendMessage("[入手] 草ブロック x2");
+        }
+      )
+    }
+  },
+  skeleton_spawn_egg: {
+    /**
+     * スケルトン
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:skeleton",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "スケルトンを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:arrow"));
+          player.sendMessage("[入手] 矢");
+        }
+      )
+    }
+  },
+  creeper_spawn_egg: {
+    /**
+     * クリーパー
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:creeper",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "クリーパーを召喚しました");
+          mob.addTag("guard");
+        }
+      )
+    }
+  },
+  witch_spawn_egg: {
+    /**
+     * ウィッチ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:witch",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ウィッチを召喚しました");
+        }
+      )
+    }
+  },
+  mob_spawner: {
+    /**
+     * モンスタースポナー
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          addAct(player, -parseInt(info.Cact));
+          sendPlayerMessage(player, "モンスタースポナーを使用しました");
+          decrementSlot(player, player.selectedSlotIndex);
+          giveItem(player, new mc.ItemStack("minecraft:husk_spawn_egg"));
+          player.sendMessage("[入手] ハスク");
+          giveItem(player, new mc.ItemStack("minecraft:stray_spawn_egg"));
+          player.sendMessage("[入手] ストレイ");
+          giveItem(player, new mc.ItemStack("minecraft:cave_spider_spawn_egg"));
+          player.sendMessage("[入手] 洞窟グモ");
+          break;
+        case O:
+          addAct(player, -parseInt(info.Cact));
+          sendPlayerMessage(player, "モンスタースポナーを設置しました");
+          decrementSlot(player, player.selectedSlotIndex);
+          setObject(player, "minecraft:mob_spawner");
+          return;
+      }
+    }
+  },
+  phantom_spawn_egg: {
+    /**
+     * ファントム
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:phantom",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ファントムを召喚しました");
+          mob.addTag("fly");
+          giveSword(player, getCard(mob.typeId).atk, "速攻効果");
+        }
+      )
+    }
+  },
+  breeze_spawn_egg: {
+    /**
+     * ブリーズ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:breeze",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ブリーズを召喚しました");
+          mob.addTag("fly");
+          mob.dimension.playSound("wind_charge.burst", mob.location, {volume: 3});
+          mob.dimension.spawnParticle("minecraft:breeze_wind_explosion_emitter", mob.location);
+          mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:item"]}).forEach(entity=>{
+            if(entity.id == mob.id) return;
+            if(entity.hasTag("protect")){
+              entity.removeTag("protect");
+            }
+            else{
+              entity.kill();
+            }
+          })
+        }
+      )
+    }
+  },
+  ender_chest: {
+    /**
+     * エンダーチェスト
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          addAct(player, -parseInt(info.Cact));
+          sendPlayerMessage(player, "エンダーチェストを使用しました");
+          decrementSlot(player, player.selectedSlotIndex);
+          mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")], excludeTags:["fly", "guard"]}).forEach(entity=>{
+            applyDamage(entity, 10);
+          })
+          switch(Math.floor(Math.random() * 4)){
+            case 0:
+              giveItem(player, new mc.ItemStack("minecraft:enchanted_golden_apple"));
+              player.sendMessage("[入手] エンチャントされた金のリンゴ");
+              break;
+            case 1:
+              giveItem(player, new mc.ItemStack("minecraft:stray_spawn_egg"),2);
+              player.sendMessage("[入手] ストレイ x2");
+              break;
+            case 2:
+              giveItem(player, new mc.ItemStack("minecraft:husk_spawn_egg"),2);
+              player.sendMessage("[入手] ハスク x2");
+              break;
+            case 3:
+              giveItem(player, new mc.ItemStack("minecraft:phantom_spawn_egg"),2);
+              player.sendMessage("[入手] ファントム x2");
+              break;
+          }
+          break;
+        case O:
+          addAct(player, -parseInt(info.Cact));
+          sendPlayerMessage(player, "エンダーチェストを設置しました");
+          decrementSlot(player, player.selectedSlotIndex);
+          setObject(player, "minecraft:ender_chest");
+          return;
+      }
     }
   }
 }
