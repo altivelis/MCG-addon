@@ -150,6 +150,56 @@ export const turnMob = {
      * @param {mc.Entity} entity
      */
     run: (newPlayer, oldPlayer, entity) => {}
+  },
+  husk: {
+    /**
+     * ハスク
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
+  stray: {
+    /**
+     * ストレイ
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow", 2));
+        sendPlayerMessage(newPlayer, "[ストレイ] 矢x2を獲得");
+      }
+    }
+  },
+  cave_spider: {
+    /**
+     * 洞窟クモ
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
+  zombie_pigman: {
+    /**
+     * ゾンビピッグマン
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
+  wither_skeleton: {
+    /**
+     * ウィザースケルトン
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
   }
 }
 
@@ -213,6 +263,15 @@ export const turnObject = {
         sendPlayerMessage(newPlayer, "[エンダーチェスト] 草ブロックx3を獲得");
       }
     }
+  },
+  crying_obsidian:{
+    /**
+     * 泣く黒曜石
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {String} blockTag
+     */
+    run: (newPlayer, oldPlayer, blockTag) => {}
   }
 }
 

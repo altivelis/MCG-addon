@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, applyDamage, decrementSlot, getAct, getCard, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setObject, swordDamage, swordName } from "./lib";
+import { addAct, applyDamage, decrementSlot, getAct, getCard, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setAct, setObject, swordDamage, swordName } from "./lib";
 import { mcg } from "./system";
 
 const error_slot = "§cこのスロットには使用できません",
@@ -976,6 +976,276 @@ export const useCard = {
           sendPlayerMessage(player, "エンダーチェストを設置しました");
           decrementSlot(player, player.selectedSlotIndex);
           setObject(player, "minecraft:ender_chest");
+          return;
+      }
+    }
+  },
+  husk_spawn_egg: {
+    /**
+     * ハスク
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:husk",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ハスクを召喚しました");
+          mob.addTag("guard");
+        }
+      )
+    }
+  },
+  stray_spawn_egg: {
+    /**
+     * ストレイ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:stray",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ストレイを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:arrow", 2));
+          player.sendMessage("[入手] 矢 x2");
+        }
+      )
+    }
+  },
+  cave_spider_spawn_egg: {
+    /**
+     * 洞窟グモ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:cave_spider",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "洞窟グモを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:web"));
+          player.sendMessage("[入手] クモの巣");
+        }
+      )
+    }
+  },
+  enchanted_golden_apple: {
+    /**
+     * エンチャントされた金のリンゴ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "エンチャントされた金のリンゴを使用しました");
+          player.addEffect(mc.EffectTypes.get("minecraft:health_boost"), 20000000, {amplifier: 4, showParticles: false});
+          player.getComponent(mc.EntityHealthComponent.componentId).setCurrentValue(40);
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  web: {
+    /**
+     * クモの巣
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "クモの巣を使用しました");
+          sendPlayerMessage(player, "相手にクモの巣が絡まる！");
+          mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]}).forEach(enemy=>{
+            addAct(enemy, -15)
+          })
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  zombie_pigman_spawn_egg: {
+    /**
+     * ゾンビピッグマン
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:zombie_pigman",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ゾンビピッグマンを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
+          player.sendMessage("[入手] 草ブロック x2");
+          if(!player.hasTag("nether")){
+            player.addTag("nether");
+            player.sendMessage("ネザーカードがドロー可能になりました");
+            player.onScreenDisplay.setTitle("§cネザーゲートが開放された...");
+            player.playSound("portal.portal", {location:player.location});
+          }
+        }
+      )
+    }
+  },
+  wither_skeleton_spawn_egg: {
+    /**
+     * ウィザースケルトン
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:wither_skeleton",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ウィザースケルトンを召喚しました");
+          if(!player.hasTag("nether")){
+            player.addTag("nether");
+            player.sendMessage("ネザーカードがドロー可能になりました");
+            player.onScreenDisplay.setTitle("§cネザーゲートが開放された...");
+            player.playSound("portal.portal", {location:player.location});
+          }
+        }
+      )
+    }
+  },
+  crying_obsidian: {
+    /**
+     * 泣く黒曜石
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case B:
+          let entities = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
+          if(entities.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "泣く黒曜石を使用しました");
+          entities.forEach(entity=>{
+            entity.addTag("protect");
+          })
+          break;
+        case W:
+          entities = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotW"]});
+          if(entities.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "泣く黒曜石を使用しました");
+          entities.forEach(entity=>{
+            entity.addTag("protect");
+          })
+          break;
+        case R:
+          entities = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"]});
+          if(entities.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "泣く黒曜石を使用しました");
+          entities.forEach(entity=>{
+            entity.addTag("protect");
+          })
+          break;
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  wither_rose: {
+    /**
+     * ウィザーローズ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          let enemyEntities = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")]});
+          if(enemyEntities.length < 3){
+            player.sendMessage("§c相手のスロットが埋まっていないため使用できません");
+            return;
+          }
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue")]}).length > 0){
+            player.sendMessage("§c自分のスロットにモブが存在しているため使用できません");
+            return;
+          }
+          let enemy = mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]})[0];
+          if(getAct(enemy) < 30){
+            player.sendMessage("§c相手のactが30未満のため使用できません");
+            return;
+          }
+          if(getAct(player) > 10){
+            player.sendMessage("§cactが10より多いため使用できません");
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "ウィザーローズを使用しました");
+          setAct(player, 40);
+          setAct(enemy, 30);
+          applyDamage(player, 8, {cause:mc.EntityDamageCause.wither});
+          giveItem(player, new mc.ItemStack("minecraft:grass_block", 3));
+          player.sendMessage("[入手] 草ブロック x3");
+          enemyEntities.forEach(entity=>{
+            applyDamage(entity, 20);
+          })
+          break;
+        case O:
+          player.sendMessage(error_slot);
           return;
       }
     }
