@@ -251,7 +251,7 @@ export function setObject(player, blockid){
 export function applyDamage(target, value, options={cause:mc.EntityDamageCause.entityAttack}){
   let before = target.getComponent(mc.EntityHealthComponent.componentId).currentValue;
   if(!target.applyDamage(value, options)) return;
-  if(before - value < target.getComponent(mc.EntityHealthComponent.componentId).currentValue){
+  if(value > 0 && before == target.getComponent(mc.EntityHealthComponent.componentId).currentValue){
     myTimeout(1, ()=>{
       applyDamage(target, value, options);
     })
