@@ -1,5 +1,6 @@
 import * as mc from "@minecraft/server";
 import { cardList } from "./cardinfo";
+import { mcg } from "./system";
 
 /**
  * Timeoutを見やすくする関数
@@ -156,7 +157,7 @@ export function addAct(target, value){
  * @param {String} atk 
  * @param {String | mc.RawMessage} name
  */
-export function giveSword(player, atk, name){
+export function giveSword(player, atk, name="不明"){
   if(atk == "-" || atk == "0") return;
   const texts = atk.split("x");
   let sword;
@@ -186,13 +187,13 @@ export function giveSword(player, atk, name){
     for(let i=0; i<parseInt(texts[1]); i++){
       giveItem(player, sword);
       mc.world.sendMessage([
-        (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:[", name, "]", {translate:`item.${sword.typeId.slice(10)}.name`}
+        (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:[", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}
       ])
     }
   }else{
     giveItem(player, sword);
     mc.world.sendMessage([
-      (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:[", name, "]", {translate:`item.${sword.typeId.slice(10)}.name`}
+      (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:[", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}
     ])
   }
   return;
@@ -222,7 +223,7 @@ export const swordName = {
  * @param {(mc.RawMessage | string)[] | mc.RawMessage | string} message 
  */
 export function sendPlayerMessage(player, message){
-  let text = [(player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:"];
+  let text = [(player.hasTag("red")?"§c":"§b")+player.nameTag+"§r: "];
   if(Array.isArray(message)){
     text.push(...message);
   }
@@ -230,4 +231,13 @@ export function sendPlayerMessage(player, message){
     text.push(message);
   }
   mc.world.sendMessage(text);
+}
+
+/**
+ * 
+ * @param {mc.Player} player 
+ * @param {String} blockid 
+ */
+export function setObject(player, blockid){
+  mc.world.getDimension("minecraft:overworld").setBlockPermutation((player.hasTag("red")?mcg.const.red.slot.object:mcg.const.blue.slot.object), mc.BlockPermutation.resolve(blockid));
 }

@@ -210,7 +210,7 @@ export const cardList = [
     Cact: "8",
     text: [
       "§b使用時 / 「ハスク」、「ストレイ」、「洞窟グモ」を獲得する。",
-      "§6オブジェクト効果 / 自分のターン開始時、自分のactを20増やす。"
+      "§6オブジェクト効果 / 自分のターン開始時、自分のactを15増やす。"
     ]
   },
   {
@@ -654,7 +654,7 @@ export const cardList = [
     hp: "4",
     atk: "0",
     Sact: "1",
-    Bact: "21",
+    Bact: "15",
     text: [
       "§bこのカードはオーバーコスト召喚ができない。",
       "§b召喚時効果 / 卵を1つ入手",
@@ -668,7 +668,7 @@ export const cardList = [
     hp: "6",
     atk: "0",
     Sact: "3",
-    Bact: "5",
+    Bact: "3",
     text: [
       "§b召喚時効果 / 草ブロックを2つ入手する。",
       "§bポピー、タンポポ、桃色のチューリップ、",
@@ -693,7 +693,7 @@ export const cardList = [
     name:["minecraft:composter"],
     type: "item",
     attribute: "アイテム・オブジェクト",
-    Cact: "3",
+    Cact: "4",
     text: [
       "§b使用時 / 「木のツルハシ」と「木のクワ」、「ニンジン付きの棒」を1枚ずつ入手する。",
       "§6オブジェクト効果 / ターン開始時に「ポピー」「タンポポ」「桃色のチューリップ」",
@@ -729,10 +729,10 @@ export const cardList = [
     name:["minecraft:mooshroom", "minecraft:mooshroom_spawn_egg"],
     type: "entity",
     attribute: "なし",
-    hp: "82",
+    hp: "62",
     atk: "15",
     Sact: "20",
-    Bact: "14",
+    Bact: "11",
     text: [
       "§b召喚時効果 / 「赤いキノコ」を入手する。"
     ]
@@ -743,7 +743,7 @@ export const cardList = [
     attribute: "なし",
     hp: "130",
     atk: "50",
-    Sact: "55",
+    Sact: "50",
     Bact: "8",
     text: [
       "§bターン終了時効果 / 相手プレイヤーの手札に「氷塊」を4枚加える。",
@@ -757,7 +757,7 @@ export const cardList = [
     attribute: "アイテム・合成素材",
     Cact: "0",
     text: [
-      "§b使用時 / 自分のHPを3回復する。",
+      "§b使用時 / 自分のHPを1回復する。",
       "§b+小麦+ミルクバケツ = ケーキ"
     ]
   },
@@ -894,7 +894,7 @@ export const cardList = [
     attribute: "アイテム",
     Cact: "0",
     text: [
-      "§b使用時 / 自分プレイヤーのHPを5回復する。"
+      "§b使用時 / 自分プレイヤーのHPを3回復する。"
     ]
   },
   {
@@ -903,7 +903,7 @@ export const cardList = [
     attribute: "アイテム",
     Cact: "0",
     text: [
-      "§b使用時 / 自分プレイヤーのHPを13回復して「チェスト」を1つ入手する。"
+      "§b使用時 / 自分プレイヤーのHPを9回復して「チェスト」を1つ入手する。"
     ]
   },
   {
@@ -1011,7 +1011,7 @@ export const cardList = [
     attribute: "速攻・貫通",
     hp: "16",
     atk: "-",
-    Sact: "25",
+    Sact: "15",
     Bact: "10",
     text: [
       "§b召喚時効果 / 自分の場にオブジェクトがあると矢を3つ入手する。",
