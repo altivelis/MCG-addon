@@ -56,7 +56,7 @@ mc.system.runInterval(() => {
             player.onScreenDisplay.setActionBar(text);
             break;
           case "minecraft:netherrack":
-            text = "§cゾンビピッグマンかウィザースケルトンを召喚すると開放\n" + text;
+            text = (player.hasTag("nether")?"":"§cゾンビピッグマンかウィザースケルトンを召喚すると開放\n") + text;
             text += (high ? drawList.nether.high : drawList.nether.low).join("\n");
             player.onScreenDisplay.setActionBar(text);
             break;
