@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, giveItem, myTimeout, sendPlayerMessage, setObject } from "./lib";
+import { addAct, applyDamage, giveItem, myTimeout, sendPlayerMessage, setObject } from "./lib";
 import { mcg } from "./system";
 
 export const turnMob = {
@@ -200,7 +200,64 @@ export const turnMob = {
      * @param {mc.Entity} entity
      */
     run: (newPlayer, oldPlayer, entity) => {}
-  }
+  },
+  strider: {
+    /**
+     * ストライダー
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
+  blaze: {
+    /**
+     * ブレイズ
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      let teamBlazes = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(entity.hasTag("red")?"red":"blue")]});
+      let test = false;
+      teamBlazes.forEach(blaze=>{
+        if(blaze.hasTag("processed")) test = true;
+      })
+      if(test) return;
+      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        applyDamage(oldPlayer, 2, {cause:mc.EntityDamageCause.fire});
+      }else{
+        applyDamage(newPlayer, 2, {cause:mc.EntityDamageCause.fire});
+      }
+      entity.addTag("processed");
+      myTimeout(20, ()=>{
+        entity.removeTag("processed");
+      })
+    }
+  },
+  chicken: {
+    /**
+     * ニワトリ
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        giveItem(newPlayer, new mc.ItemStack("minecraft:egg"));
+        sendPlayerMessage(newPlayer, "[ニワトリ] 卵を獲得");
+      }
+    }
+  },
+  parrot: {
+    /**
+     * オウム
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
 }
 
 export const turnObject = {
@@ -272,6 +329,50 @@ export const turnObject = {
      * @param {String} blockTag
      */
     run: (newPlayer, oldPlayer, blockTag) => {}
+  },
+  bee_nest: {
+    /**
+     * ミツバチの巣
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {String} blockTag
+     */
+    run: (newPlayer, oldPlayer, blockTag) => {
+      if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
+        giveItem(newPlayer, new mc.ItemStack("minecraft:bee_spawn_egg"));
+        sendPlayerMessage(newPlayer, "[ミツバチの巣] ハチを獲得");
+      }
+    }
+  },
+  composter: {
+    /**
+     * コンポスター
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {String} blockTag
+     */
+    run: (newPlayer, oldPlayer, blockTag) => {
+      if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
+        switch(Math.floor(Math.random() * 4)){
+          case 0:
+            giveItem(newPlayer, new mc.ItemStack("minecraft:poppy"));
+            sendPlayerMessage(newPlayer, "[コンポスター] ポピーを獲得");
+            break;
+          case 1:
+            giveItem(newPlayer, new mc.ItemStack("minecraft:dandelion"));
+            sendPlayerMessage(newPlayer, "[コンポスター] タンポポを獲得");
+            break;
+          case 2:
+            giveItem(newPlayer, new mc.ItemStack("minecraft:pink_tulip"));
+            sendPlayerMessage(newPlayer, "[コンポスター] 桃色のチューリップを獲得");
+            break;
+          case 3:
+            giveItem(newPlayer, new mc.ItemStack("minecraft:cactus"));
+            sendPlayerMessage(newPlayer, "[コンポスター] サボテンを獲得");
+            break;
+        }
+      }
+    }
   }
 }
 

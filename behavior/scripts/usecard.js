@@ -1249,5 +1249,274 @@ export const useCard = {
           return;
       }
     }
+  },
+  strider_spawn_egg: {
+    /**
+     * ストライダー
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:strider",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ストライダーを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:saddle"));
+          player.sendMessage("[入手] 鞍");
+        }
+      )
+    }
+  },
+  lava_bucket: {
+    /**
+     * 溶岩入りバケツ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "溶岩入りバケツを使用しました");
+          mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]}).forEach(enemy=>{
+            applyDamage(enemy, 4, {cause:mc.EntityDamageCause.lava});
+          })
+          giveItem(player, new mc.ItemStack("minecraft:crying_obsidian"));
+          player.sendMessage("[入手] 泣く黒曜石");
+          giveItem(player, new mc.ItemStack("minecraft:potato"));
+          player.sendMessage("[入手] ジャガイモ");
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  potato: {
+    /**
+     * ジャガイモ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:blaze",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ジャガイモを使用しました");
+          sendPlayerMessage(player, "ブレイズを召喚しました");
+          mob.addTag("fly");
+        }
+      )
+    }
+  },
+  saddle: {
+    /**
+     * 鞍
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let myStriders = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:strider", tags:[(player.hasTag("red")?"red":"blue")]});
+      if(myStriders.length == 0){
+        player.sendMessage("§c自分のスロットにストライダーが存在しないため使用できません");
+        return;
+      }
+      let target;
+      switch(cardBlock.typeId){
+        case B:
+          target = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotB"]});
+          if(target.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "鞍を使用しました");
+          myStriders.forEach(strider=>{
+            if(!strider.hasTag("protect")) strider.kill();
+          })
+          target.forEach(entity=>{
+            if(!entity.hasTag("protect")) entity.kill();
+          })
+          break;
+        case W:
+          target = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotW"]});
+          if(target.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "鞍を使用しました");
+          myStriders.forEach(strider=>{
+            if(!strider.hasTag("protect")) strider.kill();
+          })
+          target.forEach(entity=>{
+            if(!entity.hasTag("protect")) entity.kill();
+          })
+          break;
+        case R:
+          target = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotR"]});
+          if(target.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "鞍を使用しました");
+          myStriders.forEach(strider=>{
+            if(!strider.hasTag("protect")) strider.kill();
+          })
+          target.forEach(entity=>{
+            if(!entity.hasTag("protect")) entity.kill();
+          })
+          break;
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  chicken_spawn_egg: {
+    /**
+     * ニワトリ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:chicken",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ニワトリを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:egg"));
+          player.sendMessage("[入手] 卵");
+        }
+      )
+    }
+  },
+  parrot_spawn_egg: {
+    /**
+     * オウム
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:parrot",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "オウムを召喚しました");
+          mob.addTag("fly");
+          giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
+          player.sendMessage("[入手] 草ブロック x2");
+          switch(Math.floor(Math.random() * 4)){
+            case 0:
+              giveItem(player, new mc.ItemStack("minecraft:poppy"));
+              player.sendMessage("[入手] ポピー");
+              break;
+            case 1:
+              giveItem(player, new mc.ItemStack("minecraft:dandelion"));
+              player.sendMessage("[入手] タンポポ");
+              break;
+            case 2:
+              giveItem(player, new mc.ItemStack("minecraft:pink_tulip"));
+              player.sendMessage("[入手] 桃色のチューリップ");
+              break;
+            case 3:
+              giveItem(player, new mc.ItemStack("minecraft:cactus"));
+              player.sendMessage("[入手] サボテン");
+              break;
+          }
+        }
+      )
+    }
+  },
+  bee_nest: {
+    /**
+     * ミツバチの巣
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "ミツバチの巣を使用しました");
+          giveItem(player, new mc.ItemStack("minecraft:bee_spawn_egg", 2));
+          player.sendMessage("[入手] ミツバチ x2");
+          break;
+        case O:
+          addAct(player, -parseInt(info.Cact));
+          sendPlayerMessage(player, "ミツバチの巣を設置しました");
+          decrementSlot(player, player.selectedSlotIndex);
+          setObject(player, "minecraft:bee_nest");
+          return;
+      }
+    }
+  },
+  composter: {
+    /**
+     * コンポスター
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "コンポスターを使用しました");
+          giveItem(player, new mc.ItemStack("wooden_pickaxe"));
+          player.sendMessage("[入手] 木のツルハシ");
+          giveItem(player, new mc.ItemStack("minecraft:wooden_hoe"));
+          player.sendMessage("[入手] 木のクワ");
+          giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
+          player.sendMessage("[入手] ニンジン付きの棒");
+          break;
+        case O:
+          addAct(player, -parseInt(info.Cact));
+          sendPlayerMessage(player, "コンポスターを設置しました");
+          decrementSlot(player, player.selectedSlotIndex);
+          setObject(player, "minecraft:composter");
+          return;
+      }
+    }
   }
 }
