@@ -187,13 +187,13 @@ export function giveSword(player, atk, name="不明"){
     for(let i=0; i<parseInt(texts[1]); i++){
       giveItem(player, sword);
       mc.world.sendMessage([
-        (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:[", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}
+        (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r: [", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}
       ])
     }
   }else{
     giveItem(player, sword);
     mc.world.sendMessage([
-      (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r:[", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}
+      (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r: [", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}
     ])
   }
   return;
