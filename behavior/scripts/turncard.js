@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, applyDamage, getObject, giveItem, myTimeout, sendPlayerMessage, setObject } from "./lib";
+import { addAct, applyDamage, getObject, giveItem, giveSword, hasItem, myTimeout, sendPlayerMessage, setObject } from "./lib";
 import { mcg } from "./system";
 
 export const turnMob = {
@@ -285,14 +285,14 @@ export const turnMob = {
      */
     run: (newPlayer, oldPlayer, entity) => {}
   },
-  polar_bear: [
+  polar_bear: {
     /**
      * ホッキョクグマ
      * @param {mc.Player} newPlayer
      * @param {mc.Player} oldPlayer
      * @param {mc.Entity} entity
      */
-    (newPlayer, oldPlayer, entity) => {
+    run: (newPlayer, oldPlayer, entity) => {
       if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
         let snowgolems = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:snow_golem", tags:[(entity.hasTag("red")?"red":"blue")]});
         let ice = new mc.ItemStack("minecraft:packed_ice", (snowgolems.length > 0 ? 8 : 4));
@@ -316,7 +316,39 @@ export const turnMob = {
         }
       }
     }
-  ]
+  },
+  bee: {
+    /**
+     * ミツバチ
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
+  sheep: {
+    /**
+     * 羊
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
+  bogged: {
+    /**
+     * ボグト
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"));
+        sendPlayerMessage(newPlayer, "[ボグト] 矢を獲得");
+      }
+    }
+  }
 }
 
 export const turnObject = {
@@ -435,6 +467,45 @@ export const turnObject = {
   }
 }
 
-export const turnItem = {
-  
+/**
+ * ターン開始時のハンドアイテム、キープアイテムの処理
+ * @param {mc.Player} newPlayer ターンを開始するプレイヤー
+ * @param {mc.Player} oldPlayer ターンを終了したプレイヤー
+ */
+export function turnItem(newPlayer, oldPlayer){
+  if(hasItem(newPlayer, "minecraft:red_wool")){
+    giveSword(newPlayer, "15", "赤色の羊毛");
+  }
+  if(hasItem(newPlayer, "minecraft:yellow_wool")){
+    addAct(newPlayer, 10);
+    sendPlayerMessage(newPlayer, "[黄色の羊毛] act+10");
+  }
+  if(hasItem(newPlayer, "minecraft:pink_wool")){
+    giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"));
+    sendPlayerMessage(newPlayer, "[桃色の羊毛] 草ブロックを獲得");
+  }
+  if(hasItem(newPlayer, "minecraft:green_wool")){
+    /**
+     * @type {mc.EntityHealthComponent}
+     */
+    let hp = newPlayer.getComponent(mc.EntityHealthComponent.componentId);
+    hp.setCurrentValue(hp.currentValue + 3);
+    sendPlayerMessage(newPlayer, "[緑色の羊毛] HP+3");
+  }
+  if(hasItem(newPlayer, "minecraft:black_wool")){
+    sendPlayerMessage(newPlayer, "[黒色の羊毛] スリップダメージ");
+    applyDamage(oldPlayer, 3, {cause:mc.EntityDamageCause.wither});
+  }
+  /**
+   * @type {mc.Container}
+   */
+  let inv_old = oldPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
+  for(let i=0; i<inv_old.size; i++){
+    let item = inv_old.getItem(i);
+    if(item?.typeId == "minecraft:packed_ice"){
+      sendPlayerMessage(oldPlayer, "[凍結ダメージ]");
+      applyDamage(oldPlayer, item.amount);
+      inv_old.setItem(i);
+    }
+  }
 }

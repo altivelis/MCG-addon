@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, applyDamage, decrementSlot, getAct, getCard, getObject, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setAct, setObject, swordDamage, swordName } from "./lib";
+import { addAct, applyDamage, decrementContainer, decrementSlot, getAct, getCard, getObject, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setAct, setObject, swordDamage, swordName } from "./lib";
 import { mcg } from "./system";
 
 const error_slot = "§cこのスロットには使用できません",
@@ -20,7 +20,7 @@ const error_slot = "§cこのスロットには使用できません",
  * @param {function} event
  */
 function summonCard(cardBlock, player, identifier, event){
-  let info = getCard(handItem(player).typeId);
+  let info = getCard(identifier);
   if(parseInt(info.Sact) > getAct(player) + 1){
     player.sendMessage(error_act);
     return;
@@ -160,6 +160,7 @@ export const useCard = {
             return;
           }
           decrementSlot(player, player.selectedSlotIndex);
+          decrementContainer(player, "minecraft:packed_ice");
           targets.forEach(target=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
               {translate: `entity.${target.typeId.slice(10)}.name`},
@@ -176,6 +177,7 @@ export const useCard = {
             return;
           }
           decrementSlot(player, player.selectedSlotIndex);
+          decrementContainer(player, "minecraft:packed_ice");
           targets.forEach(target=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
               {translate: `entity.${target.typeId.slice(10)}.name`},
@@ -192,6 +194,7 @@ export const useCard = {
             return;
           }
           decrementSlot(player, player.selectedSlotIndex);
+          decrementContainer(player, "minecraft:packed_ice");
           targets.forEach(target=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
               {translate: `entity.${target.typeId.slice(10)}.name`},
@@ -208,6 +211,7 @@ export const useCard = {
             return;
           }
           decrementSlot(player, player.selectedSlotIndex);
+          decrementContainer(player, "minecraft:packed_ice");
           let enemies = mc.world.getDimension("minecraft:overworld").getPlayers({tags:[(player.hasTag("red")?"blue":"red")]});
           enemies.forEach(enemy=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
@@ -402,12 +406,13 @@ export const useCard = {
           }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
+          decrementContainer(player, "minecraft:packed_ice");
           targets.forEach(target=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
               {translate: `entity.${target.typeId.slice(10)}.name`},
               "§r: [矢]"
             ])
-            applyDamage(target, 30, {cause:mc.EntityDamageCause.projectile});
+            applyDamage(target, 30);
           })
           break;
         case W:
@@ -418,12 +423,13 @@ export const useCard = {
           }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
+          decrementContainer(player, "minecraft:packed_ice");
           targets.forEach(target=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
               {translate: `entity.${target.typeId.slice(10)}.name`},
               "§r: [矢]"
             ])
-            applyDamage(target, 30, {cause:mc.EntityDamageCause.projectile});
+            applyDamage(target, 30);
           })
           break;
         case R:
@@ -434,23 +440,26 @@ export const useCard = {
           }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
+          decrementContainer(player, "minecraft:packed_ice");
           targets.forEach(target=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
               {translate: `entity.${target.typeId.slice(10)}.name`},
               "§r: [矢]"
             ])
-            applyDamage(target, 30, {cause:mc.EntityDamageCause.projectile});
+            applyDamage(target, 30);
           })
           break;
         case P:
+          addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
+          decrementContainer(player, "minecraft:packed_ice");
           let enemies = mc.world.getDimension("minecraft:overworld").getPlayers({tags:[(player.hasTag("red")?"blue":"red")]});
           enemies.forEach(enemy=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
               enemy.nameTag,
               "§r: [矢]"
             ])
-            applyDamage(enemy, 1, {cause:mc.EntityDamageCause.projectile});
+            applyDamage(enemy, 1);
           })
           break;
         case O:
@@ -603,7 +612,7 @@ export const useCard = {
               entity.kill();
             }
             else{
-              entity.getComponent(mc.EntityHealthComponent.typeId).resetToDefaultValue();
+              entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
               entity.removeTag("protect");
             }
           })
@@ -628,7 +637,7 @@ export const useCard = {
         (mob)=>{
         sendPlayerMessage(player, "アレイを召喚しました");
         mob.addTag("fly");
-        mob.teleport({...mob.location, y: mob.location.y + 2});
+        mob.teleport({...mob.location, y: mob.location.y + 1});
         giveSword(player, getCard(mob.typeId).atk, "速攻効果");
       })
     }
@@ -657,15 +666,10 @@ export const useCard = {
      * @param {mc.Player} player
      */
     run: (cardBlock, player) => {
-      let info = getCard(handItem(player).typeId);
-      if(parseInt(info.Cact) > getAct(player) + 1){
-        player.sendMessage(error_act);
-        return;
-      }
       let wolf;
       switch(cardBlock.typeId){
         case B:
-          wolf = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"], type:"minecarft:wolf"});
+          wolf = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotB"], type:"minecraft:wolf"});
           if(wolf.length == 0){
             player.sendMessage(error_slot);
             return;
@@ -673,9 +677,9 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "生の豚肉を使用しました");
           giveSword(player, getCard(wolf[0].typeId).atk, "オオカミ効果");
-          return;
+          break;
         case W:
-          wolf = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotW"], type:"minecarft:wolf"});
+          wolf = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotW"], type:"minecraft:wolf"});
           if(wolf.length == 0){
             player.sendMessage(error_slot);
             return;
@@ -683,9 +687,9 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "生の豚肉を使用しました");
           giveSword(player, getCard(wolf[0].typeId).atk, "オオカミ効果");
-          return;
+          break;
         case R:
-          wolf = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"], type:"minecarft:wolf"});
+          wolf = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotR"], type:"minecraft:wolf"});
           if(wolf.length == 0){
             player.sendMessage(error_slot);
             return;
@@ -693,7 +697,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "生の豚肉を使用しました");
           giveSword(player, getCard(wolf[0].typeId).atk, "オオカミ効果");
-          return;
+          break;
         case P:
         case O:
           player.sendMessage(error_slot);
@@ -722,6 +726,7 @@ export const useCard = {
            */
           let hp = player.getComponent(mc.EntityHealthComponent.componentId);
           hp.setCurrentValue(hp.currentValue + 6);
+          sendPlayerMessage(player, "HP+6");
           break;
         case O:
           player.sendMessage(error_slot);
@@ -893,6 +898,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ファントムを召喚しました");
           mob.addTag("fly");
+          mob.teleport({...mob.location, y: mob.location.y + 1});
           giveSword(player, getCard(mob.typeId).atk, "速攻効果");
         }
       )
@@ -912,6 +918,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ブリーズを召喚しました");
           mob.addTag("fly");
+          mob.teleport({...mob.location, y: mob.location.y + 1});
           mob.dimension.playSound("wind_charge.burst", mob.location, {volume: 3});
           mob.dimension.spawnParticle("minecraft:breeze_wind_explosion_emitter", mob.location);
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:item"]}).forEach(entity=>{
@@ -958,15 +965,15 @@ export const useCard = {
               player.sendMessage("[入手] エンチャントされた金のリンゴ");
               break;
             case 1:
-              giveItem(player, new mc.ItemStack("minecraft:stray_spawn_egg"),2);
+              giveItem(player, new mc.ItemStack("minecraft:stray_spawn_egg",2));
               player.sendMessage("[入手] ストレイ x2");
               break;
             case 2:
-              giveItem(player, new mc.ItemStack("minecraft:husk_spawn_egg"),2);
+              giveItem(player, new mc.ItemStack("minecraft:husk_spawn_egg",2));
               player.sendMessage("[入手] ハスク x2");
               break;
             case 3:
-              giveItem(player, new mc.ItemStack("minecraft:phantom_spawn_egg"),2);
+              giveItem(player, new mc.ItemStack("minecraft:phantom_spawn_egg",2));
               player.sendMessage("[入手] ファントム x2");
               break;
           }
@@ -1154,9 +1161,10 @@ export const useCard = {
         player.sendMessage(error_act);
         return;
       }
+      let entities;
       switch(cardBlock.typeId){
         case B:
-          let entities = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
+          entities = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
           if(entities.length == 0){
             player.sendMessage(error_slot);
             return;
@@ -1320,6 +1328,7 @@ export const useCard = {
           sendPlayerMessage(player, "ジャガイモを使用しました");
           sendPlayerMessage(player, "ブレイズを召喚しました");
           mob.addTag("fly");
+          mob.teleport({...mob.location, y: mob.location.y + 1});
         }
       )
     }
@@ -1423,6 +1432,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "オウムを召喚しました");
           mob.addTag("fly");
+          mob.teleport({...mob.location, y: mob.location.y + 1});
           giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
           player.sendMessage("[入手] 草ブロック x2");
           switch(Math.floor(Math.random() * 4)){
@@ -1557,7 +1567,7 @@ export const useCard = {
           sendPlayerMessage(player, "カエルを召喚しました");
           let object = getObject(player.hasTag("red")?"blue":"red");
           if(object.typeId != "minecraft:air"){
-            object.setType("minecraft:air");
+            setObject(mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]})[0], "minecraft:air");
             sendPlayerMessage(player, "カエルが相手のオブジェクトを食べてしまった！");
             mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), (mob.hasTag("slotB")?"slotB":mob.hasTag("slotW")?"slotW":"slotR")]}).forEach(entity=>{
               if(!entity.hasTag("protect")) entity.kill();
@@ -1744,6 +1754,363 @@ export const useCard = {
           player.sendMessage(error_slot);
           return;
       }
+    }
+  },
+  bee_spawn_egg: {
+    /**
+     * ミツバチ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:bee",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ミツバチを召喚しました");
+          mob.addTag("fly");
+          mob.teleport({...mob.location, y: mob.location.y + 1});
+          giveSword(player, getCard(mob.typeId).atk, "速攻効果");
+          if(getObject(player.hasTag("red")?"red":"blue").typeId == "minecraft:bee_nest"){
+            giveItem(player, new mc.ItemStack("minecraft:honey_bottle"));
+            player.sendMessage("[入手] ハチミツ入りの瓶");
+          }
+        }
+      )
+    }
+  },
+  wooden_hoe: {
+    /**
+     * 木のクワ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "木のクワを使用しました");
+          giveItem(player, new mc.ItemStack("minecraft:wheat"));
+          player.sendMessage("[入手] 小麦");
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  stone_hoe: {
+    /**
+     * 石のクワ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "石のクワを使用しました");
+          giveItem(player, new mc.ItemStack("minecraft:wheat"));
+          player.sendMessage("[入手] 小麦");
+          giveItem(player, new mc.ItemStack("minecraft:grass_block"));
+          player.sendMessage("[入手] 草ブロック");
+          switch(Math.floor(Math.random() * 4)){
+            case 0:
+              giveItem(player, new mc.ItemStack("minecraft:poppy"));
+              player.sendMessage("[入手] ポピー");
+              break;
+            case 1:
+              giveItem(player, new mc.ItemStack("minecraft:dandelion"));
+              player.sendMessage("[入手] タンポポ");
+              break;
+            case 2:
+              giveItem(player, new mc.ItemStack("minecraft:pink_tulip"));
+              player.sendMessage("[入手] 桃色のチューリップ");
+              break;
+            case 3:
+              giveItem(player, new mc.ItemStack("minecraft:cactus"));
+              player.sendMessage("[入手] サボテン");
+              break;
+          }
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  iron_hoe: {
+    /**
+     * 鉄のクワ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "鉄のクワを使用しました");
+          giveItem(player, new mc.ItemStack("minecraft:wheat", 2));
+          player.sendMessage("[入手] 小麦 x2");
+          giveItem(player, new mc.ItemStack("minecraft:grass_block", 3));
+          player.sendMessage("[入手] 草ブロック x3");
+          for(let i=0; i<2; i++){
+            switch(Math.floor(Math.random() * 4)){
+              case 0:
+                giveItem(player, new mc.ItemStack("minecraft:poppy"));
+                player.sendMessage("[入手] ポピー");
+                break;
+              case 1:
+                giveItem(player, new mc.ItemStack("minecraft:dandelion"));
+                player.sendMessage("[入手] タンポポ");
+                break;
+              case 2:
+                giveItem(player, new mc.ItemStack("minecraft:pink_tulip"));
+                player.sendMessage("[入手] 桃色のチューリップ");
+                break;
+              case 3:
+                giveItem(player, new mc.ItemStack("minecraft:cactus"));
+                player.sendMessage("[入手] サボテン");
+                break;
+            }
+          }
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  wheat: {
+    /**
+     * 小麦
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "小麦を使用しました");
+          giveItem(player, new mc.ItemStack("minecraft:cow_spawn_egg"));
+          player.sendMessage("[入手] ウシ");
+          giveItem(player, new mc.ItemStack("minecraft:sheep_spawn_egg"));
+          player.sendMessage("[入手] ヒツジ");
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  packed_ice: {
+    /**
+     * 氷塊
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      addAct(player, -parseInt(info.Cact));
+      decrementSlot(player, player.selectedSlotIndex);
+      sendPlayerMessage(player, "氷塊を消費しました");
+    }
+  },
+  bread: {
+    /**
+     * パン
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "パンを使用しました");
+          /**
+           * @type {mc.EntityHealthComponent}
+           */
+          let hp = player.getComponent(mc.EntityHealthComponent.componentId);
+          hp.setCurrentValue(hp.currentValue + 3);
+          sendPlayerMessage(player, "HP+3");
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  cake: {
+    /**
+     * ケーキ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "ケーキを使用しました");
+          /**
+           * @type {mc.EntityHealthComponent}
+           */
+          let hp = player.getComponent(mc.EntityHealthComponent.componentId);
+          hp.setCurrentValue(hp.currentValue + 9);
+          sendPlayerMessage(player, "HP+9");
+          mc.world.sendMessage("おめでとう！プレゼントもあるよ！");
+          giveItem(player, new mc.ItemStack("minecraft:chest"));
+          player.sendMessage("[入手] チェスト");
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  sheep_spawn_egg: {
+    /**
+     * ヒツジ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:sheep",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ヒツジを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:white_wool"));
+          player.sendMessage("[入手] 白色の羊毛");
+        }
+      )
+    }
+  },
+  cow_spawn_egg: {
+    /**
+     * ウシ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:cow",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ウシを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:milk_bucket"));
+          player.sendMessage("[入手] ミルクバケツ");
+        }
+      )
+    }
+  },
+  milk_bucket: {
+    /**
+     * ミルクバケツ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let mobs;
+      switch(cardBlock.typeId){
+        case B:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"], excludeTags:["fly", "guard"]});
+          if(mobs.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "ミルクバケツを使用しました");
+          mobs.forEach(mob=>{
+            mob.addTag("guard");
+          })
+          break;
+        case W:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotW"], excludeTags:["fly", "guard"]});
+          if(mobs.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "ミルクバケツを使用しました");
+          mobs.forEach(mob=>{
+            mob.addTag("guard");
+          })
+          break;
+        case R:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"], excludeTags:["fly", "guard"]});
+          if(mobs.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "ミルクバケツを使用しました");
+          mobs.forEach(mob=>{
+            mob.addTag("guard");
+          })
+          break;
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  bogged_spawn_egg: {
+    /**
+     * ボグド
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:bogged",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ボグドを召喚しました");
+          if(getObject(player.hasTag("red")?"red":"blue").typeId != "minecraft:air"){
+            giveItem(player, new mc.ItemStack("minecraft:arrow", 3));
+            player.sendMessage("[入手] 矢 x3");
+          }
+        }
+      )
     }
   }
 }
