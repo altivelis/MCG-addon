@@ -239,7 +239,7 @@ export function sendPlayerMessage(player, message){
  * @param {String} blockid ブロックID
  */
 export function setObject(player, blockid){
-  if(mc.world.getDimension("minecraft:overworld").getBlock((player.hasTag("red")?mcg.const.red.slot.object:mcg.const.blue.slot.object)).typeId == "minecraft:bee_nest"){
+  if(getObject(player.hasTag("red")?"red":"blue")?.typeId == "minecraft:bee_nest"){
     /**
      * @type {mc.Container}
      */
@@ -256,6 +256,14 @@ export function setObject(player, blockid){
     if(test) sendPlayerMessage(player, "[ミツバチの巣] ハチミツ入りの瓶をすべて消費しました");
   }
   mc.world.getDimension("minecraft:overworld").setBlockPermutation((player.hasTag("red")?mcg.const.red.slot.object:mcg.const.blue.slot.object), mc.BlockPermutation.resolve(blockid));
+}
+
+/**
+ * オブジェクト取得関数
+ * @param {String} tag 
+ */
+export function getObject(tag){
+  return mc.world.getDimension("minecraft:overworld").getBlock(tag == "red" ? mcg.const.red.slot.object : mcg.const.blue.slot.object);
 }
 
 /**
