@@ -1,7 +1,7 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 import { mcg, turnChange } from "./system";
-import { hasItem, decrementContainer, giveItem, handItem, addAct } from "./lib";
+import { hasItem, decrementContainer, giveItem, handItem, addAct, sendPlayerMessage } from "./lib";
 import { useCard } from "./usecard";
 
 //ドロー
@@ -12,6 +12,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
   const {source, block, dimension} = data;
   if(block.typeId != "minecraft:stone_button") return;
   if(source.typeId != "minecraft:player") return;
+  block.setPermutation(mc.BlockPermutation.resolve("minecraft:stone_button", {"facing_direction":1}));
   if(!(source.hasTag("red") || source.hasTag("blue"))) return;
   if(!source.hasTag("turn")) {
     source.sendMessage("あなたのターンではありません");
@@ -33,6 +34,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
   switch(drawBlock.typeId){
     case "minecraft:grass_block":
       decrementContainer(source, "minecraft:grass_block");
+      decrementContainer(source, "minecraft:packed_ice");
       switch(Math.floor(Math.random()*4)){
         case 0:
           item = high ? new mc.ItemStack("minecraft:wolf_spawn_egg") : new mc.ItemStack("minecraft:pig_spawn_egg");
@@ -56,6 +58,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
 
     case "minecraft:stone":
       decrementContainer(source, "minecraft:grass_block");
+      decrementContainer(source, "minecraft:packed_ice");
       switch(Math.floor(Math.random()*4)){
         case 0:
           item = high ? new mc.ItemStack("minecraft:mob_spawner") : new mc.ItemStack("minecraft:zombie_spawn_egg");
@@ -79,6 +82,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
 
     case "minecraft:hay_block":
       decrementContainer(source, "minecraft:grass_block");
+      decrementContainer(source, "minecraft:packed_ice");
       switch(Math.floor(Math.random()*4)){
         case 0:
           item = high ? new mc.ItemStack("minecraft:fox_spawn_egg") : new mc.ItemStack("minecraft:chicken_spawn_egg");
@@ -106,6 +110,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
         return;
       }
       decrementContainer(source, "minecraft:grass_block");
+      decrementContainer(source, "minecraft:packed_ice");
       switch(Math.floor(Math.random()*4)){
         case 0:
           item = high ? new mc.ItemStack("minecraft:strider_spawn_egg") : new mc.ItemStack("minecraft:zombie_pigman_spawn_egg");
@@ -131,6 +136,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
   }
   if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:allay", tags:[(source.hasTag("red")?"red":"blue")]}).length >0){
     addAct(source, 4);
+    sendPlayerMessage(source, "[アレイ] act+4");
   }
 })
 
@@ -148,6 +154,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
   const {source, block, dimension} = data;
   if(block.typeId != "minecraft:wooden_button") return;
   if(source.typeId != "minecraft:player") return;
+  block.setPermutation(mc.BlockPermutation.resolve("minecraft:wooden_button", {"facing_direction":1}));
   if(!handItem(source)) return;
   if(!(source.hasTag("red") || source.hasTag("blue"))) return;
   if(!source.hasTag("turn")) {
@@ -164,5 +171,39 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     })
   }
   const cardBlock = block.below();
+  if(hasItem(source, "minecraft:packed_ice") && cardBlock.typeId == "minecraft:pink_concrete"){
+    source.sendMessage("§c氷塊を所持している状態ではピンクのボタンを使用できません");
+    return;
+  }
   useCard[handItem(source).typeId.slice(10)]?.run(cardBlock, source);
+})
+
+//観戦
+mc.world.afterEvents.buttonPush.subscribe(data=>{
+  /**
+   * @type {{source: mc.Player, block: mc.Block, dimension: mc.Dimension}}
+   */
+  let {source, block, dimension} = data;
+  if(block.typeId != "minecraft:cherry_button") return;
+  if(source.typeId != "minecraft:player") return;
+  switch(Object.values(block.location).join(" ")){
+    case "-63 -53 -26": //ロビー=>観戦席
+      source.teleport({x:0.5, y:11, z:0.5});
+      giveItem(source, new mc.ItemStack("minecraft:spyglass"));
+      break;
+    case "0 12 11": //観戦席=>ロビー
+      source.teleport({x:-62.5, y:-53, z:-12.5});
+      decrementContainer(source, "minecraft:spyglass");
+      break;
+    case "0 12 -10": //スペクテイターモード
+      source.setGameMode(mc.GameMode.spectator);
+      break;
+  }
+})
+
+mc.system.runInterval(()=>{
+  mc.world.getDimension("minecraft:overworld").getPlayers({gameMode:mc.GameMode.spectator, location:{x:0, y:12, z:-13}, maxDistance:2}).forEach(player=>{
+    player.setGameMode(mc.GameMode.adventure);
+    player.teleport({x:0.5, y:11, z:0.5});
+  })
 })
