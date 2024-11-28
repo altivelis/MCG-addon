@@ -1,5 +1,6 @@
 import * as mc from "@minecraft/server";
 import { addAct, getAct, giveItem } from "./lib";
+import { mcg } from "./system";
 
 const recipe = [
   {
@@ -181,7 +182,7 @@ mc.system.runInterval(()=>{
     r.materials.forEach(m=>{
       let item = items.find(i=>i.getComponent(mc.EntityItemComponent.componentId).itemStack.typeId == m);
       if(item){
-        if(item.getComponent(mc.EntityItemComponent.componentId).itemStack.typeId == "netherite_ingot"){
+        if(item.getComponent(mc.EntityItemComponent.componentId).itemStack.typeId == "minecraft:netherite_ingot"){
           craftCost += 20;
         }
         foundMaterials.push(item);
@@ -200,7 +201,7 @@ mc.system.runInterval(()=>{
          * @type {mc.ItemStack}
          */
         let itemStack = m.getComponent(mc.EntityItemComponent.componentId).itemStack;
-        if(itemStack.count>1){
+        if(itemStack.amount>1){
           itemStack.amount--;
           m.dimension.spawnItem(itemStack, m.location);
         }
@@ -208,6 +209,24 @@ mc.system.runInterval(()=>{
       })
       giveItem(turnPlayer, new mc.ItemStack(r.item));
       mc.world.sendMessage((turnPlayer.hasTag("red")?"§c":"§b")+turnPlayer.nameTag+"§r:[クラフト]"+r.name);
+      //羊毛設置
+      switch(r.item){
+        case "minecraft:red_wool":
+          mc.world.getDimension("minecraft:overworld").setBlockType(turnPlayer.hasTag("red")?mcg.const.red.wool.red:mcg.const.blue.wool.red, "minecraft:red_wool");
+          break;
+        case "minecraft:yellow_wool":
+          mc.world.getDimension("minecraft:overworld").setBlockType(turnPlayer.hasTag("red")?mcg.const.red.wool.yellow:mcg.const.blue.wool.yellow, "minecraft:yellow_wool");
+          break;
+        case "minecraft:pink_wool":
+          mc.world.getDimension("minecraft:overworld").setBlockType(turnPlayer.hasTag("red")?mcg.const.red.wool.pink:mcg.const.blue.wool.pink, "minecraft:pink_wool");
+          break;
+        case "minecraft:green_wool":
+          mc.world.getDimension("minecraft:overworld").setBlockType(turnPlayer.hasTag("red")?mcg.const.red.wool.green:mcg.const.blue.wool.green, "minecraft:green_wool");
+          break;
+        case "minecraft:black_wool":
+          mc.world.getDimension("minecraft:overworld").setBlockType(turnPlayer.hasTag("red")?mcg.const.red.wool.black:mcg.const.blue.wool.black, "minecraft:black_wool");
+          break;
+      }
     }
   })
 })
