@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, applyDamage, giveItem, myTimeout, sendPlayerMessage, setObject } from "./lib";
+import { addAct, applyDamage, getObject, giveItem, myTimeout, sendPlayerMessage, setObject } from "./lib";
 import { mcg } from "./system";
 
 export const turnMob = {
@@ -110,8 +110,8 @@ export const turnMob = {
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red")], excludeTags:["fly", "guard"]}).forEach(target=>{
             target.applyDamage(5, {cause:mc.EntityDamageCause.entityExplosion});
           })
-          let oldPlayerObject = mc.world.getDimension("minecraft:overworld").getBlock((entity.hasTag("red")?mcg.const.blue.slot.object:mcg.const.red.slot.object));
-          if(oldPlayerObject.typeId != "minecraft:air"){
+          let oldPlayerObject = getObject(oldPlayer.hasTag("red") ? "red" : "blue");
+          if(oldPlayerObject?.typeId != "minecraft:air"){
             setObject(oldPlayer, "minecraft:air");
             sendPlayerMessage(newPlayer, "[クリーパー] 相手のオブジェクトを破壊");
           }
@@ -258,6 +258,65 @@ export const turnMob = {
      */
     run: (newPlayer, oldPlayer, entity) => {}
   },
+  fox: {
+    /**
+     * キツネ
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
+  frog: {
+    /**
+     * カエル
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
+  mooshroom: {
+    /**
+     * ムーシュルーム
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {}
+  },
+  polar_bear: [
+    /**
+     * ホッキョクグマ
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    (newPlayer, oldPlayer, entity) => {
+      if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        let snowgolems = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:snow_golem", tags:[(entity.hasTag("red")?"red":"blue")]});
+        let ice = new mc.ItemStack("minecraft:packed_ice", (snowgolems.length > 0 ? 8 : 4));
+        ice.lockMode = mc.ItemLockMode.inventory;
+        /**
+         * @type {mc.Container}
+         */
+        let inv = newPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
+        if(inv.emptySlotsCount == 0){
+          let processed = false;
+          while(!processed){
+            let index = Math.floor(Math.random() * inv.size);
+            if(inv.getItem(index).typeId.includes("spawn_egg")){
+              inv.setItem(index, ice);
+              newPlayer.sendMessage("§cインベントリに空きがないため、ランダムなスポーンエッグを置き換えました。")
+              processed = true;
+            }
+          }
+        }else{
+          inv.addItem(ice);
+        }
+      }
+    }
+  ]
 }
 
 export const turnObject = {

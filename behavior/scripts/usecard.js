@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, applyDamage, decrementSlot, getAct, getCard, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setAct, setObject, swordDamage, swordName } from "./lib";
+import { addAct, applyDamage, decrementSlot, getAct, getCard, getObject, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setAct, setObject, swordDamage, swordName } from "./lib";
 import { mcg } from "./system";
 
 const error_slot = "§cこのスロットには使用できません",
@@ -721,7 +721,7 @@ export const useCard = {
            * @type {mc.EntityHealthComponent}
            */
           let hp = player.getComponent(mc.EntityHealthComponent.componentId);
-          hp.setCurrentValue((hp.currentValue + 6) > hp.effectiveMax ? hp.effectiveMax : hp.currentValue + 6);
+          hp.setCurrentValue(hp.currentValue + 6);
           break;
         case O:
           player.sendMessage(error_slot);
@@ -1515,6 +1515,233 @@ export const useCard = {
           sendPlayerMessage(player, "コンポスターを設置しました");
           decrementSlot(player, player.selectedSlotIndex);
           setObject(player, "minecraft:composter");
+          return;
+      }
+    }
+  },
+  fox_spawn_egg: {
+    /**
+     * キツネ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:fox",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "キツネを召喚しました");
+          giveSword(player, getCard(mob.typeId).atk, "速攻効果");
+          let object = getObject(player.hasTag("red")?"red":"blue");
+          if(object?.typeId != "minecraft:air"){
+            giveItem(player, object.getItemStack());
+            sendPlayerMessage(player, "キツネがアイテムを持ってきた！");
+          }
+        }
+      )
+    }
+  },
+  frog_spawn_egg: {
+    /**
+     * カエル
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:frog",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "カエルを召喚しました");
+          let object = getObject(player.hasTag("red")?"blue":"red");
+          if(object.typeId != "minecraft:air"){
+            object.setType("minecraft:air");
+            sendPlayerMessage(player, "カエルが相手のオブジェクトを食べてしまった！");
+            mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), (mob.hasTag("slotB")?"slotB":mob.hasTag("slotW")?"slotW":"slotR")]}).forEach(entity=>{
+              if(!entity.hasTag("protect")) entity.kill();
+            })
+          }
+        }
+      )
+    }
+  },
+  mooshroom_spawn_egg: {
+    /**
+     * ムーシュルーム
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:mooshroom",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ムーシュルームを召喚しました");
+          giveItem(player, new mc.ItemStack("minecraft:red_mushroom"));
+          player.sendMessage("[入手] 赤いキノコ");
+        }
+      )
+    }
+  },
+  polar_bear_spawn_egg: {
+    /**
+     * ホッキョクグマ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:polar_bear",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ホッキョクグマを召喚しました");
+        }
+      )
+    }
+  },
+  egg: {
+    /**
+     * 卵
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "卵を使用しました");
+          /**
+           * @type {mc.EntityHealthComponent}
+           */
+          let hp = player.getComponent(mc.EntityHealthComponent.componentId);
+          hp.setCurrentValue(hp.currentValue + 3);
+          sendPlayerMessage(player, "HP+3");
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  poppy: {
+    /**
+     * ポピー
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          if(getObject(player.hasTag("red")?"red":"blue")?.typeId != "minecraft:bee_nest") {
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "ポピーを使用しました");
+          giveItem(player, new mc.ItemStack("minecraft:honey_bottle"));
+          player.sendMessage("[入手] ハチミツ入りの瓶");
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  dandelion: {
+    /**
+     * タンポポ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          if(getObject(player.hasTag("red")?"red":"blue")?.typeId != "minecraft:bee_nest") {
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "タンポポを使用しました");
+          giveItem(player, new mc.ItemStack("minecraft:honey_bottle"));
+          player.sendMessage("[入手] ハチミツ入りの瓶");
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  pink_tulip: {
+    /**
+     * 桃色のチューリップ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          if(getObject(player.hasTag("red")?"red":"blue")?.typeId != "minecraft:bee_nest") {
+            player.sendMessage(error_slot);
+            return;
+          }
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "桃色のチューリップを使用しました");
+          giveItem(player, new mc.ItemStack("minecraft:honey_bottle"));
+          player.sendMessage("[入手] ハチミツ入りの瓶");
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  cactus: {
+    /**
+     * サボテン
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "サボテンを使用しました");
+          sendPlayerMessage(player, "サボテンのトゲを撒き散らした！");
+          mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")], excludeTags:["fly", "guard"]}).forEach(entity=>{
+            applyDamage(entity, 5);
+          })
+          break;
+        case O:
+          player.sendMessage(error_slot);
           return;
       }
     }
