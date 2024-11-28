@@ -1,7 +1,7 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage } from "./lib";
-import { turnMob, turnObject } from "./turncard";
+import { turnItem, turnMob, turnObject } from "./turncard";
 
 export const mcg = {
   const:{
@@ -19,7 +19,14 @@ export const mcg = {
         pink: {x:16, y:5, z:0},
         orange: {x:16, y:5, z:3}
       },
-      lever:{x:15, y:5, z:-5}
+      lever:{x:15, y:5, z:-5},
+      wool:{
+        red: {x:8, y:0, z:2},
+        yellow: {x:8, y:0, z:1},
+        pink: {x:8, y:0, z:0},
+        green: {x:8, y:0, z:-1},
+        black: {x:8, y:0, z:-2}
+      }
     },
     blue:{
       slot:{
@@ -35,7 +42,14 @@ export const mcg = {
         pink: {x:-16, y:5, z:0},
         orange: {x:-16, y:5, z:-3}
       },
-      lever:{x:-15, y:5, z:-5}
+      lever:{x:-15, y:5, z:-5},
+      wool:{
+        red: {x:-8, y:0, z:-2},
+        yellow: {x:-8, y:0, z:-1},
+        pink: {x:-8, y:0, z:0},
+        green: {x:-8, y:0, z:1},
+        black: {x:-8, y:0, z:2}
+      }
     }
   },
   queue:{
@@ -169,6 +183,7 @@ function reset(){
       red.removeEffect(effect);
     })
     red.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+    red.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
   })
   mc.world.getPlayers({tags:["blue"]}).forEach(blue=>{
     blue.teleport({x:-63, y:-53, z:-13},{dimension:mc.world.getDimension("minecraft:overworld")});
@@ -180,6 +195,7 @@ function reset(){
       blue.removeEffect(effect);
     })
     blue.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+    blue.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
   })
   mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
     entity.remove();
@@ -192,6 +208,12 @@ function reset(){
   })
   mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.red.slot.object, "minecraft:air");
   mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.blue.slot.object, "minecraft:air");
+  Object.values(mcg.const.red.wool).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
+  Object.values(mcg.const.blue.wool).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
   mc.world.getPlayers().forEach(player=>{
     player.camera.clear();
   })
@@ -234,6 +256,8 @@ function start(){
   //アイテム消去
   red.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
   blue.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+  red.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
+  blue.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
   //HPリセット
   red.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
   blue.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
@@ -243,6 +267,13 @@ function start(){
   //オブジェクト削除
   mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.red.slot.object, "minecraft:air");
   mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.blue.slot.object, "minecraft:air");
+  //羊毛削除
+  Object.values(mcg.const.red.wool).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
+  Object.values(mcg.const.blue.wool).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
   //移動禁止
   red.inputPermissions.movementEnabled = false;
   blue.inputPermissions.movementEnabled = false;
@@ -435,16 +466,21 @@ export function turnChange(){
     item.kill();
   })
   //ターン経過時効果
+  //モブ
   mc.world.getDimension("minecraft:overworld").getEntities({families:["mob"], excludeTypes:["minecraft:player"]}).forEach(entity=>{
     turnMob[entity.typeId.slice(10)]?.run(notTurnPlayer, turnPlayer, entity);
   })
+  //オブジェクト
   turnObject[mc.world.getDimension("minecraft:overworld").getBlock(mcg.const.red.slot.object).typeId.slice(10)]?.run(notTurnPlayer, turnPlayer, "red");
   turnObject[mc.world.getDimension("minecraft:overworld").getBlock(mcg.const.blue.slot.object).typeId.slice(10)]?.run(notTurnPlayer, turnPlayer, "blue");
+  //アイテム効果
+  turnItem(notTurnPlayer, turnPlayer);
+  //Bact、攻撃力変換
   mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:item"], tags:[(notTurnPlayer.hasTag("red")?"red":"blue")]}).forEach(entity=>{
     let info = getCard(entity.typeId);
     if(info){
       addAct(notTurnPlayer, parseInt(info.Bact));
-      giveSword(notTurnPlayer, info.atk);
+      giveSword(notTurnPlayer, info.atk, {translate: `entity.${entity.typeId.slice(10)}.name`});
     }
   })
   //タイマーリセット
@@ -459,7 +495,7 @@ export function turnChange(){
     if(tp_inv.getItem(i)?.typeId == "minecraft:compass"){
       tp_inv.setItem(i);
     }
-    if(tp_inv.getItem(i)?.typeId == "minecraft:wooden_sword" && tp_inv.getItem(i)?.typeId.includes("sword")){
+    if(tp_inv.getItem(i)?.typeId != "minecraft:wooden_sword" && tp_inv.getItem(i)?.typeId.includes("sword")){
       tp_inv.setItem(i);
     }
     if(tp_inv.getItem(i)?.typeId == "minecraft:arrow"){
@@ -508,6 +544,8 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
       //アイテム消去
       entity.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
       blue.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+      entity.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
+      blue.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
       //HPリセット
       blue.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
       mc.EffectTypes.getAll().forEach(effect=>{
@@ -539,6 +577,8 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
       //アイテム消去
       entity.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
       red.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+      entity.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
+      red.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
       //HPリセット
       red.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
       mc.EffectTypes.getAll().forEach(effect=>{
@@ -562,6 +602,13 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
     //オブジェクト削除
     mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.red.slot.object, "minecraft:air");
     mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.blue.slot.object, "minecraft:air");
+    //羊毛削除
+    Object.values(mcg.const.red.wool).forEach(pos=>{
+      mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+    })
+    Object.values(mcg.const.blue.wool).forEach(pos=>{
+      mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+    })
     //エンティティ削除
     mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
       entity.kill();
@@ -575,11 +622,5 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:test") return;
-  applyDamage(data.sourceEntity, 1);
-  myTimeout(2, ()=>{
-    applyDamage(data.sourceEntity, 1);
-  })
-  myTimeout(4, ()=>{
-    applyDamage(data.sourceEntity, 1);
-  })
+  data.sourceEntity.getComponent(mc.EntityHealthComponent.componentId).setCurrentValue(40);
 })
