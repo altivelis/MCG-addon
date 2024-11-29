@@ -620,6 +620,30 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
   }
 })
 
+const surrender_form = new ui.MessageFormData()
+  .title("§l§cサレンダー")
+  .body("降参しようとしています。\n本当によろしいですか?")
+  .button1("§l§cはい")
+  .button2("§lいいえ");
+
+//サレンダー
+mc.world.afterEvents.buttonPush.subscribe(data=>{
+  /**
+   * @type {{source: mc.Player, block: mc.Block, dimension: mc.Dimension}}
+   */
+  let {source, block, dimension} = data;
+  if(block.typeId != "minecraft:spruce_button") return;
+  if(source.typeId != "minecraft:player") return;
+  surrender_form.show(source).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == 1) return;
+    if(res.selection == 0) {
+      mc.world.sendMessage("サレンダーボタンが押されました。");
+      source.kill();
+    }
+  })
+})
+
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:test") return;
   data.sourceEntity.getComponent(mc.EntityHealthComponent.componentId).setCurrentValue(40);
