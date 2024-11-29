@@ -5,6 +5,7 @@ import "./system";
 import "./button";
 import "./craft";
 import "./config";
+import "./cardbook";
 import { mcg } from "./system";
 
 mc.system.runInterval(() => {
@@ -72,6 +73,7 @@ mc.world.afterEvents.entityHurt.subscribe(data=>{
 })
 
 mc.world.beforeEvents.itemUse.subscribe(data=>{
+  if(data.itemStack.typeId == "minecraft:book") return;
   data.cancel = true;
 })
 
