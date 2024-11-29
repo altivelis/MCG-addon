@@ -144,7 +144,7 @@ const compass_form = new ui.MessageFormData()
   .title("§l§cターンを終了しようとしています")
   .body("本当にターンを終了しますか？")
   .button1("§l§cはい")
-  .button2("いいえ");
+  .button2("§lいいえ");
 
 //カード使用
 mc.world.afterEvents.buttonPush.subscribe(data=>{
@@ -191,7 +191,11 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
       source.teleport({x:0.5, y:11, z:0.5});
       giveItem(source, new mc.ItemStack("minecraft:spyglass"));
       break;
-    case "0 12 11": //観戦席=>ロビー
+    case "0 12 11": //観戦=>ロビー
+    case "13 1 -11":
+    case "-13 1 -11":
+    case "-13 1 12":
+    case "13 1 12":
       source.teleport({x:-62.5, y:-53, z:-12.5});
       decrementContainer(source, "minecraft:spyglass");
       break;
