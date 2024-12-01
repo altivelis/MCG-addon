@@ -5,7 +5,7 @@ import "./system";
 import "./button";
 import "./craft";
 import "./config";
-import "./cardbook";
+import "./rulebook";
 import { mcg } from "./system";
 
 mc.system.runInterval(() => {
