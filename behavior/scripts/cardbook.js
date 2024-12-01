@@ -63,7 +63,7 @@ const cardLibrary = {
     high: [
       {name: "モンスタースポナー", id: "minecraft:mob_spawner", icon: "textures/blocks/mob_spawner"},
       {name: "ファントム", id: "minecraft:phantom", icon: "textures/items/egg_phantom"},
-      {name: "ブリーズ", id: "minecraft:breeze", icon: "textures/items/egg_breeze"},
+      {name: "ブリーズ", id: "minecraft:breeze", icon: "textures/items/wind_charge"},
       {name: "エンダーチェスト", id: "minecraft:ender_chest", icon: "textures/blocks/ender_chest_front"}
     ],
     other: [
@@ -100,9 +100,9 @@ const cardLibrary = {
     ],
     high: [
       {name: "キツネ", id: "minecraft:fox", icon: "textures/items/egg_fox"},
-      {name: "カエル", id: "minecraft:frog", icon: "textures/items/egg_frog"},
-      {name: "ムーシュルーム", id: "minecraft:mooshroom", icon: "textures/items/egg_mooshroom"},
-      {name: "シロクマ", id: "minecraft:polar_bear", icon: "textures/items/egg_polar_bear"}
+      {name: "カエル", id: "minecraft:frog", icon: "textures/blocks/frogspawn"},
+      {name: "ムーシュルーム", id: "minecraft:mooshroom", icon: "textures/items/egg_mushroomcow"},
+      {name: "シロクマ", id: "minecraft:polar_bear", icon: "textures/items/egg_polarbear"}
     ],
     other: [
       {name: "卵", id: "minecraft:egg", icon: "textures/items/egg"},
@@ -129,21 +129,21 @@ const cardLibrary = {
       {name: "緑色の羊毛", id: "minecraft:green_wool", icon: "textures/blocks/wool_colored_green"},
       {name: "黒色の羊毛", id: "minecraft:black_wool", icon: "textures/blocks/wool_colored_black"},
       {name: "ミルクバケツ", id: "minecraft:milk_bucket", icon: "textures/items/bucket_milk"},
-      {name: "ボグド", id: "minecraft:bogged", icon: "textures/items/egg_bogged"},
+      {name: "ボグド", id: "minecraft:bogged", icon: "textures/blocks/moss_block"},
     ]
   }
 }
 
-mc.world.afterEvents.itemUse.subscribe(data=>{
-  let {source, itemStack} = data;
-  if(itemStack.typeId != "minecraft:book") return;
-  form_home(source);
-})
+// mc.world.afterEvents.itemUse.subscribe(data=>{
+//   let {source, itemStack} = data;
+//   if(itemStack.typeId != "minecraft:book") return;
+//   cardBookForm_home(source);
+// })
 
 /**
  * @param {mc.Player} player 
  */
-function form_home(player){
+export function cardBookForm_home(player){
   cardBook_form.show(player).then(res=>{
     if(res.canceled) return;
     switch(res.selection){
@@ -152,6 +152,15 @@ function form_home(player){
         break;
       case 1:
         form_overworld(player);
+        break;
+      case 2:
+        form_cave(player);
+        break;
+      case 3:
+        form_nether(player);
+        break;
+      case 4:
+        form_animal(player);
         break;
     }
   })
@@ -169,7 +178,7 @@ function form_normal(player){
   form.show(player).then(res=>{
     if(res.canceled) return;
     if(res.selection == cardLibrary.normal.length) {
-      form_home(player);
+      cardBookForm_home(player);
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
@@ -177,10 +186,7 @@ function form_normal(player){
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
-      if(res2.canceled){
-        form_normal(player);
-        return;
-      }
+      if(res2.canceled) return;
       if(res2.selection == 0) return;
       if(res2.selection == 1) {
         form_normal(player);
@@ -212,7 +218,7 @@ function form_overworld(player){
         form_overworld_other(player);
         break;
       case 3:
-        form_home(player);
+        cardBookForm_home(player);
         break;
     }
   })
@@ -238,10 +244,7 @@ function form_overworld_low(player){
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
-      if(res2.canceled){
-        form_overworld_low(player);
-        return;
-      }
+      if(res2.canceled) return;
       if(res2.selection == 0) return;
       if(res2.selection == 1) {
         form_overworld_low(player);
@@ -271,10 +274,7 @@ function form_overworld_high(player){
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
-      if(res2.canceled){
-        form_overworld_high(player);
-        return;
-      }
+      if(res2.canceled) return;
       if(res2.selection == 0) return;
       if(res2.selection == 1) {
         form_overworld_high(player);
@@ -304,13 +304,364 @@ function form_overworld_other(player){
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
-      if(res2.canceled){
-        form_overworld_other(player);
-        return;
-      }
+      if(res2.canceled) return;
       if(res2.selection == 0) return;
       if(res2.selection == 1) {
         form_overworld_other(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_cave(player){
+  let form = new ui.ActionFormData().title("洞窟カード")
+    .button("§l§9ローコスト")
+    .button("§l§cハイコスト")
+    .button("§l§aドロー以外で入手可能なカード")
+    .button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    switch(res.selection){
+      case 0:
+        form_cave_low(player);
+        break;
+      case 1:
+        form_cave_high(player);
+        break;
+      case 2:
+        form_cave_other(player);
+        break;
+      case 3:
+        cardBookForm_home(player);
+        break;
+    }
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_cave_low(player){
+  let form = new ui.ActionFormData().title("洞窟カード(ローコスト)");
+  cardLibrary.cave.low.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.cave.low.length) {
+      form_cave(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.cave.low[res.selection].name + "\n" + cardInfo(cardLibrary.cave.low[res.selection].id).join("\n"))
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_cave_low(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_cave_high(player){
+  let form = new ui.ActionFormData().title("洞窟カード(ハイコスト)");
+  cardLibrary.cave.high.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.cave.high.length) {
+      form_cave(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.cave.high[res.selection].name + "\n" + cardInfo(cardLibrary.cave.high[res.selection].id).join("\n"))
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_cave_high(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_cave_other(player){
+  let form = new ui.ActionFormData().title("洞窟カード(ドロー以外)");
+  cardLibrary.cave.other.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.cave.other.length) {
+      form_cave(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.cave.other[res.selection].name + "\n" + cardInfo(cardLibrary.cave.other[res.selection].id).join("\n"))
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_cave_other(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_nether(player){
+  let form = new ui.ActionFormData().title("ネザーカード")
+    .button("§l§9ローコスト")
+    .button("§l§cハイコスト")
+    .button("§l§aドロー以外で入手可能なカード")
+    .button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    switch(res.selection){
+      case 0:
+        form_nether_low(player);
+        break;
+      case 1:
+        form_nether_high(player);
+        break;
+      case 2:
+        form_nether_other(player);
+        break;
+      case 3:
+        cardBookForm_home(player);
+        break;
+    }
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_nether_low(player){
+  let form = new ui.ActionFormData().title("ネザーカード(ローコスト)");
+  cardLibrary.nether.low.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.nether.low.length) {
+      form_nether(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.nether.low[res.selection].name + "\n" + cardInfo(cardLibrary.nether.low[res.selection].id).join("\n"))
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_nether_low(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_nether_high(player){
+  let form = new ui.ActionFormData().title("ネザーカード(ハイコスト)");
+  cardLibrary.nether.high.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.nether.high.length) {
+      form_nether(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.nether.high[res.selection].name + "\n" + cardInfo(cardLibrary.nether.high[res.selection].id).join("\n"))
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_nether_high(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_nether_other(player){
+  let form = new ui.ActionFormData().title("ネザーカード(ドロー以外)");
+  cardLibrary.nether.other.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.nether.other.length) {
+      form_nether(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.nether.other[res.selection].name + "\n" + cardInfo(cardLibrary.nether.other[res.selection].id).join("\n"))
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_nether_other(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_animal(player){
+  let form = new ui.ActionFormData().title("アニマルカード")
+    .button("§l§9ローコスト")
+    .button("§l§cハイコスト")
+    .button("§l§aドロー以外で入手可能なカード")
+    .button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    switch(res.selection){
+      case 0:
+        form_animal_low(player);
+        break;
+      case 1:
+        form_animal_high(player);
+        break;
+      case 2:
+        form_animal_other(player);
+        break;
+      case 3:
+        cardBookForm_home(player);
+        break;
+    }
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_animal_low(player){
+  let form = new ui.ActionFormData().title("アニマルカード(ローコスト)");
+  cardLibrary.animal.low.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.animal.low.length) {
+      form_animal(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.animal.low[res.selection].name + "\n" + cardInfo(cardLibrary.animal.low[res.selection].id).join("\n"))
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_animal_low(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_animal_high(player){
+  let form = new ui.ActionFormData().title("アニマルカード(ハイコスト)");
+  cardLibrary.animal.high.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.animal.high.length) {
+      form_animal(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.animal.high[res.selection].name + "\n" + cardInfo(cardLibrary.animal.high[res.selection].id).join("\n"))
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_animal_high(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_animal_other(player){
+  let form = new ui.ActionFormData().title("アニマルカード(ドロー以外)");
+  cardLibrary.animal.other.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.animal.other.length) {
+      form_animal(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.animal.other[res.selection].name + "\n" + cardInfo(cardLibrary.animal.other[res.selection].id).join("\n"))
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_animal_other(player);
         return;
       }
     })
