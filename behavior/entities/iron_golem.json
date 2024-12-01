@@ -14,6 +14,7 @@
         "family": [ "irongolem", "mob" ]
       },
       "minecraft:nameable": {
+        "always_show": true
       },
       "minecraft:collision_box": {
         "width": 1.4,

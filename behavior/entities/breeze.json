@@ -22,7 +22,9 @@
           "mob"
         ]
       },
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:health": {
         "value": 30,
         "max": 30

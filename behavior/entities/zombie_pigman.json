@@ -23,6 +23,7 @@
         "height": 1.9
       },
       "minecraft:nameable": {
+        "always_show": true
       },
       "minecraft:jump.static": {
       },

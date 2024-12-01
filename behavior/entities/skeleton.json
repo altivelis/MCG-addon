@@ -61,6 +61,7 @@
       "minecraft:can_climb": {
       },
       "minecraft:nameable": {
+        "always_show": true
       },
       "minecraft:equipment": {
         "table": "loot_tables/entities/skeleton_gear.json"

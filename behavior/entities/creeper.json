@@ -73,6 +73,7 @@
         "suffocate_time": 0
       },
       "minecraft:nameable": {
+        "always_show": true
       },
       "minecraft:collision_box": {
         "width": 0.6,

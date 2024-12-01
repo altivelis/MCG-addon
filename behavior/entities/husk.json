@@ -28,6 +28,7 @@
         "height": 1.9
       },
       "minecraft:nameable": {
+        "always_show": true
       },
 
       // Zombie_husk Components

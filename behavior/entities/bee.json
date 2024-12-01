@@ -88,8 +88,6 @@
       "minecraft:flying_speed": {
         "value": 0.15
       },
-      "minecraft:movement.hover": {
-      },
       "minecraft:jump.static": {
       },
       "minecraft:can_fly": {
@@ -99,6 +97,7 @@
         "max": 10
       },
       "minecraft:nameable": {
+        "always_show": true
       },
       "minecraft:pushable": {
         "is_pushable": false,

@@ -23,6 +23,7 @@
         "height": 0.8
       },
       "minecraft:nameable": {
+        "always_show": true
       },
       "minecraft:health": {
         "value": 4,

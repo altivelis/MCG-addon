@@ -50,7 +50,9 @@
         "totalSupply": 15,
         "suffocateTime": 0
       },
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:leashable": {
         "soft_distance": 4.0,
         "hard_distance": 6.0,

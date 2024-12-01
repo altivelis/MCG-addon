@@ -20,6 +20,7 @@
         "suffocate_time": 0
       },
       "minecraft:nameable": {
+        "always_show": true
       },
       "minecraft:loot": {
         "table": "loot_tables/entities/witch.json"

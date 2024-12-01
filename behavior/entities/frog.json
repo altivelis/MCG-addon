@@ -29,6 +29,7 @@
         "generates_bubbles": false
       },
       "minecraft:nameable": {
+        "always_show": true
       },
       "minecraft:health": {
         "value": 10

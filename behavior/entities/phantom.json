@@ -22,6 +22,7 @@
         "table": "loot_tables/entities/phantom.json"
       },
       "minecraft:nameable": {
+        "always_show": true
       },
       "minecraft:health": {
         "value": 20,

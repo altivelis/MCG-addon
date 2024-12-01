@@ -66,6 +66,14 @@ mc.system.runInterval(() => {
       }
     }
   });
+  //HP表示
+  mc.world.getDimension("overworld").getEntities({excludeTypes:["minecraft:player"], families:["mob"]}).forEach(entity=>{
+    /**
+     * @type {mc.EntityHealthComponent}
+     */
+    let hp = entity.getComponent(mc.EntityHealthComponent.componentId);
+    entity.nameTag = `${hp.currentValue}/${hp.effectiveMax} §l§a${"|".repeat(Math.floor(20 * (hp.currentValue / hp.effectiveMax)))}§c${"|".repeat(20 * (1 - hp.currentValue / hp.effectiveMax))}`;
+  })
 })
 
 mc.world.afterEvents.entityHurt.subscribe(data=>{

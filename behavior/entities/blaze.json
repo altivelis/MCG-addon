@@ -58,7 +58,7 @@
       "minecraft:fire_immune": {
       },
       "minecraft:nameable": {
-
+        "always_show": true
       },
       "minecraft:behavior.float": {
         "priority": 0
