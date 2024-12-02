@@ -9,6 +9,9 @@
     },
 
     "components": {
+      "minecraft:type_family": {
+        "family": [ "parrot_wild", "mob" ]
+      },
       "minecraft:is_hidden_when_invisible": {
       },
       "minecraft:breathable": {

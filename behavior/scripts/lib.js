@@ -281,3 +281,19 @@ export function applyDamage(target, value, options={cause:mc.EntityDamageCause.e
     })
   }
 }
+
+/**
+ * インベントリクリア関数
+ * @param {mc.Player} player
+ */
+export function clearInventory(player){
+  /**
+   * @type {mc.Container}
+   */
+  let inv = player.getComponent(mc.EntityInventoryComponent.componentId).container;
+  for(let i=0; i<inv.size; i++){
+    let item = inv.getItem(i);
+    if(item?.typeId == "minecraft:book") continue;
+    inv.setItem(i);
+  }
+}

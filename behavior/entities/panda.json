@@ -12,7 +12,7 @@
       "minecraft:is_hidden_when_invisible": {
       },
       "minecraft:type_family": {
-        "family": [ "panda" ]
+        "family": [ "panda", "mob" ]
       },
       "minecraft:breathable": {
         "total_supply": 15,

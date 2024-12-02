@@ -208,7 +208,7 @@ mc.system.runInterval(()=>{
         m.kill();
       })
       giveItem(turnPlayer, new mc.ItemStack(r.item));
-      mc.world.sendMessage((turnPlayer.hasTag("red")?"§c":"§b")+turnPlayer.nameTag+"§r:[クラフト]"+r.name);
+      mc.world.sendMessage((turnPlayer.hasTag("red")?"§c":"§b")+turnPlayer.nameTag+"§r: [クラフト] "+r.name);
       //羊毛設置
       switch(r.item){
         case "minecraft:red_wool":

@@ -211,3 +211,18 @@ mc.system.runInterval(()=>{
     player.teleport({x:0.5, y:11, z:0.5});
   })
 })
+
+//コンパス
+mc.world.afterEvents.itemUse.subscribe(data=>{
+  const {source, itemStack} = data;
+  if(itemStack.typeId != "minecraft:compass") return;
+  if(!(source.hasTag("red") || source.hasTag("blue"))) return;
+  if(!source.hasTag("turn")) return;
+  compass_form.show(source).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == 0){
+      turnChange();
+    }
+    if(res.selection == 1) return;
+  })
+})

@@ -1716,8 +1716,8 @@ export const useCard = {
            * @type {mc.EntityHealthComponent}
            */
           let hp = player.getComponent(mc.EntityHealthComponent.componentId);
-          hp.setCurrentValue(hp.currentValue + 3);
-          sendPlayerMessage(player, "HP+3");
+          hp.setCurrentValue(hp.currentValue + 1);
+          sendPlayerMessage(player, "HP+1");
           break;
         case O:
           player.sendMessage(error_slot);

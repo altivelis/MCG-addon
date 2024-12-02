@@ -243,7 +243,7 @@ export const cardList = [
     name:["minecraft:ender_chest"],
     type: "item",
     attribute: "アイテム・オブジェクト",
-    Cact: "25",
+    Cact: "30",
     text: [
       "§b使用時 / 相手モブ全員に10ダメージを与え、以下のカードからランダムで獲得する。",
       "§b「エンチャントされた金のリンゴ」",
@@ -813,7 +813,7 @@ export const cardList = [
     hp: "10",
     atk: "15",
     Sact: "4",
-    Bact: "8",
+    Bact: "5",
     text: [
       "§b召喚時効果 / 自分のオブジェクトがミツバチの巣であれば",
       "§b「ハチミツ入りの瓶」を1つ入手する。",

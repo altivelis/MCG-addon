@@ -72,7 +72,7 @@ mc.system.runInterval(() => {
      * @type {mc.EntityHealthComponent}
      */
     let hp = entity.getComponent(mc.EntityHealthComponent.componentId);
-    entity.nameTag = `${hp.currentValue}/${hp.effectiveMax} §l§a${"|".repeat(Math.floor(20 * (hp.currentValue / hp.effectiveMax)))}§c${"|".repeat(20 * (1 - hp.currentValue / hp.effectiveMax))}`;
+    entity.nameTag = `${Math.floor(hp.currentValue*10)/10}/${hp.effectiveMax} §l§a${"|".repeat(Math.floor(20 * (hp.currentValue / hp.effectiveMax)))}§c${"|".repeat(20 * (1 - hp.currentValue / hp.effectiveMax))}`;
   })
 })
 
@@ -82,6 +82,7 @@ mc.world.afterEvents.entityHurt.subscribe(data=>{
 
 mc.world.beforeEvents.itemUse.subscribe(data=>{
   if(data.itemStack.typeId == "minecraft:book") return;
+  if(data.itemStack.typeId == "minecraft:compass") return;
   data.cancel = true;
 })
 

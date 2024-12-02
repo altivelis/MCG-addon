@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory } from "./lib";
 import { turnItem, turnMob, turnObject } from "./turncard";
 
 export const mcg = {
@@ -120,14 +120,16 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
 })
 //看板の文字を更新
 mc.system.runInterval(()=>{
+  if(!mcg.queue.red?.isValid()) mcg.queue.red = null;
+  if(!mcg.queue.blue?.isValid()) mcg.queue.blue = null;
   setSign("red", mcg.queue.red);
   setSign("blue", mcg.queue.blue);
 })
 
 mc.system.runInterval(()=>{
   //プレイヤーパーティクル
-  if(mcg.queue.red) mcg.queue.red.dimension.spawnParticle("minecraft:raid_omen_emitter",mcg.queue.red.location);
-  if(mcg.queue.blue) mcg.queue.blue.dimension.spawnParticle("minecraft:trial_omen_emitter",mcg.queue.blue.location);
+  if(mcg.queue.red && mcg.queue.red.getGameMode() != mc.GameMode.spectator) mcg.queue.red.dimension.spawnParticle("minecraft:raid_omen_emitter",mcg.queue.red.location);
+  if(mcg.queue.blue && mcg.queue.blue.getGameMode() != mc.GameMode.spectator) mcg.queue.blue.dimension.spawnParticle("minecraft:trial_omen_emitter",mcg.queue.blue.location);
   mc.world.getPlayers({tags:["turn"]}).forEach(tp=>{
     tp.dimension.spawnParticle("minecraft:heart_particle",{...tp.location, y:tp.location.y+2});
   })
@@ -254,8 +256,8 @@ function start(){
     blue.removeEffect(effect);
   })
   //アイテム消去
-  red.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
-  blue.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+  clearInventory(red);
+  clearInventory(blue);
   red.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
   blue.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
   //HPリセット
