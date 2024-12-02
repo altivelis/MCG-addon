@@ -330,6 +330,8 @@ function start(){
           blue.onScreenDisplay.setTitle("§oDUEL",{fadeInDuration:0, fadeOutDuration:20, stayDuration:40});
           red.onScreenDisplay.updateSubtitle("vs §b"+blue.nameTag);
           blue.onScreenDisplay.updateSubtitle("vs §c"+red.nameTag);
+          mc.world.sendMessage("対戦を開始しました");
+          mc.world.sendMessage("§l§c"+red.nameTag+"§r vs §l§b"+blue.nameTag);
           myTimeout(40,()=>{
             red.camera.fade({
               fadeTime:{fadeInTime:1, holdTime:1, fadeOutTime:1},
@@ -366,6 +368,7 @@ function start(){
                   giveItem(blue, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("second_draw")));
                   red.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   blue.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+                  mc.world.sendMessage("§c"+red.nameTag+"§rが先攻です。");
                   giveItem(red, compass);
                   setAct(red, 5);
                   setAct(blue, 3);
@@ -382,6 +385,7 @@ function start(){
                   giveItem(blue, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("first_draw")));
                   blue.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   red.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+                  mc.world.sendMessage("§b"+blue.nameTag+"§rが先攻です。");
                   giveItem(blue, compass);
                   setAct(blue, 5);
                   setAct(red, 3);
