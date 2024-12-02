@@ -681,7 +681,7 @@ export const useCard = {
         mob.dimension.playSound("random.explode", mob.location, {volume: 3});
         mob.addTag("protect");
         mc.world.getPlayers().forEach(p=>{
-          p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "パンダ"]);
+          p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "パンダ"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
           p.onScreenDisplay.updateSubtitle("§3呪術高専二年 準二級呪術師");
         })
       })
@@ -800,7 +800,7 @@ export const useCard = {
           sendPlayerMessage(player, "アイアンゴーレムを召喚しました");
           mob.dimension.playSound("beacon.power", mob.location, {volume: 3});
           mc.world.getPlayers().forEach(p=>{
-            p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "アイアンゴーレム"]);
+            p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "アイアンゴーレム"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
             p.onScreenDisplay.updateSubtitle("§3村の守護神");
           })
           if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue")], type:"minecraft:villager_v2"}).length > 0){
@@ -1387,9 +1387,13 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ジャガイモを使用しました");
           sendPlayerMessage(player, "ブレイズを召喚しました");
-          mob.dimension.playSound("respawn_anchor.charge", mob.location, {volume: 3});
           mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
+          mob.dimension.playSound("respawn_anchor.charge", mob.location, {volume: 3});
+          mc.world.getPlayers().forEach(p=>{
+            p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "ブレイズ"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
+            p.onScreenDisplay.updateSubtitle("§3上手に揚がりました!!");
+          })
         }
       )
     }
@@ -1684,7 +1688,7 @@ export const useCard = {
           sendPlayerMessage(player, "ホッキョクグマを召喚しました");
           mob.dimension.playSound("random.explode", mob.location, {volume: 3});
           mc.world.getPlayers().forEach(p=>{
-            p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "ホッキョクグマ"]);
+            p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "ホッキョクグマ"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
             p.onScreenDisplay.updateSubtitle("§3氷界の猛獣");
           })
         }
