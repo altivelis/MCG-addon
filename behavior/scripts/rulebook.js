@@ -30,6 +30,25 @@ mc.world.afterEvents.itemUse.subscribe(data=>{
   }
 })
 
+mc.world.afterEvents.buttonPush.subscribe(data=>{
+  /**
+   * @type {{source: mc.Player, block: mc.Block, dimension: mc.Dimension}}
+   */
+  const {source, block, dimension} = data;
+  if(source.typeId != "minecraft:player") return;
+  if(block.typeId != "minecraft:acacia_button") return;
+  switch(Object.values(block.location).join(" ")){
+    case "18 5 1":
+    case "-18 5 -1":
+      cardBookForm_home(source);
+      break;
+    case "18 5 -1":
+    case "-18 5 1":
+      ruleBookForm_home(source);
+      break;
+  }
+})
+
 /**
  * @param {mc.Player} player 
  */
