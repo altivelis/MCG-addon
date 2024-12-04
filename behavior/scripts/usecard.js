@@ -25,7 +25,7 @@ function summonCard(cardBlock, player, identifier, event){
     player.sendMessage(error_act);
     return;
   }
-  if(parseInt(info.Cact) == 1 && getAct(player) == 0){
+  if(parseInt(info.Sact) == 1 && getAct(player) == 0){
     player.sendMessage(error_act);
     player.sendMessage("§c必要actが1のカードはオーバーコストして使用できません");
     return;
