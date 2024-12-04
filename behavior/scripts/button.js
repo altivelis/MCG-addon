@@ -165,6 +165,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     compass_form.show(source).then(res=>{
       if(res.canceled) return;
       if(res.selection == 0){
+        if(!source.hasTag("turn")) return;
         turnChange();
       }
       if(res.selection == 1) return;
@@ -221,6 +222,7 @@ mc.world.afterEvents.itemUse.subscribe(data=>{
   compass_form.show(source).then(res=>{
     if(res.canceled) return;
     if(res.selection == 0){
+      if(!source.hasTag("turn")) return;
       turnChange();
     }
     if(res.selection == 1) return;
