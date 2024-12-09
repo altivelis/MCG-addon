@@ -4,7 +4,7 @@ import { cardBookForm_home } from "./cardbook";
 
 mc.world.afterEvents.playerInteractWithBlock.subscribe(data=>{
   const {player, block} = data;
-  if(block.typeId != "minecraft:chest" || Object.values(block.location).join(" ") != "-60 -54 -25") return;
+  if(block.typeId != "minecraft:chest" || `${block.location.x} ${block.location.y} ${block.location.z}` != "-60 -54 -25") return;
   /**
    * @type {mc.Container}
    */
@@ -37,7 +37,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
   const {source, block, dimension} = data;
   if(source.typeId != "minecraft:player") return;
   if(block.typeId != "minecraft:acacia_button") return;
-  switch(Object.values(block.location).join(" ")){
+  switch(`${block.location.x} ${block.location.y} ${block.location.z}`){
     case "18 5 1":
     case "-18 5 -1":
       cardBookForm_home(source);

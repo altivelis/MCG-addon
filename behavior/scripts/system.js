@@ -95,7 +95,7 @@ function setSign(color, player=null){
 //ボタンを押したときの処理
 mc.world.afterEvents.buttonPush.subscribe(data=>{
   const {block, source} = data;
-  if(JSON.stringify(block.location) == JSON.stringify({x:-61, y:-53, z:-2})){
+  if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-61 -53 -2"){
     if(!mcg.queue.red){
       mcg.queue.red = source;
       if(mcg.queue.blue && mcg.queue.blue.id == source.id){
@@ -106,7 +106,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
       mcg.queue.red = null;
     }
   }
-  else if(JSON.stringify(block.location) == JSON.stringify({x:-65, y:-53, z:-2})){
+  else if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-65 -53 -2"){
     if(!mcg.queue.blue){
       mcg.queue.blue = source;
       if(mcg.queue.red && mcg.queue.red.id == source.id){
@@ -155,7 +155,7 @@ mc.system.runInterval(()=>{
 })
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
-  if(data.id != "mcg:initialize") return;
+  if(data.id != "mcg:init") return;
   initialize_config();
 })
 

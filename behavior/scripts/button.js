@@ -187,7 +187,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
   let {source, block, dimension} = data;
   if(block.typeId != "minecraft:cherry_button") return;
   if(source.typeId != "minecraft:player") return;
-  switch(Object.values(block.location).join(" ")){
+  switch(`${block.location.x} ${block.location.y} ${block.location.z}`){
     case "-63 -53 -26": //ロビー=>観戦席
       source.teleport({x:0.5, y:11, z:0.5});
       giveItem(source, new mc.ItemStack("minecraft:spyglass"));
