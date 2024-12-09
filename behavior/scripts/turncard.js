@@ -337,7 +337,7 @@ export const turnMob = {
   },
   bogged: {
     /**
-     * ボグト
+     * ボグド
      * @param {mc.Player} newPlayer
      * @param {mc.Player} oldPlayer
      * @param {mc.Entity} entity
@@ -345,7 +345,7 @@ export const turnMob = {
     run: (newPlayer, oldPlayer, entity) => {
       if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
         giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"));
-        sendPlayerMessage(newPlayer, "[ボグト] 矢を獲得");
+        sendPlayerMessage(newPlayer, "[ボグド] 矢を獲得");
       }
     }
   }
