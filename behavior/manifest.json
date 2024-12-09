@@ -4,7 +4,7 @@
 		"name": "MCGアドオン",
 		"description": "MinecraftCardGameのスクリプト化用アドオン",
 		"uuid": "9acf4ee1-1ab6-4417-a3de-62c5b43fb03d",
-		"version": [1, 0, 1],
+		"version": [1, 0, 4],
 		"min_engine_version": [1, 21, 0]
 	},
 	"modules": [
@@ -19,14 +19,14 @@
 			"language": "javascript",
 			"type": "script",
 			"uuid": "cd73462e-ba38-42c3-bb5f-3bf21dceec17",
-			"version": [0, 0, 1],
+			"version": [1, 0, 0],
 			"entry": "scripts/main.js"
 		}
 	],
 	"dependencies": [
 		{
 			"module_name": "@minecraft/server",
-			"version": "1.15.0"
+			"version": "1.16.0"
 		},
 		{
 			"module_name": "@minecraft/server-ui",
