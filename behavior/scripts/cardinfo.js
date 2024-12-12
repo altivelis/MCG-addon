@@ -99,7 +99,8 @@ export const cardList = [
     attribute: "アイテム",
     Cact: "2",
     text: [
-      "§b使用時 / 「スノーゴーレム」、「アイアンゴーレム」を入手する。"
+      "§b使用時 / 「スノーゴーレム」、「アイアンゴーレム」を入手する。",
+      "§b+石炭 = ジャック・オ・ランタン"
     ]
   },
   {
@@ -117,11 +118,13 @@ export const cardList = [
   {
     name:["minecraft:bell"],
     type: "item",
-    attribute: "アイテム",
+    attribute: "アイテム・オブジェクト",
     Cact: "15",
     text: [
       "§bお互いの場のアンデッド系モブに即死ダメージを与える。(除外効果ではない)",
-      "§bそれ以外のモブは全回復し、すべてのモブから除外無効効果をなくす。"
+      "§bそれ以外のモブは全回復し、すべてのモブから除外無効効果をなくす。",
+      "§6オブジェクト効果 / ターン開始時に村人を1枚獲得する。",
+      "§6このオブジェクトがある間、自分は村人のSactが0になる。"
     ]
   },
   {
@@ -202,8 +205,7 @@ export const cardList = [
     Sact: "5",
     Bact: "11",
     text: [
-      "§bターン開始時効果 / 自分を全回復する。",
-      "§bマイクラの仕様で自動で回復するので一気に倒したほうが良い。"
+      "§bターン開始時効果 / 自分を全回復する。"
     ]
   },
   {
@@ -296,10 +298,13 @@ export const cardList = [
   {
     name:["minecraft:crying_obsidian"],
     type: "item",
-    attribute: "アイテム",
+    attribute: "アイテム・オブジェクト",
     Cact: "10",
     text: [
-      "§b使用時 / 自分のモブ1体に除外無効効果を付与する。"
+      "§b使用時 / 自分のモブに使用した次の相手ターンにそのモブが死亡すると、",
+      "§bそのスロットにゾンビピッグマンを召喚する。",
+      "§6オブジェクト効果 / 相手のターンに自分のブタが死亡するとそのスロットに",
+      "§6ゾンビピッグマンを召喚する。"
     ]
   },
   {
@@ -333,7 +338,7 @@ export const cardList = [
     Sact: "30",
     Bact: "15",
     text: [
-      "§bお互いのターン終了時 / 相手プレイヤーに2ダメージを与える。",
+      "§b相手がドローするたびに相手に1ダメージ与える。",
       "§b何体いてもダメージは重ならない。"
     ]
   },
@@ -592,7 +597,8 @@ export const cardList = [
     Cact: "-",
     text: [
       "§b+生の豚肉 = 焼き豚",
-      "§b+スケルトン = ウィザースケルトン"
+      "§b+スケルトン = ウィザースケルトン",
+      "§b+くり抜かれたカボチャ = ジャック・オ・ランタン" 
     ]
   },
   {
@@ -834,7 +840,7 @@ export const cardList = [
     name:["minecraft:wooden_hoe"],
     type: "item",
     attribute: "アイテム・合成素材",
-    Cact: "0",
+    Cact: "1",
     text: [
       "§b使用時 / 「小麦」を1つ入手する。",
       "§b+丸石 = 石のクワ",
@@ -845,7 +851,7 @@ export const cardList = [
     name:["minecraft:stone_hoe"],
     type: "item",
     attribute: "アイテム",
-    Cact: "0",
+    Cact: "1",
     text: [
       "§b使用時 / 「小麦」を1つ入手する。",
       "§b「草ブロック」を1つ入手する。",
@@ -856,7 +862,7 @@ export const cardList = [
     name:["minecraft:iron_hoe"],
     type: "item",
     attribute: "アイテム",
-    Cact: "0",
+    Cact: "1",
     text: [
       "§b使用時 / 「小麦」を2つ入手する。",
       "§b「草ブロック」を3つ入手する。",
@@ -930,7 +936,7 @@ export const cardList = [
     name:["minecraft:cow", "minecraft:cow_spawn_egg"],
     type: "entity",
     attribute: "なし",
-    hp: "34",
+    hp: "30",
     atk: "15",
     Sact: "7",
     Bact: "2",
@@ -1010,7 +1016,8 @@ export const cardList = [
     Cact: "0",
     text: [
       "§b使用時 / 自分の任意のモブ(浮遊を除く)にガード属性を付与する。",
-      "§b+卵+小麦 = ケーキ"
+      "§b+卵+小麦 = ケーキ",
+      "§bクラフト時にactを3消費する。"
     ]
   },
   {
@@ -1033,6 +1040,17 @@ export const cardList = [
     Cact: "40",
     text: [
       "§b使用時 / なぜか「ブレイズ」を召喚できる。"
+    ]
+  },
+  {
+    name:["minecraft:lit_pumpkin"],
+    type: "item",
+    attribute: "オブジェクト",
+    Cact: "20",
+    text: [
+      "§6オブジェクト効果",
+      "§6設置時 / 相手のオブジェクトをジャック・オ・ランタンに変え、",
+      "§6元々設置してあったオブジェクトは自分のものになる。"
     ]
   }
 ]
