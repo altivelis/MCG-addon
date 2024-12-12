@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline } from "./lib";
 import { turnItem, turnMob, turnObject } from "./turncard";
 
 export const mcg = {
@@ -75,6 +75,7 @@ const button_permutation = mc.BlockPermutation.resolve("wooden_button",{"facing_
 function setSign(color, player=null){
   if(color == "red"){
     const block = mc.world.getDimension("minecraft:overworld").getBlock({x:-62, y:-53, z:-2});
+    if(!block) return;
     if(player){
       block.getComponent(mc.BlockSignComponent.componentId).setText("\n対戦予約中\n"+"§c"+player.nameTag);
     }
@@ -84,6 +85,7 @@ function setSign(color, player=null){
   }
   else if(color == "blue"){
     const block = mc.world.getDimension("minecraft:overworld").getBlock({x:-64, y:-53, z:-2});
+    if(!block) return;
     if(player){
       block.getComponent(mc.BlockSignComponent.componentId).setText("\n対戦予約中\n"+"§b"+player.nameTag);
     }
@@ -122,6 +124,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
 mc.system.runInterval(()=>{
   if(!mcg.queue.red?.isValid()) mcg.queue.red = null;
   if(!mcg.queue.blue?.isValid()) mcg.queue.blue = null;
+  
   setSign("red", mcg.queue.red);
   setSign("blue", mcg.queue.blue);
 })
@@ -144,6 +147,9 @@ mc.system.runInterval(()=>{
     if(entity.hasTag("guard")){
       entity.dimension.spawnParticle("minecraft:trial_spawner_detection_ominous", {...entity.location, x:entity.location.x-0.5, z:entity.location.z-0.5});
     }
+    if(entity.hasTag("call_pigman")){
+      entity.dimension.spawnParticle("minecraft:infested_emitter", {...entity.location, y: entity.location.y+1});
+    }
   })
 },10)
 
@@ -163,7 +169,8 @@ function initialize_config(){
   mc.world.setDynamicProperty("time", 150);
   mc.world.setDynamicProperty("first_draw", 5);
   mc.world.setDynamicProperty("second_draw", 6);
-  mc.world.setDynamicProperty("anim", false);
+  mc.world.setDynamicProperty("start_act", 5);
+  mc.world.setDynamicProperty("end_act", 3);
   mc.world.sendMessage("変数を初期化しました。")
 }
 
@@ -174,30 +181,23 @@ mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
 
 function reset(){
   mc.world.setDynamicProperty("status", 0);
-  setAct("timer", 0);
-  mc.world.getPlayers({tags:["red"]}).forEach(red=>{
-    red.teleport({x:-63, y:-53, z:-13},{dimension:mc.world.getDimension("minecraft:overworld")});
-    red.removeTag("red");
-    red.removeTag("turn");
-    red.removeTag("nether");
-    red.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
-    mc.EffectTypes.getAll().forEach(effect=>{
-      red.removeEffect(effect);
-    })
-    red.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
-    red.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
+  mc.world.scoreboard.getObjective("act").getParticipants().forEach(id=>{
+    mc.world.scoreboard.getObjective("act").removeParticipant(id);
   })
-  mc.world.getPlayers({tags:["blue"]}).forEach(blue=>{
-    blue.teleport({x:-63, y:-53, z:-13},{dimension:mc.world.getDimension("minecraft:overworld")});
-    blue.removeTag("blue");
-    blue.removeTag("turn");
-    blue.removeTag("nether");
-    blue.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
+  setAct("timer", 0);
+  mc.world.getPlayers().forEach(player=>{
+    player.teleport({x:-63, y:-53, z:-13},{dimension:mc.world.getDimension("minecraft:overworld")});
+    player.removeTag("red");
+    player.removeTag("blue");
+    player.removeTag("turn");
+    player.removeTag("nether");
+    player.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
     mc.EffectTypes.getAll().forEach(effect=>{
-      blue.removeEffect(effect);
+      player.removeEffect(effect);
     })
-    blue.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
-    blue.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
+    player.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+    player.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
+    player.camera.clear();
   })
   mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
     entity.remove();
@@ -215,9 +215,6 @@ function reset(){
   })
   Object.values(mcg.const.blue.wool).forEach(pos=>{
     mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
-  })
-  mc.world.getPlayers().forEach(player=>{
-    player.camera.clear();
   })
   mc.world.sendMessage("対戦を強制終了しました。");
 }
@@ -362,49 +359,42 @@ function start(){
                 wither_skull.lockMode = mc.ItemLockMode.inventory;
                 giveItem(red, wither_skull);
                 giveItem(blue, wither_skull);
-                //コンパス配布
-                let compass = new mc.ItemStack("minecraft:compass",1);
+                //先行後攻決定
+                /**@type {mc.Player} */
+                let first;
+                /**@type {mc.Player} */
+                let second;
                 if(Math.floor(Math.random()*2) == 0){
-                  red.addTag("turn");
-                  giveItem(red, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("first_draw")));
-                  giveItem(blue, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("second_draw")));
-                  red.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-                  blue.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-                  mc.world.sendMessage("§c"+red.nameTag+"§rが先攻です。");
-                  giveItem(red, compass);
-                  setAct(red, 5);
-                  setAct(blue, 3);
-                  //ボタン設置
-                  Object.values(mcg.const.red.button).forEach(pos=>{
-                    red.dimension.setBlockPermutation(pos, button_permutation);
-                  })
-                  Object.values(mcg.const.blue.button).forEach(pos=>{
-                    blue.dimension.setBlockType(pos, "minecraft:air");
-                  })
+                  first = red;
+                  second = blue;
                 }else{
-                  blue.addTag("turn");
-                  giveItem(red, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("second_draw")));
-                  giveItem(blue, new mc.ItemStack("minecraft:grass_block",mc.world.getDynamicProperty("first_draw")));
-                  blue.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-                  red.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-                  mc.world.sendMessage("§b"+blue.nameTag+"§rが先攻です。");
-                  giveItem(blue, compass);
-                  setAct(blue, 5);
-                  setAct(red, 3);
-                  //ボタン設置
-                  Object.values(mcg.const.blue.button).forEach(pos=>{
-                    blue.dimension.setBlockPermutation(pos, button_permutation);
-                  })
-                  Object.values(mcg.const.red.button).forEach(pos=>{
-                    red.dimension.setBlockType(pos, "minecraft:air");
-                  })
+                  first = blue;
+                  second = red;
                 }
-                red.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
-                blue.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
-                setAct("timer", mc.world.getDynamicProperty("time"));
-                mc.world.getPlayers({excludeTags:["red","blue"]}).forEach(player=>{
+                first.addTag("turn");
+                //草ブロック配布
+                giveItem(first, new mc.ItemStack("minecraft:grass_block", mc.world.getDynamicProperty("first_draw")));
+                giveItem(second, new mc.ItemStack("minecraft:grass_block", mc.world.getDynamicProperty("second_draw")));
+                //タイトル表示
+                first.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+                second.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+                mc.world.getPlayers().forEach(player=>{
                   player.onScreenDisplay.setTitle("§bDUEL §cSTART",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                   player.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
+                })
+                mc.world.sendMessage((first.hasTag("red")?"§c":"§b")+first.nameTag+"§rが先攻です。");
+                //コンパス配布
+                giveItem(first, new mc.ItemStack("minecraft:compass"));
+                //act付与
+                setAct(first, mc.world.getDynamicProperty("start_act"));
+                setAct(second, mc.world.getDynamicProperty("end_act"));
+                setAct("timer", mc.world.getDynamicProperty("time"));
+                //ボタン設置
+                Object.values(first.hasTag("red")?mcg.const.red.button:mcg.const.blue.button).forEach(pos=>{
+                  first.dimension.setBlockPermutation(pos, button_permutation);
+                })
+                Object.values(first.hasTag("red")?mcg.const.blue.button:mcg.const.red.button).forEach(pos=>{
+                  second.dimension.setBlockType(pos, "minecraft:air");
                 })
               })
             })
@@ -415,10 +405,39 @@ function start(){
   })
 }
 
+//回線落ち対策
+mc.world.afterEvents.playerSpawn.subscribe(data=>{
+  let {player, initialSpawn} = data;
+  if(!initialSpawn) return;
+  if(player.hasTag("red") || player.hasTag("blue")){
+    if(mc.world.getDynamicProperty("status") != 2){
+      player.removeTag("red");
+      player.removeTag("blue");
+      player.teleport({x:-62.5, y:-53, z:-12.5},{dimension:mc.world.getDimension("minecraft:overworld")});
+      mc.world.scoreboard.getObjective("act").removeParticipant(player);
+    }else{
+      if(mc.world.getPlayers({tags:[(player.hasTag("red")?"red":"blue")]}).length > 1){
+        player.removeTag("red");
+        player.removeTag("blue");
+        player.teleport({x:-62.5, y:-53, z:-12.5},{dimension:mc.world.getDimension("minecraft:overworld")});
+        mc.world.scoreboard.getObjective("act").removeParticipant(player);
+      }
+    }
+  }
+})
+
 //ターン経過処理
 mc.system.runInterval(()=>{
   if(mc.world.getDynamicProperty("status") == 2){
     if(mc.world.getDynamicProperty("anim") == true) return;
+    if(isOnline()){
+      mc.world.setDynamicProperty("stop", false);
+    }
+    if(mc.world.getDynamicProperty("stop") == true) return;
+    if(!isOnline()){
+      mc.world.sendMessage("§c対戦プレイヤーが見つかりません。タイマーをストップします。\n強制終了する場合は§a/scriptevent mcg:reset§cを実行してください。");
+      mc.world.setDynamicProperty("stop", true);
+    }
     if(getAct("timer") > 0){
       //時間切れ前
       if(getAct("timer") <= 10){
@@ -459,19 +478,26 @@ export function turnChange(){
       notTurnPlayer.dimension.setBlockPermutation(pos, button_permutation);
     })
   }
+  if(!turnPlayer || !notTurnPlayer) {
+    mc.world.sendMessage("§c対戦プレイヤーが見つかりません。強制終了する場合は§a/scriptevent mcg:reset§cを実行してください。");
+  }
   //ターンタグ切り替え
   turnPlayer.removeTag("turn");
   notTurnPlayer.addTag("turn");
   //act付与
-  addAct(turnPlayer, 3);
-  sendPlayerMessage(turnPlayer, "act+3");
-  addAct(notTurnPlayer, 5);
-  sendPlayerMessage(notTurnPlayer, "act+5");
+  addAct(turnPlayer, mc.world.getDynamicProperty("end_act"));
+  sendPlayerMessage(turnPlayer, "act+" + mc.world.getDynamicProperty("end_act"));
+  addAct(notTurnPlayer, mc.world.getDynamicProperty("start_act"));
+  sendPlayerMessage(notTurnPlayer, "act+" + mc.world.getDynamicProperty("start_act"));
   //ドロップアイテム消去
   turnPlayer.dimension.getEntities({type:"minecraft:item", excludeTags:["give"]}).forEach(item=>{
     item.kill();
   })
   //ターン経過時効果
+  //泣く黒曜石効果
+  mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(turnPlayer.hasTag("red")?"blue":"red"), "call_pigman"]}).forEach(entity=>{
+    entity.removeTag("call_pigman");
+  })
   //モブ
   mc.world.getDimension("minecraft:overworld").getEntities({families:["mob"], excludeTypes:["minecraft:player"]}).forEach(entity=>{
     turnMob[entity.typeId.slice(10)]?.run(notTurnPlayer, turnPlayer, entity);
@@ -527,103 +553,73 @@ export function turnChange(){
 //勝敗判定
 mc.world.afterEvents.entityDie.subscribe(data=>{
   if(mc.world.getDynamicProperty("status") != 2) return;
-  /**
-   * @type {mc.Player}
-   */
-  const entity = data.deadEntity;
-  if(entity.typeId == "minecraft:player"){
-    if(entity.hasTag("red")){
-      const blue = mc.world.getPlayers({tags:["blue"]})[0];
-      mc.world.setDynamicProperty("status", 3);
-      blue.teleport({x:-62.5, y:-53, z:-12.5});
-      mc.world.sendMessage(`§b${blue.nameTag}§rが勝利しました。`);
-      blue.onScreenDisplay.setTitle("§bYOU WIN!",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-      entity.onScreenDisplay.setTitle("§cYOU LOSE…",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-      mc.world.getPlayers({excludeTags:["red","blue"]}).forEach(player=>{
-        player.onScreenDisplay.setTitle("§bBLUE WIN",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-      })
-      //タグ削除
-      entity.removeTag("red");
-      entity.removeTag("turn");
-      blue.removeTag("blue");
-      blue.removeTag("turn");
-      //アイテム消去
-      entity.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
-      blue.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
-      entity.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
-      blue.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
-      //HPリセット
-      blue.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
-      mc.EffectTypes.getAll().forEach(effect=>{
-        blue.removeEffect(effect);
-      })
-      //スコアリセット
-      mc.world.scoreboard.getObjective("act").removeParticipant(entity);
-      mc.world.scoreboard.getObjective("act").removeParticipant(blue);
-      setAct("timer", 0);
-      myTimeout(60,()=>{
-        mc.world.setDynamicProperty("status", 0);
-      })
-    }
-    else if(entity.hasTag("blue")){
-      const red = mc.world.getPlayers({tags:["red"]})[0];
-      mc.world.setDynamicProperty("status", 3);
-      red.teleport({x:-62.5, y:-53, z:-12.5});
-      mc.world.sendMessage(`§c${red.nameTag}§rが勝利しました。`);
-      red.onScreenDisplay.setTitle("§bYOU WIN!",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-      entity.onScreenDisplay.setTitle("§cYOU LOSE…",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-      mc.world.getPlayers({excludeTags:["red","blue"]}).forEach(player=>{
-        player.onScreenDisplay.setTitle("§cRED WIN",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-      })
-      //タグ削除
-      entity.removeTag("blue");
-      entity.removeTag("turn");
-      red.removeTag("red");
-      red.removeTag("turn");
-      //アイテム消去
-      entity.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
-      red.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
-      entity.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
-      red.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
-      //HPリセット
-      red.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
-      mc.EffectTypes.getAll().forEach(effect=>{
-        red.removeEffect(effect);
-      })
-      //スコアリセット
-      mc.world.scoreboard.getObjective("act").removeParticipant(entity);
-      mc.world.scoreboard.getObjective("act").removeParticipant(red);
-      setAct("timer", 0);
-      myTimeout(60,()=>{
-        mc.world.setDynamicProperty("status", 0);
-      })
-    }
-    //ボタン削除
-    Object.values(mcg.const.red.button).forEach(pos=>{
-      mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
-    })
-    Object.values(mcg.const.blue.button).forEach(pos=>{
-      mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
-    })
-    //オブジェクト削除
-    mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.red.slot.object, "minecraft:air");
-    mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.blue.slot.object, "minecraft:air");
-    //羊毛削除
-    Object.values(mcg.const.red.wool).forEach(pos=>{
-      mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
-    })
-    Object.values(mcg.const.blue.wool).forEach(pos=>{
-      mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
-    })
-    //エンティティ削除
-    mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
-      entity.kill();
-    })
-    //カメラリセット
-    mc.world.getPlayers().forEach(player=>{
-      player.camera.clear();
-    })
+  /**@type {mc.Player}*/
+  const loser = data.deadEntity;
+  if(loser.typeId != "minecraft:player") return;
+  /**@type {mc.Player} */
+  const winner = mc.world.getPlayers({tags:[(loser.hasTag("red")?"blue":"red")]})[0];
+  if(!winner) {
+    mc.world.sendMessage("§c勝利プレイヤーが見つからなかったため、強制終了します。");
+    reset();
+    return;
   }
+  mc.world.setDynamicProperty("status", 3);
+  winner.teleport({x:-62.5, y:-53, z:-12.5});
+  mc.world.sendMessage(`${winner.hasTag("red")?"§c":"§b"}${winner.nameTag}§rが勝利しました。`);
+  winner.onScreenDisplay.setTitle("§bYOU WIN!",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+  loser.onScreenDisplay.setTitle("§cYOU LOSE…",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+  mc.world.getPlayers({excludeTags:["red","blue"]}).forEach(player=>{
+    player.onScreenDisplay.setTitle((winner.hasTag("red")?"§cRED WIN":"§bBLUE WIN"),{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+  })
+  //タグ削除
+  winner.removeTag("red");
+  winner.removeTag("blue");
+  winner.removeTag("turn");
+  loser.removeTag("red");
+  loser.removeTag("blue");
+  loser.removeTag("turn");
+  //アイテム消去
+  winner.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+  loser.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
+  winner.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
+  loser.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
+  //HPリセット
+  winner.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
+  mc.EffectTypes.getAll().forEach(effect=>{
+    winner.removeEffect(effect);
+  })
+  //スコアリセット
+  mc.world.scoreboard.getObjective("act").removeParticipant(winner);
+  mc.world.scoreboard.getObjective("act").removeParticipant(loser);
+  setAct("timer", 0);
+  myTimeout(60,()=>{
+    mc.world.setDynamicProperty("status", 0);
+  })
+  //ボタン削除
+  Object.values(mcg.const.red.button).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
+  Object.values(mcg.const.blue.button).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
+  //オブジェクト削除
+  mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.red.slot.object, "minecraft:air");
+  mc.world.getDimension("minecraft:overworld").setBlockType(mcg.const.blue.slot.object, "minecraft:air");
+  //羊毛削除
+  Object.values(mcg.const.red.wool).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
+  Object.values(mcg.const.blue.wool).forEach(pos=>{
+    mc.world.getDimension("minecraft:overworld").setBlockType(pos, "minecraft:air");
+  })
+  //エンティティ削除
+  mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
+    entity.kill();
+  })
+  //カメラリセット
+  mc.world.getPlayers().forEach(player=>{
+    player.camera.clear();
+  })
 })
 
 const surrender_form = new ui.MessageFormData()
