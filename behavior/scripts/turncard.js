@@ -218,21 +218,21 @@ export const turnMob = {
      * @param {mc.Entity} entity
      */
     run: (newPlayer, oldPlayer, entity) => {
-      let teamBlazes = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(entity.hasTag("red")?"red":"blue")]});
-      let test = false;
-      teamBlazes.forEach(blaze=>{
-        if(blaze.hasTag("processed")) test = true;
-      })
-      if(test) return;
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        applyDamage(oldPlayer, 2, {cause:mc.EntityDamageCause.fire});
-      }else{
-        applyDamage(newPlayer, 2, {cause:mc.EntityDamageCause.fire});
-      }
-      entity.addTag("processed");
-      myTimeout(20, ()=>{
-        entity.removeTag("processed");
-      })
+      // let teamBlazes = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(entity.hasTag("red")?"red":"blue")]});
+      // let test = false;
+      // teamBlazes.forEach(blaze=>{
+      //   if(blaze.hasTag("processed")) test = true;
+      // })
+      // if(test) return;
+      // if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+      //   applyDamage(oldPlayer, 2, {cause:mc.EntityDamageCause.fire});
+      // }else{
+      //   applyDamage(newPlayer, 2, {cause:mc.EntityDamageCause.fire});
+      // }
+      // entity.addTag("processed");
+      // myTimeout(20, ()=>{
+      //   entity.removeTag("processed");
+      // })
     }
   },
   chicken: {
@@ -382,7 +382,12 @@ export const turnObject = {
      * @param {mc.Player} oldPlayer
      * @param {String} blockTag
      */
-    run: (newPlayer, oldPlayer, blockTag) => {}
+    run: (newPlayer, oldPlayer, blockTag) => {
+      if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
+        giveItem(newPlayer, new mc.ItemStack("minecraft:villager_spawn_egg"));
+        sendPlayerMessage(newPlayer, "[鐘] 村人を獲得");
+      }
+    }
   },
   mob_spawner: {
     /**

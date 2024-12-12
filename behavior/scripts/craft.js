@@ -163,6 +163,14 @@ const recipe = [
       "minecraft:cow_spawn_egg",
       "minecraft:red_mushroom"
     ]
+  },
+  {
+    item: "minecraft:lit_pumpkin",
+    name: "ジャック・オ・ランタン",
+    materials: [
+      "minecraft:carved_pumpkin",
+      "minecraft:coal"
+    ]
   }
 ]
 
@@ -182,8 +190,13 @@ mc.system.runInterval(()=>{
     r.materials.forEach(m=>{
       let item = items.find(i=>i.getComponent(mc.EntityItemComponent.componentId).itemStack.typeId == m);
       if(item){
-        if(item.getComponent(mc.EntityItemComponent.componentId).itemStack.typeId == "minecraft:netherite_ingot"){
-          craftCost += 20;
+        switch(item.getComponent(mc.EntityItemComponent.componentId).itemStack.typeId){
+          case "minecraft:netherite_ingot":
+            craftCost += 20;
+            break;
+          case "minecraft:milk_bucket":
+            craftCost += 3;
+            break;
         }
         foundMaterials.push(item);
       }

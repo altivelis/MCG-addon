@@ -1,7 +1,7 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 import { mcg, turnChange } from "./system";
-import { hasItem, decrementContainer, giveItem, handItem, addAct, sendPlayerMessage } from "./lib";
+import { hasItem, decrementContainer, giveItem, handItem, addAct, sendPlayerMessage, isOnline, applyDamage } from "./lib";
 import { useCard } from "./usecard";
 
 //ドロー
@@ -35,6 +35,9 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     case "minecraft:grass_block":
       decrementContainer(source, "minecraft:grass_block");
       decrementContainer(source, "minecraft:packed_ice");
+      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
+        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
+      }
       switch(Math.floor(Math.random()*4)){
         case 0:
           item = high ? new mc.ItemStack("minecraft:wolf_spawn_egg") : new mc.ItemStack("minecraft:pig_spawn_egg");
@@ -59,6 +62,9 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     case "minecraft:stone":
       decrementContainer(source, "minecraft:grass_block");
       decrementContainer(source, "minecraft:packed_ice");
+      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
+        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
+      }
       switch(Math.floor(Math.random()*4)){
         case 0:
           item = high ? new mc.ItemStack("minecraft:mob_spawner") : new mc.ItemStack("minecraft:zombie_spawn_egg");
@@ -83,6 +89,9 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     case "minecraft:hay_block":
       decrementContainer(source, "minecraft:grass_block");
       decrementContainer(source, "minecraft:packed_ice");
+      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
+        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
+      }
       switch(Math.floor(Math.random()*4)){
         case 0:
           item = high ? new mc.ItemStack("minecraft:fox_spawn_egg") : new mc.ItemStack("minecraft:chicken_spawn_egg");
@@ -111,6 +120,9 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
       }
       decrementContainer(source, "minecraft:grass_block");
       decrementContainer(source, "minecraft:packed_ice");
+      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
+        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
+      }
       switch(Math.floor(Math.random()*4)){
         case 0:
           item = high ? new mc.ItemStack("minecraft:strider_spawn_egg") : new mc.ItemStack("minecraft:zombie_pigman_spawn_egg");
@@ -154,6 +166,10 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
   const {source, block, dimension} = data;
   if(block.typeId != "minecraft:wooden_button") return;
   if(source.typeId != "minecraft:player") return;
+  if(!isOnline()){
+    source.sendMessage("対戦相手が復帰するまでお待ち下さい");
+    return;
+  }
   block.setPermutation(mc.BlockPermutation.resolve("minecraft:wooden_button", {"facing_direction":1}));
   if(!handItem(source)) return;
   if(!(source.hasTag("red") || source.hasTag("blue"))) return;

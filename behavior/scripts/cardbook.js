@@ -51,6 +51,7 @@ const cardLibrary = {
       {name: "焼き豚", id: "minecraft:cooked_porkchop", icon: "textures/items/porkchop_cooked"},
       {name: "スノーゴーレム", id: "minecraft:snow_golem", icon: "textures/items/snowball"},
       {name: "アイアンゴーレム", id: "minecraft:iron_golem", icon: "textures/items/egg_null"},
+      {name: "ジャック・オ・ランタン", id: "minecraft:lit_pumpkin", icon: "textures/blocks/pumpkin_face_on"}
     ]
   },
   cave: {

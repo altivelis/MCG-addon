@@ -6,6 +6,7 @@ import "./button";
 import "./craft";
 import "./config";
 import "./rulebook";
+import "./die";
 import { mcg } from "./system";
 
 mc.system.runInterval(() => {
@@ -25,6 +26,7 @@ mc.system.runInterval(() => {
         (target.hasTag("protect"))?"§2除外無効 ":"",
         (target.hasTag("guard"))?"§2ガード ":"",
         (target.hasTag("fly"))?"§2浮遊 ":"",
+        (target.hasTag("call_pigman"))?"§2呼び声 ":"",
         "\n",
         cardInfo(target.typeId).join("\n")
       ]);

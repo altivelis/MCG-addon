@@ -21,6 +21,11 @@ const error_slot = "§cこのスロットには使用できません",
  */
 function summonCard(cardBlock, player, identifier, event){
   let info = getCard(identifier);
+  if(identifier == "minecraft:villager_v2"){
+    if(getObject(player.hasTag("red") ? "red" : "blue").typeId == "minecraft:bell"){
+      addAct(player, parseInt(info.Sact));
+    }
+  }
   if(parseInt(info.Sact) > getAct(player) + 1){
     player.sendMessage(error_act);
     return;
@@ -631,7 +636,7 @@ export const useCard = {
           player.dimension.playSound("block.bell.hit", player.location, {volume: 3});
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
             if(entity.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
-              entity.kill();
+              applyDamage(entity, 999, {cause: mc.EntityDamageCause.magic});
             }
             else{
               entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
@@ -640,8 +645,12 @@ export const useCard = {
           })
           break;
         case O:
-          player.sendMessage(error_slot);
-          return;
+          addAct(player, -parseInt(info.Cact));
+          sendPlayerMessage(player, "鐘を設置しました");
+          decrementSlot(player, player.selectedSlotIndex);
+          setObject(player, "minecraft:bell");
+          player.dimension.playSound("block.bell.hit", player.location, {volume: 3});
+          break;
       }
     }
   },
@@ -1227,9 +1236,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "泣く黒曜石を使用しました");
           player.dimension.playSound("mob.ghast.scream", player.location, {volume: 3});
-          entities.forEach(entity=>{
-            entity.addTag("protect");
-          })
+          entities[0].addTag("call_pigman");
           break;
         case W:
           entities = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotW"]});
@@ -1241,9 +1248,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "泣く黒曜石を使用しました");
           player.dimension.playSound("mob.ghast.scream", player.location, {volume: 3});
-          entities.forEach(entity=>{
-            entity.addTag("protect");
-          })
+          entities[0].addTag("call_pigman");
           break;
         case R:
           entities = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"]});
@@ -1255,13 +1260,16 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "泣く黒曜石を使用しました");
           player.dimension.playSound("mob.ghast.scream", player.location, {volume: 3});
-          entities.forEach(entity=>{
-            entity.addTag("protect");
-          })
+          entities[0].addTag("call_pigman");
           break;
         case P:
-        case O:
           player.sendMessage(error_slot);
+          return;
+        case O:
+          addAct(player, -parseInt(info.Cact));
+          sendPlayerMessage(player, "泣く黒曜石を設置しました");
+          decrementSlot(player, player.selectedSlotIndex);
+          setObject(player, "minecraft:crying_obsidian");
           return;
       }
     }
@@ -1739,7 +1747,8 @@ export const useCard = {
           player.sendMessage(error_slot);
           return;
         case P:
-          if(getObject(player.hasTag("red")?"red":"blue")?.typeId != "minecraft:bee_nest") {
+          if(getObject(player.hasTag("red")?"red":"blue")?.typeId != "minecraft:bee_nest" ||
+          mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:bee", tags:[(player.hasTag("red")?"red":"blue")]}).length == 0) {
             player.sendMessage(error_slot);
             return;
           }
@@ -1768,7 +1777,8 @@ export const useCard = {
           player.sendMessage(error_slot);
           return;
         case P:
-          if(getObject(player.hasTag("red")?"red":"blue")?.typeId != "minecraft:bee_nest") {
+          if(getObject(player.hasTag("red")?"red":"blue")?.typeId != "minecraft:bee_nest" ||
+          mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:bee", tags:[(player.hasTag("red")?"red":"blue")]}).length == 0) {
             player.sendMessage(error_slot);
             return;
           }
@@ -1797,7 +1807,8 @@ export const useCard = {
           player.sendMessage(error_slot);
           return;
         case P:
-          if(getObject(player.hasTag("red")?"red":"blue")?.typeId != "minecraft:bee_nest") {
+          if(getObject(player.hasTag("red")?"red":"blue")?.typeId != "minecraft:bee_nest" ||
+          mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:bee", tags:[(player.hasTag("red")?"red":"blue")]}).length == 0) {
             player.sendMessage(error_slot);
             return;
           }
@@ -1872,6 +1883,11 @@ export const useCard = {
      * @param {mc.Player} player
      */
     run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
       switch(cardBlock.typeId){
         case B:
         case W:
@@ -1880,6 +1896,7 @@ export const useCard = {
           return;
         case P:
           decrementSlot(player, player.selectedSlotIndex);
+          addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "木のクワを使用しました");
           player.dimension.playSound("dig.gravel", player.location, {volume: 3});
           giveItem(player, new mc.ItemStack("minecraft:wheat"));
@@ -1898,6 +1915,11 @@ export const useCard = {
      * @param {mc.Player} player
      */
     run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
       switch(cardBlock.typeId){
         case B:
         case W:
@@ -1906,6 +1928,7 @@ export const useCard = {
           return;
         case P:
           decrementSlot(player, player.selectedSlotIndex);
+          addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "石のクワを使用しました");
           player.dimension.playSound("dig.gravel", player.location, {volume: 3});
           giveItem(player, new mc.ItemStack("minecraft:wheat"));
@@ -1944,6 +1967,11 @@ export const useCard = {
      * @param {mc.Player} player
      */
     run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
       switch(cardBlock.typeId){
         case B:
         case W:
@@ -1952,6 +1980,7 @@ export const useCard = {
           return;
         case P:
           decrementSlot(player, player.selectedSlotIndex);
+          addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "鉄のクワを使用しました");
           player.dimension.playSound("dig.gravel", player.location, {volume: 3});
           giveItem(player, new mc.ItemStack("minecraft:wheat", 2));
@@ -2207,6 +2236,36 @@ export const useCard = {
           }
         }
       )
+    }
+  },
+  lit_pumpkin: {
+    /**
+     * ジャック・オ・ランタン
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+        case O:
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "ジャック・オ・ランタンを設置しました");
+          setObject(player, mc.world.getDimension("minecraft:overworld").getBlock(player.hasTag("red")?mcg.const.blue.slot.object:mcg.const.red.slot.object)?.typeId);
+          setObject(mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]})[0], "minecraft:lit_pumpkin");
+          sendPlayerMessage(player, "オブジェクトが入れ替わった！");
+          return;
+      }
     }
   }
 }

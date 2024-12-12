@@ -239,7 +239,7 @@ export function sendPlayerMessage(player, message){
  * @param {String} blockid ブロックID
  */
 export function setObject(player, blockid){
-  if(getObject(player.hasTag("red")?"red":"blue")?.typeId == "minecraft:bee_nest"){
+  if(getObject(player.hasTag("red")?"red":"blue")?.typeId == "minecraft:bee_nest" && blockid != "minecraft:bee_nest"){
     /**
      * @type {mc.Container}
      */
@@ -296,4 +296,11 @@ export function clearInventory(player){
     if(item?.typeId == "minecraft:book") continue;
     inv.setItem(i);
   }
+}
+
+/**
+ * 対戦プレイヤー検知関数
+ */
+export function isOnline(){
+  return (mc.world.getPlayers({tags:["red"]}).length > 0 && mc.world.getPlayers({tags:["blue"]}).length > 0);
 }
