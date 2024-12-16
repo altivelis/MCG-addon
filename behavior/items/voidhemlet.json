@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.50",
+  "minecraft:item": {
+    "description": {
+      "identifier": "mcg:voidhelmet",
+      "menu_category": {
+        "category": "equipment",
+        "is_hidden_in_commands": true
+      }
+    },
+    "components": {
+      "minecraft:max_stack_size": 1,
+      "minecraft:icon": {
+        "textures": {
+          "default": "empty_armor_slot_helmet"
+        }
+      },
+      "minecraft:display_name": {
+        "value": "§4使用禁止"
+      },
+      "minecraft:wearable": {
+        "slot": "slot.armor.head"
+      }
+    }
+  }
+}
