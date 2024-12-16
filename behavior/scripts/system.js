@@ -154,9 +154,12 @@ mc.system.runInterval(()=>{
 },10)
 
 mc.system.runInterval(()=>{
+  let voidhelmet = new mc.ItemStack("mcg:voidhelmet",1);
+  voidhelmet.lockMode = mc.ItemLockMode.slot;
   mc.world.getAllPlayers().forEach(player=>{
     player.addEffect(mc.EffectTypes.get("minecraft:saturation"),20,{showParticles:false, amplifier:1});
     player.setSpawnPoint({dimension:mc.world.getDimension("minecraft:overworld"), x:-66.5, y:-44, z:-20.5});
+    player.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head, voidhelmet);
   })
 })
 
@@ -415,12 +418,14 @@ mc.world.afterEvents.playerSpawn.subscribe(data=>{
       player.removeTag("blue");
       player.teleport({x:-62.5, y:-53, z:-12.5},{dimension:mc.world.getDimension("minecraft:overworld")});
       mc.world.scoreboard.getObjective("act").removeParticipant(player);
+      player.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
     }else{
       if(mc.world.getPlayers({tags:[(player.hasTag("red")?"red":"blue")]}).length > 1){
         player.removeTag("red");
         player.removeTag("blue");
         player.teleport({x:-62.5, y:-53, z:-12.5},{dimension:mc.world.getDimension("minecraft:overworld")});
         mc.world.scoreboard.getObjective("act").removeParticipant(player);
+        player.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
       }
     }
   }
@@ -533,6 +538,11 @@ export function turnChange(){
     if(tp_inv.getItem(i)?.typeId == "minecraft:arrow"){
       tp_inv.setItem(i);
     }
+  }
+  switch(turnPlayer.getComponent(mc.EntityEquippableComponent.componentId).getEquipment(mc.EquipmentSlot.Offhand)?.typeId){
+    case "minecraft:arrow":
+      turnPlayer.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Offhand);
+      break;
   }
   giveItem(notTurnPlayer, new mc.ItemStack("minecraft:compass", 1));
   giveItem(notTurnPlayer, new mc.ItemStack("minecraft:grass_block", 1));
