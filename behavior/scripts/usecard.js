@@ -2258,6 +2258,12 @@ export const useCard = {
           return;
         case P:
         case O:
+          if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:snow_golem", tags:[(player.hasTag("red")?"red":"blue")]}).length == 0 &&
+            mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:iron_golem", tags:[(player.hasTag("red")?"red":"blue")]}).length == 0
+          ){
+            player.sendMessage("§c自分のスロットにゴーレムが存在しないため使用できません。");
+            return;
+          }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "ジャック・オ・ランタンを設置しました");

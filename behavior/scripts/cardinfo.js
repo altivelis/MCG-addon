@@ -59,6 +59,204 @@ export const drawList = {
 
 export const cardList = [
   {
+    name:["minecraft:compass"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "-",
+    text: [
+      "§b使用時 / 自分のターンを終了する。"
+    ]
+  },
+  {
+    name:["minecraft:spyglass"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "-",
+    text: [
+      "§b遠くを見るための道具。"
+    ]
+  },
+  {
+    name:["minecraft:grass_block"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "-",
+    text: [
+      "§bドローするのに必要なアイテム。"
+    ]
+  },
+  {
+    name:["minecraft:wither_skeleton_skull"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "300",
+    text: [
+      "§b使用時 / ウィザーを召喚する。",
+      "§bウィザーの召喚に成功したとき、あなたは勝利する。"
+    ]
+  },
+  {
+    name:["minecraft:wooden_sword"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b攻撃力: 5",
+      "§bプレイヤーに与えるダメージは1。",
+      "§b+丸石 = 石の剣",
+      "§b+鉄のインゴット = 鉄の剣",
+      "§b+ダイヤモンド = ダイヤモンドの剣",
+      "§b+ネザライトインゴット+20act = ネザライトの剣"
+    ]
+  },
+  {
+    name:["minecraft:stone_sword"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b攻撃力: 15",
+      "§bプレイヤーに与えるダメージは3。",
+      "§bターン終了時に消滅する。"
+    ]
+  },
+  {
+    name:["minecraft:golden_sword"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b攻撃力: 20",
+      "§bプレイヤーに与えるダメージは4。",
+      "§bターン終了時に消滅する。"
+    ]
+  },
+  {
+    name:["minecraft:iron_sword"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b攻撃力: 30",
+      "§bプレイヤーに与えるダメージは6。",
+      "§bターン終了時に消滅する。"
+    ]
+  },
+  {
+    name:["minecraft:diamond_sword"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b攻撃力: 50",
+      "§bプレイヤーに与えるダメージは10。",
+      "§bターン終了時に消滅する。"
+    ]
+  },
+  {
+    name:["minecraft:netherite_sword"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b攻撃力: 70",
+      "§bプレイヤーに与えるダメージは14。",
+      "§bターン終了時に消滅する。"
+    ]
+  },
+  {
+    name:["minecraft:wooden_pickaxe"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b使用時 / 丸石と石炭を入手する。",
+      "§b+丸石 = 石のツルハシ",
+      "§b+鉄のインゴット = 鉄のツルハシ"
+    ]
+  },
+  {
+    name:["minecraft:stone_pickaxe"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b使用時 / 鉄インゴットを入手する。"
+    ]
+  },
+  {
+    name:["minecraft:iron_pickaxe"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§bダイヤモンドを入手する。"
+    ]
+  },
+  {
+    name:["minecraft:coal"],
+    type: "item",
+    attribute: "合成素材",
+    Cact: "-",
+    text: [
+      "§b+生の豚肉 = 焼き豚",
+      "§b+スケルトン = ウィザースケルトン",
+      "§b+くり抜かれたカボチャ = ジャック・オ・ランタン" 
+    ]
+  },
+  {
+    name:["minecraft:cobblestone"],
+    type: "item",
+    attribute: "合成素材",
+    Cact: "-",
+    text:[
+      "§b+木の剣 = 石の剣",
+      "§b+木のツルハシ = 石のツルハシ"
+    ]
+  },
+  {
+    name:["minecraft:iron_ingot"],
+    type: "item",
+    attribute: "合成素材",
+    Cact: "-",
+    text: [
+      "§b+木の剣 = 鉄の剣",
+      "§b+木のツルハシ = 鉄のツルハシ"
+    ]
+  },
+  {
+    name:["minecraft:diamond"],
+    type: "item",
+    attribute: "合成素材",
+    Cact: "-",
+    text: [
+      "§b+木の剣 = ダイヤモンドの剣",
+    ]
+  },
+  {
+    name:["minecraft:carrot_on_a_stick"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b使用時 / 自分のモブを1体除外してスロットを空けることができる。",
+      "§bこの効果は除外無効のモブにも有効である。"
+    ]
+  },
+  {
+    name:["minecraft:arrow"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "2",
+    text: [
+      "§b使用時 / 相手1体に30ダメージ",
+      "§b浮遊している敵にも当たる。",
+      "§bまた、相手スロットにモブがいてもプレイヤーを攻撃できる。",
+      "§bプレイヤーに与えるダメージは1になる。",
+      "§bターン終了時に消滅する。"
+    ]
+  },
+  {
     name: ["minecraft:pig", "minecraft:pig_spawn_egg"],
     type: "entity",
     attribute: "なし",
@@ -150,6 +348,62 @@ export const cardList = [
     Bact: "8",
     text: [
       "§b除外無効"
+    ]
+  },
+  {
+    name:["minecraft:porkchop"],
+    type: "item",
+    attribute: "合成素材",
+    Cact: "-",
+    text: [
+      "§bそのままオオカミに使用できる。",
+      "§b+石炭 = 焼き豚",
+      "§b+ゾンビ = ゾンビピッグマン"
+    ]
+  },
+  {
+    name:["minecraft:cooked_porkchop"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b自分のHPを6回復する。"
+    ]
+  },
+  {
+    name:["minecraft:snow_golem", "minecraft:snow_golem_spawn_egg"],
+    type: "entity",
+    attribute: "なし",
+    hp: "36",
+    atk: "15",
+    Sact: "4",
+    Bact: "2",
+    text: [
+      "§b除外無効"
+    ]
+  },
+  {
+    name:["minecraft:iron_golem", "minecraft:iron_golem_spawn_egg"],
+    type: "entity",
+    attribute: "なし",
+    hp: "250",
+    atk: "30x2",
+    Sact: "80",
+    Bact: "5",
+    text: [
+      "§b召喚時効果 / 自分の場に村人がいると40act獲得する。"
+    ]
+  },
+  {
+    name:["minecraft:lit_pumpkin"],
+    type: "item",
+    attribute: "オブジェクト",
+    Cact: "20",
+    text: [
+      "§bこのカードは自分のスロットに「ゴーレム」カードが存在しないと使用/設置できない。",
+      "§6オブジェクト効果",
+      "§6設置時 / 相手のオブジェクトをジャック・オ・ランタンに変え、",
+      "§6元々設置してあったオブジェクトは自分のものになる。"
     ]
   },
   {
@@ -256,147 +510,6 @@ export const cardList = [
     ]
   },
   {
-    name:["minecraft:wither_rose"],
-    type: "item",
-    attribute: "アイテム・合成素材",
-    Cact: "0",
-    text: [
-      "§bこのカードは以下の条件下でしか使用できない。",
-      "§b・相手のスロットがすべて埋まっている。",
-      "§b・自分の場にモブがいない。",
-      "§b・相手のactが30以上",
-      "§b・自分のactが10以下",
-      "§b使用時 / 使用者のactを40にする。相手のactを30にする。自分は8ダメージを受ける。",
-      "§b草ブロックを3つ入手する。 相手の場のすべてのモブに20ダメージを与える。",
-      "§bこのダメージは相手の属性の影響を受けない。",
-      "§b+白い羊毛 = 黒い羊毛"
-    ]
-  },
-  {
-    name:["minecraft:zombie_pigman", "minecraft:zombie_pigman_spawn_egg"],
-    type: "entity",
-    attribute: "なし",
-    hp: "20",
-    atk: "20x2",
-    Sact: "10",
-    Bact: "15",
-    text: [
-      "§b召喚時効果 / 草ブロックを2つ獲得。",
-      "§b装備がなくても防御力が2ある。",
-    ]
-  },
-  {
-    name:["minecraft:wither_skeleton", "minecraft:wither_skeleton_spawn_egg"],
-    type: "entity",
-    attribute: "なし",
-    hp: "60",
-    atk: "15x3",
-    Sact: "20",
-    Bact: "10",
-    text: []
-  },
-  {
-    name:["minecraft:crying_obsidian"],
-    type: "item",
-    attribute: "アイテム・オブジェクト",
-    Cact: "10",
-    text: [
-      "§b使用時 / 自分のモブに使用した次の相手ターンにそのモブが死亡すると、",
-      "§bそのスロットにゾンビピッグマンを召喚する。",
-      "§6オブジェクト効果 / 相手のターンに自分のブタが死亡するとそのスロットに",
-      "§6ゾンビピッグマンを召喚する。"
-    ]
-  },
-  {
-    name:["minecraft:strider", "minecraft:strider_spawn_egg"],
-    type: "entity",
-    attribute: "なし",
-    hp: "32",
-    atk: "0",
-    Sact: "25",
-    Bact: "25",
-    text: [
-      "§b召喚時効果 / 「鞍」を1つ入手する。"
-    ]
-  },
-  {
-    name:["minecraft:lava_bucket"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "25",
-    text: [
-      "§b使用時 / 相手プレイヤーに4ダメージを与えて",
-      "§bその後「泣く黒曜石」と「ジャガイモ」を入手する。"
-    ]
-  },
-  {
-    name:["minecraft:blaze", "minecraft:blaze_spawn_egg"],
-    type: "entity",
-    attribute: "浮遊",
-    hp: "20",
-    atk: "30",
-    Sact: "30",
-    Bact: "15",
-    text: [
-      "§b相手がドローするたびに相手に1ダメージ与える。",
-      "§b何体いてもダメージは重ならない。"
-    ]
-  },
-  {
-    name:["minecraft:netherite_ingot"],
-    type: "item",
-    attribute: "合成素材",
-    Cact: "-",
-    text: [
-      "§b木の剣と合成できる。",
-      "§b合成するためには20act消費する必要がある。"
-    ]
-  },
-  {
-    name:["minecraft:porkchop"],
-    type: "item",
-    attribute: "合成素材",
-    Cact: "-",
-    text: [
-      "§bそのままオオカミに使用できる。",
-      "§b+石炭 = 焼き豚",
-      "§b+ゾンビ = ゾンビピッグマン"
-    ]
-  },
-  {
-    name:["minecraft:cooked_porkchop"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "0",
-    text: [
-      "§b自分のHPを6回復する。"
-    ]
-  },
-  {
-    name:["minecraft:snow_golem", "minecraft:snow_golem_spawn_egg"],
-    type: "entity",
-    attribute: "なし",
-    hp: "36",
-    atk: "15",
-    Sact: "4",
-    Bact: "2",
-    text: [
-      "§b除外無効"
-    ]
-  },
-  {
-    name:["minecraft:iron_golem", "minecraft:iron_golem_spawn_egg"],
-    type: "entity",
-    attribute: "なし",
-    hp: "250",
-    atk: "30x2",
-    Sact: "80",
-    Bact: "5",
-    text: [
-      "§b召喚時効果 / 自分の場に村人がいると40act獲得する。"
-    ]
-  },
-  {
     name:["minecraft:husk", "minecraft:husk_spawn_egg"],
     type: "entity",
     attribute: "ガード",
@@ -444,17 +557,6 @@ export const cardList = [
     ]
   },
   {
-    name:["minecraft:saddle"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "0",
-    text: [
-      "§b自分の場にストライダーがいるときのみ使える。",
-      "§b使用時 / 相手のモンスター1体と",
-      "§b自分の場のすべてのストライダーを除外する。"
-    ]
-  },
-  {
     name:["minecraft:web"],
     type: "item",
     attribute: "アイテム",
@@ -464,201 +566,120 @@ export const cardList = [
     ]
   },
   {
-    name:["minecraft:wooden_sword"],
+    name:["minecraft:zombie_pigman", "minecraft:zombie_pigman_spawn_egg"],
+    type: "entity",
+    attribute: "なし",
+    hp: "20",
+    atk: "20x2",
+    Sact: "10",
+    Bact: "15",
+    text: [
+      "§b召喚時効果 / 草ブロックを2つ獲得。",
+      "§b装備がなくても防御力が2ある。",
+    ]
+  },
+  {
+    name:["minecraft:wither_skeleton", "minecraft:wither_skeleton_spawn_egg"],
+    type: "entity",
+    attribute: "なし",
+    hp: "60",
+    atk: "15x3",
+    Sact: "20",
+    Bact: "10",
+    text: []
+  },
+  {
+    name:["minecraft:crying_obsidian"],
     type: "item",
-    attribute: "アイテム",
+    attribute: "アイテム・オブジェクト",
+    Cact: "10",
+    text: [
+      "§b使用時 / 自分のモブに使用した次の相手ターンにそのモブが死亡すると、",
+      "§bそのスロットにゾンビピッグマンを召喚する。",
+      "§6オブジェクト効果 / 相手のターンに自分のブタが死亡するとそのスロットに",
+      "§6ゾンビピッグマンを召喚する。"
+    ]
+  },
+  {
+    name:["minecraft:wither_rose"],
+    type: "item",
+    attribute: "アイテム・合成素材",
     Cact: "0",
     text: [
-      "§b攻撃力: 5",
-      "§bプレイヤーに与えるダメージは1。",
-      "§b+丸石 = 石の剣",
-      "§b+鉄のインゴット = 鉄の剣",
-      "§b+ダイヤモンド = ダイヤモンドの剣",
-      "§b+ネザライトインゴット+20act = ネザライトの剣"
+      "§bこのカードは以下の条件下でしか使用できない。",
+      "§b・相手のスロットがすべて埋まっている。",
+      "§b・自分の場にモブがいない。",
+      "§b・相手のactが30以上",
+      "§b・自分のactが10以下",
+      "§b使用時 / 使用者のactを40にする。相手のactを30にする。自分は8ダメージを受ける。",
+      "§b草ブロックを3つ入手する。 相手の場のすべてのモブに20ダメージを与える。",
+      "§bこのダメージは相手の属性の影響を受けない。",
+      "§b+白い羊毛 = 黒い羊毛"
     ]
   },
   {
-    name:["minecraft:stone_sword"],
+    name:["minecraft:strider", "minecraft:strider_spawn_egg"],
+    type: "entity",
+    attribute: "なし",
+    hp: "32",
+    atk: "0",
+    Sact: "25",
+    Bact: "25",
+    text: [
+      "§b召喚時効果 / 「鞍」を1つ入手する。"
+    ]
+  },
+  {
+    name:["minecraft:lava_bucket"],
     type: "item",
     attribute: "アイテム",
-    Cact: "0",
+    Cact: "25",
     text: [
-      "§b攻撃力: 15",
-      "§bプレイヤーに与えるダメージは3。",
-      "§bターン終了時に消滅する。"
+      "§b使用時 / 相手プレイヤーに4ダメージを与えて",
+      "§bその後「泣く黒曜石」と「ジャガイモ」を入手する。"
     ]
   },
   {
-    name:["minecraft:golden_sword"],
+    name:["minecraft:potato"],
     type: "item",
     attribute: "アイテム",
-    Cact: "0",
+    Cact: "40",
     text: [
-      "§b攻撃力: 20",
-      "§bプレイヤーに与えるダメージは4。",
-      "§bターン終了時に消滅する。"
+      "§b使用時 / なぜか「ブレイズ」を召喚できる。"
     ]
   },
   {
-    name:["minecraft:iron_sword"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "0",
+    name:["minecraft:blaze", "minecraft:blaze_spawn_egg"],
+    type: "entity",
+    attribute: "浮遊",
+    hp: "20",
+    atk: "30",
+    Sact: "30",
+    Bact: "15",
     text: [
-      "§b攻撃力: 30",
-      "§bプレイヤーに与えるダメージは6。",
-      "§bターン終了時に消滅する。"
+      "§b相手がドローするたびに相手に1ダメージ与える。",
+      "§b何体いてもダメージは重ならない。"
     ]
   },
   {
-    name:["minecraft:diamond_sword"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "0",
-    text: [
-      "§b攻撃力: 50",
-      "§bプレイヤーに与えるダメージは10。",
-      "§bターン終了時に消滅する。"
-    ]
-  },
-  {
-    name:["minecraft:netherite_sword"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "0",
-    text: [
-      "§b攻撃力: 70",
-      "§bプレイヤーに与えるダメージは14。",
-      "§bターン終了時に消滅する。"
-    ]
-  },
-  {
-    name:["minecraft:wooden_pickaxe"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "0",
-    text: [
-      "§b使用時 / 丸石と石炭を入手する。",
-      "§b+丸石 = 石のツルハシ",
-      "§b+鉄のインゴット = 鉄のツルハシ"
-    ]
-  },
-  {
-    name:["minecraft:stone_pickaxe"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "0",
-    text: [
-      "§b使用時 / 鉄インゴットを入手する。"
-    ]
-  },
-  {
-    name:["minecraft:iron_pickaxe"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "0",
-    text: [
-      "§bダイヤモンドを入手する。"
-    ]
-  },
-  {
-    name:["minecraft:cobblestone"],
-    type: "item",
-    attribute: "合成素材",
-    Cact: "-",
-    text:[
-      "§b+木の剣 = 石の剣",
-      "§b+木のツルハシ = 石のツルハシ"
-    ]
-  },
-  {
-    name:["minecraft:iron_ingot"],
+    name:["minecraft:netherite_ingot"],
     type: "item",
     attribute: "合成素材",
     Cact: "-",
     text: [
-      "§b+木の剣 = 鉄の剣",
-      "§b+木のツルハシ = 鉄のツルハシ"
+      "§b木の剣と合成できる。",
+      "§b合成するためには20act消費する必要がある。"
     ]
   },
   {
-    name:["minecraft:diamond"],
-    type: "item",
-    attribute: "合成素材",
-    Cact: "-",
-    text: [
-      "§b+木の剣 = ダイヤモンドの剣",
-    ]
-  },
-  {
-    name:["minecraft:coal"],
-    type: "item",
-    attribute: "合成素材",
-    Cact: "-",
-    text: [
-      "§b+生の豚肉 = 焼き豚",
-      "§b+スケルトン = ウィザースケルトン",
-      "§b+くり抜かれたカボチャ = ジャック・オ・ランタン" 
-    ]
-  },
-  {
-    name:["minecraft:arrow"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "2",
-    text: [
-      "§b使用時 / 相手1体に30ダメージ",
-      "§b浮遊している敵にも当たる。",
-      "§bまた、相手スロットにモブがいてもプレイヤーを攻撃できる。",
-      "§bプレイヤーに与えるダメージは1になる。",
-      "§bターン終了時に消滅する。"
-    ]
-  },
-  {
-    name:["minecraft:carrot_on_a_stick"],
+    name:["minecraft:saddle"],
     type: "item",
     attribute: "アイテム",
     Cact: "0",
     text: [
-      "§b使用時 / 自分のモブを1体除外してスロットを空けることができる。",
-      "§bこの効果は除外無効のモブにも有効である。"
-    ]
-  },
-  {
-    name:["minecraft:compass"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "-",
-    text: [
-      "§b使用時 / 自分のターンを終了する。"
-    ]
-  },
-  {
-    name:["minecraft:spyglass"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "-",
-    text: [
-      "§b遠くを見るための道具。"
-    ]
-  },
-  {
-    name:["minecraft:grass_block"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "-",
-    text: [
-      "§bドローするのに必要なアイテム。"
-    ]
-  },
-  {
-    name:["minecraft:wither_skeleton_skull"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "300",
-    text: [
-      "§b使用時 / ウィザーを召喚する。",
-      "§bウィザーの召喚に成功したとき、あなたは勝利する。"
+      "§b自分の場にストライダーがいるときのみ使える。",
+      "§b使用時 / 相手のモンスター1体と",
+      "§b自分の場のすべてのストライダーを除外する。"
     ]
   },
   {
@@ -732,7 +753,7 @@ export const cardList = [
     attribute: "なし",
     hp: "10",
     atk: "0",
-    Sact: "20",
+    Sact: "30",
     Bact: "1",
     text: [
       "§b召喚時効果 / 相手の場にオブジェクトがある時、相手のオブジェクトを破壊し、",
@@ -760,9 +781,8 @@ export const cardList = [
     Sact: "50",
     Bact: "8",
     text: [
-      "§bターン終了時効果 / 相手プレイヤーの手札に「氷塊」を4枚加える。",
-      "§b自分の場にスノーゴレームがいる場合、さらに追加で4枚相手の手札に加える。",
-      "§bこれらの効果はホッキョクグマ、スノーゴーレムが複数体いても効果は重ならない。"
+      "§bターン終了時効果 / 相手の手札に「氷塊」を4枚加える。",
+      "§b自分の場に存在するスノーゴレーム1体につき追加で4枚相手の手札に「氷塊」を加える。"
     ]
   },
   {
@@ -1033,24 +1053,4 @@ export const cardList = [
       "§bターン開始時効果 / 矢を1つ入手する。"
     ]
   },
-  {
-    name:["minecraft:potato"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "40",
-    text: [
-      "§b使用時 / なぜか「ブレイズ」を召喚できる。"
-    ]
-  },
-  {
-    name:["minecraft:lit_pumpkin"],
-    type: "item",
-    attribute: "オブジェクト",
-    Cact: "20",
-    text: [
-      "§6オブジェクト効果",
-      "§6設置時 / 相手のオブジェクトをジャック・オ・ランタンに変え、",
-      "§6元々設置してあったオブジェクトは自分のものになる。"
-    ]
-  }
 ]

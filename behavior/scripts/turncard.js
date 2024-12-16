@@ -295,7 +295,7 @@ export const turnMob = {
     run: (newPlayer, oldPlayer, entity) => {
       if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
         let snowgolems = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:snow_golem", tags:[(entity.hasTag("red")?"red":"blue")]});
-        let ice = new mc.ItemStack("minecraft:packed_ice", (snowgolems.length > 0 ? 8 : 4));
+        let ice = new mc.ItemStack("minecraft:packed_ice", 4 + snowgolems.length * 4);
         ice.lockMode = mc.ItemLockMode.inventory;
         /**
          * @type {mc.Container}
