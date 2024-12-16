@@ -381,8 +381,10 @@ function start(){
                 //タイトル表示
                 first.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                 second.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
-                mc.world.getPlayers().forEach(player=>{
+                mc.world.getPlayers({excludeTags:["red", "blue"]}).forEach(player=>{
                   player.onScreenDisplay.setTitle("§bDUEL §cSTART",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
+                })
+                mc.world.getPlayers().forEach(player=>{
                   player.onScreenDisplay.updateSubtitle(`Turn ${mc.world.getDynamicProperty("turn")}`);
                 })
                 mc.world.sendMessage((first.hasTag("red")?"§c":"§b")+first.nameTag+"§rが先攻です。");
