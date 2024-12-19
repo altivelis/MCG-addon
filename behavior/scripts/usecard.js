@@ -172,7 +172,7 @@ export const useCard = {
               `§r[${swordName[sword.slice(10)]}]`
             ])
             applyDamage(target,swordDamage[sword.slice(10)]);
-            target.dimension.playSound("random.glass", target.location, {volume: 3});
+            target.dimension.playSound("random.glass", target.location, {volume: 10});
           })
           break;
         case W:
@@ -189,7 +189,7 @@ export const useCard = {
               `§r[${swordName[sword.slice(10)]}]`
             ])
             applyDamage(target,swordDamage[sword.slice(10)]);
-            target.dimension.playSound("random.glass", target.location, {volume: 3});
+            target.dimension.playSound("random.glass", target.location, {volume: 10});
           })
           break;
         case R:
@@ -206,7 +206,7 @@ export const useCard = {
               `§r[${swordName[sword.slice(10)]}]`
             ])
             applyDamage(target,swordDamage[sword.slice(10)]);
-            target.dimension.playSound("random.glass", target.location, {volume: 3});
+            target.dimension.playSound("random.glass", target.location, {volume: 10});
           })
           break;
         case P:
@@ -224,7 +224,7 @@ export const useCard = {
               `§r[${swordName[sword.slice(10)]}]`
             ])
             applyDamage(enemy, swordDamage[sword.slice(10)] / 5);
-            enemy.dimension.playSound("random.glass", enemy.location, {volume: 3});
+            enemy.dimension.playSound("random.glass", enemy.location, {volume: 10});
           })
           break;
         case O:
@@ -355,7 +355,7 @@ export const useCard = {
           sendPlayerMessage(player, "ニンジン付きの棒を使用しました");
           decrementSlot(player, player.selectedSlotIndex);
           targets.forEach(target=>{
-            target.dimension.playSound("random.fizz", target.location, {volume: 3});
+            target.dimension.playSound("random.fizz", target.location, {volume: 10});
             target.kill();
           })
           break;
@@ -368,7 +368,7 @@ export const useCard = {
           sendPlayerMessage(player, "ニンジン付きの棒を使用しました");
           decrementSlot(player, player.selectedSlotIndex);
           targets.forEach(target=>{
-            target.dimension.playSound("random.fizz", target.location, {volume: 3});
+            target.dimension.playSound("random.fizz", target.location, {volume: 10});
             target.kill();
           })
           break;
@@ -381,7 +381,7 @@ export const useCard = {
           sendPlayerMessage(player, "ニンジン付きの棒を使用しました");
           decrementSlot(player, player.selectedSlotIndex);
           targets.forEach(target=>{
-            target.dimension.playSound("random.fizz", target.location, {volume: 3});
+            target.dimension.playSound("random.fizz", target.location, {volume: 10});
             target.kill();
           })
           break;
@@ -414,7 +414,7 @@ export const useCard = {
           }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("random.bow", player.location, {volume: 3});
+          player.dimension.playSound("random.bow", player.location, {volume: 10});
           decrementContainer(player, "minecraft:packed_ice");
           targets.forEach(target=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
@@ -432,7 +432,7 @@ export const useCard = {
           }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("random.bow", player.location, {volume: 3});
+          player.dimension.playSound("random.bow", player.location, {volume: 10});
           decrementContainer(player, "minecraft:packed_ice");
           targets.forEach(target=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
@@ -450,7 +450,7 @@ export const useCard = {
           }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("random.bow", player.location, {volume: 3});
+          player.dimension.playSound("random.bow", player.location, {volume: 10});
           decrementContainer(player, "minecraft:packed_ice");
           targets.forEach(target=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
@@ -463,7 +463,7 @@ export const useCard = {
         case P:
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("random.bow", player.location, {volume: 3});
+          player.dimension.playSound("random.bow", player.location, {volume: 10});
           decrementContainer(player, "minecraft:packed_ice");
           let enemies = mc.world.getDimension("minecraft:overworld").getPlayers({tags:[(player.hasTag("red")?"blue":"red")]});
           enemies.forEach(enemy=>{
@@ -494,7 +494,7 @@ export const useCard = {
          */
         (mob)=>{
         sendPlayerMessage(player, "ブタを召喚しました");
-        mob.dimension.playSound("mob.chicken.plop", mob.location, {volume: 3});
+        mob.dimension.playSound("mob.chicken.plop", mob.location, {volume: 10});
         giveItem(player, new mc.ItemStack("minecraft:porkchop"));
         player.sendMessage("[入手] 生の豚肉");
       });
@@ -513,7 +513,7 @@ export const useCard = {
          */
         (mob)=>{
         sendPlayerMessage(player, "村人を召喚しました");
-        mob.dimension.playSound("mob.chicken.plop", mob.location, {volume: 3});
+        mob.dimension.playSound("mob.chicken.plop", mob.location, {volume: 10});
         giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
         player.sendMessage("[入手] 草ブロック x2");
       });
@@ -541,7 +541,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "チェストを使用しました");
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("random.chestopen", player.location, {volume: 3});
+          player.dimension.playSound("random.chestopen", player.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:wooden_sword"));
           player.sendMessage("[入手] 木の剣");
           giveItem(player, new mc.ItemStack("minecraft:wooden_pickaxe"));
@@ -554,7 +554,7 @@ export const useCard = {
           sendPlayerMessage(player, "チェストを設置しました");
           decrementSlot(player, player.selectedSlotIndex);
           setObject(player, "minecraft:chest");
-          player.dimension.playSound("random.chestopen", player.location, {volume: 3});
+          player.dimension.playSound("random.chestopen", player.location, {volume: 10});
           break;
       }
     }
@@ -581,7 +581,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "くり抜かれたカボチャを使用しました");
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("pumpkin.carve", player.location, {volume: 3});
+          player.dimension.playSound("pumpkin.carve", player.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:snow_golem_spawn_egg"));
           player.sendMessage("[入手] スノーゴーレム");
           giveItem(player, new mc.ItemStack("minecraft:iron_golem_spawn_egg"));
@@ -606,7 +606,7 @@ export const useCard = {
          */
         (mob)=>{
         sendPlayerMessage(player, "オオカミを召喚しました");
-        mob.dimension.playSound("beacon.activate", mob.location, {volume: 3});
+        mob.dimension.playSound("beacon.activate", mob.location, {volume: 10});
         giveSword(player, getCard(mob.typeId).atk, "速攻効果");
       });
     }
@@ -633,7 +633,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "鐘を使用しました");
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("block.bell.hit", player.location, {volume: 3});
+          player.dimension.playSound("block.bell.hit", player.location, {volume: 10});
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
             if(entity.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
               applyDamage(entity, 999, {cause: mc.EntityDamageCause.magic});
@@ -649,7 +649,7 @@ export const useCard = {
           sendPlayerMessage(player, "鐘を設置しました");
           decrementSlot(player, player.selectedSlotIndex);
           setObject(player, "minecraft:bell");
-          player.dimension.playSound("block.bell.hit", player.location, {volume: 3});
+          player.dimension.playSound("block.bell.hit", player.location, {volume: 10});
           break;
       }
     }
@@ -669,7 +669,7 @@ export const useCard = {
         sendPlayerMessage(player, "アレイを召喚しました");
         mob.addTag("fly");
         mob.teleport({...mob.location, y: mob.location.y + 1});
-        mob.dimension.playSound("beacon.activate", mob.location, {volume: 3});
+        mob.dimension.playSound("beacon.activate", mob.location, {volume: 10});
         giveSword(player, getCard(mob.typeId).atk, "速攻効果");
       })
     }
@@ -687,7 +687,7 @@ export const useCard = {
          */
         (mob)=>{
         sendPlayerMessage(player, "パンダを召喚しました");
-        mob.dimension.playSound("random.explode", mob.location, {volume: 3});
+        mob.dimension.playSound("random.explode", mob.location, {volume: 10});
         mob.addTag("protect");
         mc.world.getPlayers().forEach(p=>{
           p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "パンダ"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
@@ -713,7 +713,7 @@ export const useCard = {
           }
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "生の豚肉を使用しました");
-          wolf[0].dimension.playSound("mob.wolf.bark", wolf[0].location, {volume: 3});
+          wolf[0].dimension.playSound("mob.wolf.bark", wolf[0].location, {volume: 10});
           giveSword(player, getCard(wolf[0].typeId).atk, "オオカミ効果");
           break;
         case W:
@@ -724,7 +724,7 @@ export const useCard = {
           }
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "生の豚肉を使用しました");
-          wolf[0].dimension.playSound("mob.wolf.bark", wolf[0].location, {volume: 3});
+          wolf[0].dimension.playSound("mob.wolf.bark", wolf[0].location, {volume: 10});
           giveSword(player, getCard(wolf[0].typeId).atk, "オオカミ効果");
           break;
         case R:
@@ -735,7 +735,7 @@ export const useCard = {
           }
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "生の豚肉を使用しました");
-          wolf[0].dimension.playSound("mob.wolf.bark", wolf[0].location, {volume: 3});
+          wolf[0].dimension.playSound("mob.wolf.bark", wolf[0].location, {volume: 10});
           giveSword(player, getCard(wolf[0].typeId).atk, "オオカミ効果");
           break;
         case P:
@@ -761,7 +761,7 @@ export const useCard = {
         case P:
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "焼き豚を使用しました");
-          player.dimension.playSound("random.eat", player.location, {volume: 3});
+          player.dimension.playSound("random.eat", player.location, {volume: 10});
           /**
            * @type {mc.EntityHealthComponent}
            */
@@ -788,7 +788,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "スノーゴーレムを召喚しました");
-          mob.dimension.playSound("beacon.activate", mob.location, {volume: 3});
+          mob.dimension.playSound("beacon.activate", mob.location, {volume: 10});
           mob.addTag("protect");
         }
       )
@@ -807,7 +807,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "アイアンゴーレムを召喚しました");
-          mob.dimension.playSound("beacon.power", mob.location, {volume: 3});
+          mob.dimension.playSound("beacon.power", mob.location, {volume: 10});
           mc.world.getPlayers().forEach(p=>{
             p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "アイアンゴーレム"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
             p.onScreenDisplay.updateSubtitle("§3村の守護神");
@@ -833,7 +833,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ゾンビを召喚しました");
-          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 3});
+          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
           player.sendMessage("[入手] 草ブロック x2");
         }
@@ -853,7 +853,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "スケルトンを召喚しました");
-          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 3});
+          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:arrow"));
           player.sendMessage("[入手] 矢");
         }
@@ -873,7 +873,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "クリーパーを召喚しました");
-          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 3});
+          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
           mob.addTag("guard");
         }
       )
@@ -892,7 +892,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ウィッチを召喚しました");
-          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 3});
+          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
         }
       )
     }
@@ -919,7 +919,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "モンスタースポナーを使用しました");
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("trial_spawner.open_shutter", player.location, {volume: 3});
+          player.dimension.playSound("trial_spawner.open_shutter", player.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:husk_spawn_egg"));
           player.sendMessage("[入手] ハスク");
           giveItem(player, new mc.ItemStack("minecraft:stray_spawn_egg"));
@@ -931,7 +931,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "モンスタースポナーを設置しました");
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("trial_spawner.open_shutter", player.location, {volume: 3});
+          player.dimension.playSound("trial_spawner.open_shutter", player.location, {volume: 10});
           setObject(player, "minecraft:mob_spawner");
           return;
       }
@@ -952,7 +952,7 @@ export const useCard = {
           sendPlayerMessage(player, "ファントムを召喚しました");
           mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
-          mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 3});
+          mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 10});
           giveSword(player, getCard(mob.typeId).atk, "速攻効果");
         }
       )
@@ -973,7 +973,7 @@ export const useCard = {
           sendPlayerMessage(player, "ブリーズを召喚しました");
           mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
-          mob.dimension.playSound("wind_charge.burst", mob.location, {volume: 3});
+          mob.dimension.playSound("wind_charge.burst", mob.location, {volume: 10});
           mob.dimension.spawnParticle("minecraft:breeze_wind_explosion_emitter", mob.location);
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:item"]}).forEach(entity=>{
             if(entity.id == mob.id) return;
@@ -1010,7 +1010,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "エンダーチェストを使用しました");
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("random.enderchestopen", player.location, {volume: 3});
+          player.dimension.playSound("random.enderchestopen", player.location, {volume: 10});
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")], excludeTags:["fly", "guard"]}).forEach(entity=>{
             applyDamage(entity, 10);
           })
@@ -1037,7 +1037,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "エンダーチェストを設置しました");
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("random.enderchestopen", player.location, {volume: 3});
+          player.dimension.playSound("random.enderchestopen", player.location, {volume: 10});
           setObject(player, "minecraft:ender_chest");
           return;
       }
@@ -1056,7 +1056,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ハスクを召喚しました");
-          mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 3});
+          mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 10});
           mob.addTag("guard");
         }
       )
@@ -1075,7 +1075,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ストレイを召喚しました");
-          mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 3});
+          mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:arrow", 2));
           player.sendMessage("[入手] 矢 x2");
         }
@@ -1095,7 +1095,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "洞窟グモを召喚しました");
-          mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 3});
+          mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:web"));
           player.sendMessage("[入手] クモの巣");
         }
@@ -1124,7 +1124,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "エンチャントされた金のリンゴを使用しました");
-          player.dimension.playSound("random.eat", player.location, {volume: 3});
+          player.dimension.playSound("random.eat", player.location, {volume: 10});
           player.addEffect(mc.EffectTypes.get("minecraft:health_boost"), 20000000, {amplifier: 4, showParticles: false});
           player.getComponent(mc.EntityHealthComponent.componentId).setCurrentValue(40);
           break;
@@ -1151,7 +1151,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "クモの巣を使用しました");
           sendPlayerMessage(player, "相手にクモの巣が絡まる！");
-          player.dimension.playSound("step.web", player.location, {volume: 3});
+          player.dimension.playSound("step.web", player.location, {volume: 10});
           mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]}).forEach(enemy=>{
             addAct(enemy, -15)
           })
@@ -1175,7 +1175,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ゾンビピッグマンを召喚しました");
-          mob.dimension.playSound("mob.blaze.shoot", mob.location, {volume: 3});
+          mob.dimension.playSound("mob.blaze.shoot", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
           player.sendMessage("[入手] 草ブロック x2");
           if(!player.hasTag("nether")){
@@ -1201,7 +1201,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ウィザースケルトンを召喚しました");
-          mob.dimension.playSound("mob.blaze.shoot", mob.location, {volume: 3});
+          mob.dimension.playSound("mob.blaze.shoot", mob.location, {volume: 10});
           if(!player.hasTag("nether")){
             player.addTag("nether");
             player.sendMessage("ネザーカードがドロー可能になりました");
@@ -1235,7 +1235,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "泣く黒曜石を使用しました");
-          player.dimension.playSound("mob.ghast.scream", player.location, {volume: 3});
+          player.dimension.playSound("mob.ghast.scream", player.location, {volume: 10});
           entities[0].addTag("call_pigman");
           break;
         case W:
@@ -1247,7 +1247,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "泣く黒曜石を使用しました");
-          player.dimension.playSound("mob.ghast.scream", player.location, {volume: 3});
+          player.dimension.playSound("mob.ghast.scream", player.location, {volume: 10});
           entities[0].addTag("call_pigman");
           break;
         case R:
@@ -1259,7 +1259,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "泣く黒曜石を使用しました");
-          player.dimension.playSound("mob.ghast.scream", player.location, {volume: 3});
+          player.dimension.playSound("mob.ghast.scream", player.location, {volume: 10});
           entities[0].addTag("call_pigman");
           break;
         case P:
@@ -1308,7 +1308,7 @@ export const useCard = {
           }
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "ウィザーローズを使用しました");
-          player.dimension.playSound("mob.wither.shoot", player.location, {volume: 3});
+          player.dimension.playSound("mob.wither.shoot", player.location, {volume: 10});
           setAct(player, 40);
           setAct(enemy, 30);
           applyDamage(player, 8, {cause:mc.EntityDamageCause.wither});
@@ -1337,7 +1337,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ストライダーを召喚しました");
-          mob.dimension.playSound("respawn_anchor.charge", mob.location, {volume: 3});
+          mob.dimension.playSound("respawn_anchor.charge", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:saddle"));
           player.sendMessage("[入手] 鞍");
         }
@@ -1366,7 +1366,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "溶岩入りバケツを使用しました");
-          player.dimension.playSound("bucket.fill_lava", player.location, {volume: 3});
+          player.dimension.playSound("bucket.fill_lava", player.location, {volume: 10});
           mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]}).forEach(enemy=>{
             applyDamage(enemy, 4, {cause:mc.EntityDamageCause.lava});
           })
@@ -1397,7 +1397,7 @@ export const useCard = {
           sendPlayerMessage(player, "ブレイズを召喚しました");
           mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
-          mob.dimension.playSound("respawn_anchor.charge", mob.location, {volume: 3});
+          mob.dimension.playSound("respawn_anchor.charge", mob.location, {volume: 10});
           mc.world.getPlayers().forEach(p=>{
             p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "ブレイズ"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
             p.onScreenDisplay.updateSubtitle("§3上手に揚がりました!!");
@@ -1430,7 +1430,7 @@ export const useCard = {
           sendPlayerMessage(player, "鞍を使用しました");
           myStriders.forEach(strider=>{
             if(!strider.hasTag("protect")) strider.kill();
-            strider.dimension.playSound("random.fizz", strider.location, {volume: 3});
+            strider.dimension.playSound("random.fizz", strider.location, {volume: 10});
           })
           target.forEach(entity=>{
             if(!entity.hasTag("protect")) entity.kill();
@@ -1446,7 +1446,7 @@ export const useCard = {
           sendPlayerMessage(player, "鞍を使用しました");
           myStriders.forEach(strider=>{
             if(!strider.hasTag("protect")) strider.kill();
-            strider.dimension.playSound("random.fizz", strider.location, {volume: 3});
+            strider.dimension.playSound("random.fizz", strider.location, {volume: 10});
           })
           target.forEach(entity=>{
             if(!entity.hasTag("protect")) entity.kill();
@@ -1462,7 +1462,7 @@ export const useCard = {
           sendPlayerMessage(player, "鞍を使用しました");
           myStriders.forEach(strider=>{
             if(!strider.hasTag("protect")) strider.kill();
-            strider.dimension.playSound("random.fizz", strider.location, {volume: 3});
+            strider.dimension.playSound("random.fizz", strider.location, {volume: 10});
           })
           target.forEach(entity=>{
             if(!entity.hasTag("protect")) entity.kill();
@@ -1488,7 +1488,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ニワトリを召喚しました");
-          mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 3});
+          mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:egg"));
           player.sendMessage("[入手] 卵");
         }
@@ -1508,7 +1508,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "オウムを召喚しました");
-          mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 3});
+          mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 10});
           mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
           giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
@@ -1557,7 +1557,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "ミツバチの巣を使用しました");
-          player.dimension.playSound("block.beehive.enter", player.location, {volume: 3});
+          player.dimension.playSound("block.beehive.enter", player.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:bee_spawn_egg", 2));
           player.sendMessage("[入手] ミツバチ x2");
           break;
@@ -1565,7 +1565,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "ミツバチの巣を設置しました");
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("block.beehive.enter", player.location, {volume: 3});
+          player.dimension.playSound("block.beehive.enter", player.location, {volume: 10});
           setObject(player, "minecraft:bee_nest");
           return;
       }
@@ -1593,7 +1593,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "コンポスターを使用しました");
-          player.dimension.playSound("block.composter.ready", player.location, {volume: 3});
+          player.dimension.playSound("block.composter.ready", player.location, {volume: 10});
           giveItem(player, new mc.ItemStack("wooden_pickaxe"));
           player.sendMessage("[入手] 木のツルハシ");
           giveItem(player, new mc.ItemStack("minecraft:wooden_hoe"));
@@ -1605,7 +1605,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "コンポスターを設置しました");
           decrementSlot(player, player.selectedSlotIndex);
-          player.dimension.playSound("block.composter.ready", player.location, {volume: 3});
+          player.dimension.playSound("block.composter.ready", player.location, {volume: 10});
           setObject(player, "minecraft:composter");
           return;
       }
@@ -1624,7 +1624,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "キツネを召喚しました");
-          mob.dimension.playSound("dig.grass", mob.location, {volume: 3});
+          mob.dimension.playSound("dig.grass", mob.location, {volume: 10});
           giveSword(player, getCard(mob.typeId).atk, "速攻効果");
           let object = getObject(player.hasTag("red")?"red":"blue");
           if(object?.typeId != "minecraft:air"){
@@ -1648,7 +1648,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "カエルを召喚しました");
-          mob.dimension.playSound("dig.grass", mob.location, {volume: 3});
+          mob.dimension.playSound("dig.grass", mob.location, {volume: 10});
           let object = getObject(player.hasTag("red")?"blue":"red");
           if(object.typeId != "minecraft:air"){
             setObject(mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]})[0], "minecraft:air");
@@ -1674,7 +1674,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ムーシュルームを召喚しました");
-          mob.dimension.playSound("dig.grass", mob.location, {volume: 3});
+          mob.dimension.playSound("dig.grass", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:red_mushroom"));
           player.sendMessage("[入手] 赤いキノコ");
         }
@@ -1694,7 +1694,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ホッキョクグマを召喚しました");
-          mob.dimension.playSound("random.explode", mob.location, {volume: 3});
+          mob.dimension.playSound("random.explode", mob.location, {volume: 10});
           mc.world.getPlayers().forEach(p=>{
             p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "ホッキョクグマ"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
             p.onScreenDisplay.updateSubtitle("§3氷界の猛獣");
@@ -1719,7 +1719,7 @@ export const useCard = {
         case P:
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "卵を使用しました");
-          player.dimension.playSound("random.eat", player.location, {volume: 3});
+          player.dimension.playSound("random.eat", player.location, {volume: 10});
           /**
            * @type {mc.EntityHealthComponent}
            */
@@ -1840,7 +1840,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "サボテンを使用しました");
           sendPlayerMessage(player, "サボテンのトゲを撒き散らした！");
-          player.dimension.playSound("block.sweet_berry_bush.hurt", player.location, {volume: 3});
+          player.dimension.playSound("block.sweet_berry_bush.hurt", player.location, {volume: 10});
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")], excludeTags:["fly", "guard"]}).forEach(entity=>{
             applyDamage(entity, 5);
           })
@@ -1866,7 +1866,7 @@ export const useCard = {
           sendPlayerMessage(player, "ミツバチを召喚しました");
           mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
-          mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 3});
+          mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 10});
           giveSword(player, getCard(mob.typeId).atk, "速攻効果");
           if(getObject(player.hasTag("red")?"red":"blue").typeId == "minecraft:bee_nest"){
             giveItem(player, new mc.ItemStack("minecraft:honey_bottle"));
@@ -1898,7 +1898,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "木のクワを使用しました");
-          player.dimension.playSound("dig.gravel", player.location, {volume: 3});
+          player.dimension.playSound("dig.gravel", player.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:wheat"));
           player.sendMessage("[入手] 小麦");
           break;
@@ -1930,7 +1930,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "石のクワを使用しました");
-          player.dimension.playSound("dig.gravel", player.location, {volume: 3});
+          player.dimension.playSound("dig.gravel", player.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:wheat"));
           player.sendMessage("[入手] 小麦");
           giveItem(player, new mc.ItemStack("minecraft:grass_block"));
@@ -1982,7 +1982,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "鉄のクワを使用しました");
-          player.dimension.playSound("dig.gravel", player.location, {volume: 3});
+          player.dimension.playSound("dig.gravel", player.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:wheat", 2));
           player.sendMessage("[入手] 小麦 x2");
           giveItem(player, new mc.ItemStack("minecraft:grass_block", 3));
@@ -2074,7 +2074,7 @@ export const useCard = {
         case P:
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "パンを使用しました");
-          player.dimension.playSound("random.eat", player.location, {volume: 3});
+          player.dimension.playSound("random.eat", player.location, {volume: 10});
           /**
            * @type {mc.EntityHealthComponent}
            */
@@ -2104,7 +2104,7 @@ export const useCard = {
         case P:
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "ケーキを使用しました");
-          player.dimension.playSound("random.eat", player.location, {volume: 3});
+          player.dimension.playSound("random.eat", player.location, {volume: 10});
           /**
            * @type {mc.EntityHealthComponent}
            */
@@ -2134,7 +2134,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ヒツジを召喚しました");
-          mob.dimension.playSound("dig.grass", mob.location, {volume: 3});
+          mob.dimension.playSound("dig.grass", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:white_wool"));
           player.sendMessage("[入手] 白色の羊毛");
         }
@@ -2154,7 +2154,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ウシを召喚しました");
-          mob.dimension.playSound("dig.grass", mob.location, {volume: 3});
+          mob.dimension.playSound("dig.grass", mob.location, {volume: 10});
           giveItem(player, new mc.ItemStack("minecraft:milk_bucket"));
           player.sendMessage("[入手] ミルクバケツ");
         }
@@ -2178,7 +2178,7 @@ export const useCard = {
           }
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "ミルクバケツを使用しました");
-          player.dimension.playSound("random.drink", player.location, {volume: 3});
+          player.dimension.playSound("random.drink", player.location, {volume: 10});
           mobs.forEach(mob=>{
             mob.addTag("guard");
           })
@@ -2191,7 +2191,7 @@ export const useCard = {
           }
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "ミルクバケツを使用しました");
-          player.dimension.playSound("random.drink", player.location, {volume: 3});
+          player.dimension.playSound("random.drink", player.location, {volume: 10});
           mobs.forEach(mob=>{
             mob.addTag("guard");
           })
@@ -2204,7 +2204,7 @@ export const useCard = {
           }
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "ミルクバケツを使用しました");
-          player.dimension.playSound("random.drink", player.location, {volume: 3});
+          player.dimension.playSound("random.drink", player.location, {volume: 10});
           mobs.forEach(mob=>{
             mob.addTag("guard");
           })
@@ -2229,7 +2229,7 @@ export const useCard = {
          */
         (mob)=>{
           sendPlayerMessage(player, "ボグドを召喚しました");
-          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 3});
+          mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
           if(getObject(player.hasTag("red")?"red":"blue").typeId != "minecraft:air"){
             giveItem(player, new mc.ItemStack("minecraft:arrow", 3));
             player.sendMessage("[入手] 矢 x3");

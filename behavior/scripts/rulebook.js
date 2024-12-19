@@ -325,6 +325,12 @@ function form_system(player){
 
 let patch_list = [
   {
+    ver: "1.5.4",
+    description: [
+      "-効果音の聞こえる範囲を広げました。"
+    ]
+  },
+  {
     ver: "1.5.3",
     description: [
       "-頭にアイテムを置けないように変更しました。",
