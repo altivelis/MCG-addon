@@ -32,7 +32,7 @@ function summonCard(cardBlock, player, identifier, event){
   }
   if(parseInt(info.Sact) == 1 && getAct(player) == 0){
     player.sendMessage(error_act);
-    player.sendMessage("§c必要actが1のカードはオーバーコストして使用できません");
+    player.sendMessage("§cこのカードはオーバーコストして使用できません");
     return;
   }
   let mob;
@@ -122,11 +122,11 @@ export const useCard = {
         })
       }else{
         enemy = mc.world.getPlayers({tags:["red"]})[0];
-          player.camera.setCamera("minecraft:free",{
+        player.camera.setCamera("minecraft:free",{
           facingEntity: wither,
           location: {x:-11.5, y:5.0, z:0.5}
         })
-          enemy.camera.setCamera("minecraft:free",{
+        enemy.camera.setCamera("minecraft:free",{
           facingEntity: wither,
           location: {x:11.5, y:5.0, z:0.5}
         })
@@ -2270,6 +2270,53 @@ export const useCard = {
           setObject(player, mc.world.getDimension("minecraft:overworld").getBlock(player.hasTag("red")?mcg.const.blue.slot.object:mcg.const.red.slot.object)?.typeId);
           setObject(mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]})[0], "minecraft:lit_pumpkin");
           sendPlayerMessage(player, "オブジェクトが入れ替わった！");
+          return;
+      }
+    }
+  },
+  snowball: {
+    /**
+     * 雪玉
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "雪玉を使用しました");
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"],tags:[(player.hasTag("red")?"red":"blue"), "slotB"]}).length == 0){
+            let mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:snow_golem", (player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
+            mobb.addTag((player.hasTag("red") ? "red" : "blue"));
+            mobb.addTag("slotB");
+            sendPlayerMessage(player, "スノーゴーレムを召喚しました");
+            mobb.dimension.playSound("beacon.activate", mobb.location, {volume: 10});
+            mobb.addTag("protect");
+          }
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"],tags:[(player.hasTag("red")?"red":"blue"), "slotW"]}).length == 0){
+            let mobw = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:snow_golem", (player.hasTag("red") ? mcg.const.red.slot.white : mcg.const.blue.slot.white));
+            mobw.addTag((player.hasTag("red") ? "red" : "blue"));
+            mobw.addTag("slotW");
+            sendPlayerMessage(player, "スノーゴーレムを召喚しました");
+            mobw.dimension.playSound("beacon.activate", mobw.location, {volume: 10});
+            mobw.addTag("protect");
+          }
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"],tags:[(player.hasTag("red")?"red":"blue"), "slotR"]}).length == 0){
+            let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:snow_golem", (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
+            mobr.addTag((player.hasTag("red") ? "red" : "blue"));
+            mobr.addTag("slotR");
+            sendPlayerMessage(player, "スノーゴーレムを召喚しました");
+            mobr.dimension.playSound("beacon.activate", mobr.location, {volume: 10});
+            mobr.addTag("protect");
+          }
+          break;
+        case O:
+          player.sendMessage(error_slot);
           return;
       }
     }
