@@ -174,6 +174,7 @@ function initialize_config(){
   mc.world.setDynamicProperty("second_draw", 6);
   mc.world.setDynamicProperty("start_act", 5);
   mc.world.setDynamicProperty("end_act", 3);
+  mc.world.setDynamicProperty("event", false);
   mc.world.sendMessage("変数を初期化しました。")
 }
 
@@ -378,6 +379,9 @@ function start(){
                 //草ブロック配布
                 giveItem(first, new mc.ItemStack("minecraft:grass_block", mc.world.getDynamicProperty("first_draw")));
                 giveItem(second, new mc.ItemStack("minecraft:grass_block", mc.world.getDynamicProperty("second_draw")));
+                //イベントアイテム配布
+                giveItem(first, new mc.ItemStack("minecraft:snowball", 1));
+                giveItem(second, new mc.ItemStack("minecraft:snowball", 1));
                 //タイトル表示
                 first.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                 second.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
@@ -538,6 +542,9 @@ export function turnChange(){
       tp_inv.setItem(i);
     }
     if(tp_inv.getItem(i)?.typeId == "minecraft:arrow"){
+      tp_inv.setItem(i);
+    }
+    if(tp_inv.getItem(i)?.typeId == "minecraft:snowball"){
       tp_inv.setItem(i);
     }
   }

@@ -1053,4 +1053,14 @@ export const cardList = [
       "§bターン開始時効果 / 矢を1つ入手する。"
     ]
   },
+  {
+    name:["minecraft:snowball"],
+    type: "item",
+    attribute: "イベントアイテム",
+    Cact: "0",
+    text: [
+      "§b使用時 / 自分の空きスロット全てに「スノーゴーレム」を召喚する。",
+      "§bこのアイテムは自分ターン終了時に消滅する。"
+    ]
+  }
 ]
