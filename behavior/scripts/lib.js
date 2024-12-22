@@ -304,3 +304,22 @@ export function clearInventory(player){
 export function isOnline(){
   return (mc.world.getPlayers({tags:["red"]}).length > 0 && mc.world.getPlayers({tags:["blue"]}).length > 0);
 }
+
+/**
+ * 直線上にパーティクルを等間隔で生成する関数
+ * @param {mc.Dimension} dimension 
+ * @param {mc.Vector3} from 
+ * @param {mc.Vector3} to 
+ * @param {String} particleName 
+ * @param {Number} interval 
+ */
+export function lineParticle(dimension, from, to, particleName, interval){
+  let vec = {x:to.x-from.x, y:to.y-from.y, z:to.z-from.z};
+  let distance = Math.sqrt(vec.x**2 + vec.y**2 + vec.z**2);
+  let count = Math.ceil(distance / interval);
+  vec.x /= count; vec.y /= count; vec.z /= count;
+  for(let i=0; i<count; i++){
+    dimension.spawnParticle(particleName, {x:from.x+vec.x*i, y:from.y+vec.y*i, z:from.z+vec.z*i});
+  }
+  return;
+}
