@@ -380,8 +380,8 @@ function start(){
                 giveItem(first, new mc.ItemStack("minecraft:grass_block", mc.world.getDynamicProperty("first_draw")));
                 giveItem(second, new mc.ItemStack("minecraft:grass_block", mc.world.getDynamicProperty("second_draw")));
                 //イベントアイテム配布
-                giveItem(first, new mc.ItemStack("minecraft:snowball", 1));
-                giveItem(second, new mc.ItemStack("minecraft:snowball", 1));
+                if(mc.world.getDynamicProperty("event")) giveItem(first, new mc.ItemStack("minecraft:snowball", 1));
+                if(mc.world.getDynamicProperty("event")) giveItem(second, new mc.ItemStack("minecraft:snowball", 1));
                 //タイトル表示
                 first.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                 second.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});

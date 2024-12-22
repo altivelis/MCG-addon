@@ -1,20 +1,20 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
-const config_form = new ui.ModalFormData()
-  .title("設定")
-  .slider("制限時間", 30, 300, 10, mc.world.getDynamicProperty("time"))
-  .slider("先攻ドロー", 1, 10, 1, mc.world.getDynamicProperty("first_draw"))
-  .slider("後攻ドロー", 1, 10, 1, mc.world.getDynamicProperty("second_draw"))
-  .slider("ターン開始時act", 1, 20, 1, mc.world.getDynamicProperty("start_act"))
-  .slider("ターン終了時act", 1, 20, 1, mc.world.getDynamicProperty("end_act"))
-  .toggle("イベントモード", mc.world.getDynamicProperty("event"));
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:config") return;
   /**
    * @type {{sourceEntity: mc.Player}}
    */
+  const config_form = new ui.ModalFormData()
+    .title("設定")
+    .slider("制限時間", 30, 300, 10, mc.world.getDynamicProperty("time"))
+    .slider("先攻ドロー", 1, 10, 1, mc.world.getDynamicProperty("first_draw"))
+    .slider("後攻ドロー", 1, 10, 1, mc.world.getDynamicProperty("second_draw"))
+    .slider("ターン開始時act", 1, 20, 1, mc.world.getDynamicProperty("start_act"))
+    .slider("ターン終了時act", 1, 20, 1, mc.world.getDynamicProperty("end_act"))
+    .toggle("イベントモード", mc.world.getDynamicProperty("event"));
   const {sourceEntity:player} = data;
   config_form.show(player).then(res=>{
     if(res.canceled) return;
