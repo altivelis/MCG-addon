@@ -2,7 +2,7 @@
   "format_version": "1.21.50",
   "minecraft:item": {
     "description": {
-      "identifier": "mcg:voidhelmet",
+      "identifier": "mcg:damage_splash_potion",
       "menu_category": {
         "category": "equipment",
         "is_hidden_in_commands": false
@@ -12,14 +12,11 @@
       "minecraft:max_stack_size": 1,
       "minecraft:icon": {
         "textures": {
-          "default": "empty_armor_slot_helmet"
+          "default": "mcg:potion_damage_splash"
         }
       },
       "minecraft:display_name": {
-        "value": "§4使用禁止"
-      },
-      "minecraft:wearable": {
-        "slot": "slot.armor.head"
+        "value": "負傷のスプラッシュポーション"
       }
     }
   }
