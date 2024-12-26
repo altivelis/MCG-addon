@@ -1,0 +1,27 @@
+{
+  "resource_pack_name": "MCG",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "mcg:water_bottle": {
+      "textures": "textures/items/potion_bottle_drinkable"
+    },
+    "mcg:potion_heal": {
+      "textures": "textures/items/potion_bottle_heal"
+    },
+    "mcg:potion_heal_splash": {
+      "textures": "textures/items/potion_bottle_splash_heal"
+    },
+    "mcg:potion_damage": {
+      "textures": "textures/items/potion_bottle_harm"
+    },
+    "mcg:potion_damage_splash": {
+      "textures": "textures/items/potion_bottle_splash_harm"
+    },
+    "mcg:potion_speed": {
+      "textures": "textures/items/potion_bottle_moveSpeed"
+    },
+    "mcg:potion_fireresistance": {
+      "textures": "textures/items/potion_bottle_fireResistance"
+    }
+  }
+}

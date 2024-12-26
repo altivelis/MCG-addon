@@ -1,0 +1,22 @@
+{
+	"format_version": 2,
+	"header": {
+		"name": "MCGリソースver1.0.0",
+		"description": "MinecraftCardGameのリソースパック",
+		"uuid": "92bd67d1-9d60-4fa4-b60d-a9654bcd6f5e",
+		"version": [1, 0, 0],
+		"min_engine_version": [1, 21, 50]
+	},
+	"modules": [
+		{
+			"type":"resources",
+			"description":"resource_module",
+			"version":[1, 0, 0],
+			"uuid":"4301ec17-4b4f-44b1-8948-855a93793361"
+		}
+	],
+	"metadata": {
+		"authors": ["altivelis"],
+    "license": "この名前さえ残していれば改造、改変OK"
+	}
+}
