@@ -1,0 +1,104 @@
+{
+  "format_version": "1.21.50",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "minecraft:ravager",
+      "spawn_category": "monster",
+      "is_spawnable": true,
+      "is_summonable": true
+    },
+
+    "component_groups": {
+    },
+    "components": {
+      "minecraft:is_hidden_when_invisible": {
+      },
+      "minecraft:experience_reward": {
+        "on_death": "query.last_hit_by_player ? 20 : 0"
+      },
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:attack": {
+        "damage": 12.0
+      },
+      "minecraft:breathable": {
+        "suffocate_time": 0,
+        "total_supply": 15
+      },
+      "minecraft:collision_box": {
+        "height": 2.2,
+        "width": 1.95
+      },
+      "minecraft:health": {
+        "max": 100,
+        "value": 100
+      },
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "filters": {
+              "test": "in_lava", "subject": "self"
+            },
+            "cause": "lava",
+            "damage_per_tick": 4
+          }
+        ]
+      },
+      "minecraft:jump.static": {},
+      "minecraft:loot": {
+        "table": "loot_tables/entities/ravager.json"
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      },
+      "minecraft:movement": {
+        "value": 0.0
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:nameable": {},
+      "minecraft:navigation.walk": {
+        "avoid_damage_blocks": true,
+        "can_path_over_water": true,
+        "can_sink": false
+      },
+      "minecraft:physics": {
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      },
+      "minecraft:can_join_raid": {
+      },
+      "minecraft:conditional_bandwidth_optimization": {
+      },
+      "minecraft:despawn": {
+        "despawn_from_distance": {}
+      },
+      "minecraft:follow_range": {
+        "value": 64
+      },
+      "minecraft:rideable": {
+        "seat_count": 1,
+        "family_types": [
+          "pillager",
+          "vindicator",
+          "evocation_illager"
+        ],
+        "seats": {
+          "position": [ 0.0, 2.1, -0.3 ]
+        }
+      },
+      "minecraft:type_family": {
+        "family": [
+          "monster",
+          "ravager",
+          "mob"
+        ]
+      }
+    },
+
+    "events": {
+    }
+  }
+}
