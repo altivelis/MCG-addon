@@ -2315,6 +2315,29 @@ export const useCard = {
       }
     }
   },
+  trapped_chest: {
+    /**
+     * トラップチェスト
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          
+      }
+    }
+  },
   snowball: {
     /**
      * 雪玉

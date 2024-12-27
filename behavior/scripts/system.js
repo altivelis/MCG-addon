@@ -80,7 +80,7 @@ function setSign(color, player=null){
       block.getComponent(mc.BlockSignComponent.componentId).setText("\n対戦予約中\n"+"§c"+player.nameTag);
     }
     else{
-      block.getComponent(mc.BlockSignComponent.componentId).setText("\nボタンを押して"+"\n対戦予約");
+      block.getComponent(mc.BlockSignComponent.componentId).setText("\nタッチして"+"\n対戦予約");
     }
   }
   else if(color == "blue"){
@@ -90,32 +90,70 @@ function setSign(color, player=null){
       block.getComponent(mc.BlockSignComponent.componentId).setText("\n対戦予約中\n"+"§b"+player.nameTag);
     }
     else{
-      block.getComponent(mc.BlockSignComponent.componentId).setText("\nボタンを押して"+"\n対戦予約");
+      block.getComponent(mc.BlockSignComponent.componentId).setText("\nタッチして"+"\n対戦予約");
     }
   }
 }
 //ボタンを押したときの処理
-mc.world.afterEvents.buttonPush.subscribe(data=>{
-  const {block, source} = data;
-  if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-61 -53 -2"){
+// mc.world.afterEvents.buttonPush.subscribe(data=>{
+//   const {block, source} = data;
+//   if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-61 -53 -2"){
+//     if(!mcg.queue.red){
+//       mcg.queue.red = source;
+//       if(mcg.queue.blue && mcg.queue.blue.id == source.id){
+//         mcg.queue.blue = null;
+//       }
+//     }
+//     else if(mcg.queue.red && mcg.queue.red.id == source.id){
+//       mcg.queue.red = null;
+//     }
+//   }
+//   else if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-65 -53 -2"){
+//     if(!mcg.queue.blue){
+//       mcg.queue.blue = source;
+//       if(mcg.queue.red && mcg.queue.red.id == source.id){
+//         mcg.queue.red = null;
+//       }
+//     }
+//     else if(mcg.queue.blue && mcg.queue.blue.id == source.id){
+//       mcg.queue.blue = null;
+//     }
+//   }
+// })
+mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
+  const {block, faceLocation, isFirstEvent, player} = data;
+  if(!isFirstEvent) return;
+  if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-62 -53 -2"){
+    data.cancel = true;
     if(!mcg.queue.red){
-      mcg.queue.red = source;
-      if(mcg.queue.blue && mcg.queue.blue.id == source.id){
+      mcg.queue.red = player;
+      mc.system.run(()=>{
+        let variable = new mc.MolangVariableMap();
+        variable.setColorRGB("variable.color", {red:1, green:0.2, blue:0.3});
+        block.dimension.spawnParticle("mcg:custom_explosion_emitter", faceLocation, variable);
+      })
+      if(mcg.queue.blue && mcg.queue.blue.id == player.id){
         mcg.queue.blue = null;
       }
     }
-    else if(mcg.queue.red && mcg.queue.red.id == source.id){
+    else if(mcg.queue.red && mcg.queue.red.id == player.id){
       mcg.queue.red = null;
     }
   }
-  else if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-65 -53 -2"){
+  else if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-64 -53 -2"){
+    data.cancel = true;
     if(!mcg.queue.blue){
-      mcg.queue.blue = source;
-      if(mcg.queue.red && mcg.queue.red.id == source.id){
+      mcg.queue.blue = player;
+      mc.system.run(()=>{
+        let variable = new mc.MolangVariableMap();
+        variable.setColorRGB("variable.color", {red:0, green:0.7, blue:0.9});
+        block.dimension.spawnParticle("mcg:custom_explosion_emitter", faceLocation, variable);
+      })
+      if(mcg.queue.red && mcg.queue.red.id == player.id){
         mcg.queue.red = null;
       }
     }
-    else if(mcg.queue.blue && mcg.queue.blue.id == source.id){
+    else if(mcg.queue.blue && mcg.queue.blue.id == player.id){
       mcg.queue.blue = null;
     }
   }
@@ -667,5 +705,9 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:test") return;
-  data.sourceEntity.getComponent(mc.EntityHealthComponent.componentId).setCurrentValue(40);
+  /**@type {mc.ItemStack} */
+  let item = data.sourceEntity.getComponent(mc.EntityEquippableComponent.componentId).getEquipment(mc.EquipmentSlot.Mainhand);
+  item.getComponents().forEach(comp=>{
+    mc.world.sendMessage(comp.typeId);
+  })
 })
