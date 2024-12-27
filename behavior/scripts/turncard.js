@@ -348,6 +348,24 @@ export const turnMob = {
         sendPlayerMessage(newPlayer, "[ボグド] 矢を獲得");
       }
     }
+  },
+  pillager: {
+    /**
+     * 略奪者
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block", 1));
+        sendPlayerMessage(newPlayer, "[略奪者] 草ブロックを獲得");
+        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow", 2));
+        sendPlayerMessage(newPlayer, "[略奪者] 矢x2を獲得");
+        sendPlayerMessage(newPlayer, "[略奪者] スリップダメージ");
+        applyDamage(newPlayer, 2);
+      }
+    }
   }
 }
 

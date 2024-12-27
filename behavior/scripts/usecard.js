@@ -2274,6 +2274,47 @@ export const useCard = {
       }
     }
   },
+  pillager_spawn_egg: {
+    /**
+     * 略奪者
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+          player.sendMessage(error_slot);
+          return;
+        case R:
+          let villager = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:villager_v2", tags:[(player.hasTag("red")?"red":"blue"), "slotR"]});
+          if(villager.length == 0){
+            player.sendMessage("§c赤スロットに村人が存在しないため使用できません。");
+            return;
+          }
+          summonCard(cardBlock, player, "minecraft:pillager",
+            /**
+             * @param {mc.Entity} mob
+             */
+            (mob)=>{
+              villager.forEach(v=>{
+                v.kill();
+              })
+              sendPlayerMessage(player, "略奪者を召喚しました");
+              mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
+              applyDamage(player, 3);
+              giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
+              player.sendMessage("[入手] 草ブロック x2");
+            }
+          )
+          break;
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
   snowball: {
     /**
      * 雪玉
