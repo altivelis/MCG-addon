@@ -2370,6 +2370,45 @@ export const useCard = {
       }
     }
   },
+  vindicator_spawn_egg: {
+    /**
+     * ヴィンディケーター
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+          let villager = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:villager_v2", tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
+          if(villager.length == 0){
+            player.sendMessage("§c青スロットに村人が存在しないため使用できません。");
+            return;
+          }
+          summonCard(cardBlock, player, "minecraft:vindicator",
+            /**
+             * @param {mc.Entity} mob
+             */
+            (mob)=>{
+              villager.forEach(v=>{
+                v.kill();
+              })
+              sendPlayerMessage(player, "ヴィンディケーターを召喚しました");
+              mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
+              applyDamage(player, 4);
+              giveItem(player, new mc.ItemStack("minecraft:iron_axe"));
+              player.sendMessage("[入手] 鉄の斧");
+            }
+          )
+          break;
+        case W:
+        case R:
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
   snowball: {
     /**
      * 雪玉

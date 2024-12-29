@@ -366,6 +366,22 @@ export const turnMob = {
         applyDamage(newPlayer, 2);
       }
     }
+  },
+  vindicator: {
+    /**
+     * ヴィンディケーター
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        giveItem(newPlayer, new mc.ItemStack("minecraft:iron_axe"));
+        sendPlayerMessage(newPlayer, "[ヴィンディケーター] 鉄の斧を獲得");
+        sendPlayerMessage(newPlayer, "[ヴィンディケーター] スリップダメージ");
+        applyDamage(newPlayer, 2);
+      }
+    }
   }
 }
 

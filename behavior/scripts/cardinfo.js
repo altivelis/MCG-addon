@@ -1145,6 +1145,20 @@ export const cardList = [
     ]
   },
   {
+    name:["minecraft:vex", "minecraft:vex_spawn_egg"],
+    type: "entity",
+    attribute: "残虐・浮遊",
+    hp: "20",
+    atk: "20",
+    Sact: "4",
+    Bact: "2",
+    text: [
+      "§bこのモブが存在する限り「ヴェックス」を除く自分の場の「残虐」",
+      "§bモブが受けるダメージは半分になる。(小数点以下切り捨て)",
+      "§bターン終了時効果 / 使用者に1ダメージ与える。"
+    ]
+  },
+  {
     name:["minecraft:evocation_illager", "minecraft:evoker_spawn_egg"],
     type: "entity",
     attribute: "残虐",
@@ -1159,20 +1173,6 @@ export const cardList = [
       "§bターン終了時効果 / 自分の空いているスロットに「ヴェックス」を召喚する。",
       "§bターン開始時効果 / 使用者に5ダメージ与え、",
       "§b相手の赤スロットと青スロットに存在するモブに20ダメージ与える。"
-    ]
-  },
-  {
-    name:["minecraft:vex", "minecraft:vex_spawn_egg"],
-    type: "entity",
-    attribute: "残虐・浮遊",
-    hp: "20",
-    atk: "20",
-    Sact: "4",
-    Bact: "2",
-    text: [
-      "§bこのモブが存在する限り「ヴェックス」を除く自分の場の「残虐」",
-      "§bモブが受けるダメージは半分になる。(小数点以下切り捨て)",
-      "§bターン終了時効果 / 使用者に1ダメージ与える。"
     ]
   },
   {
@@ -1218,6 +1218,15 @@ export const cardList = [
       "§b使用者のターン開始時に草ブロック、石の剣を追加で1枚入手し、",
       "§bactを20にリセットする。",
       "§b「大将」がいなくなると襲撃モードは終了する。"
+    ]
+  },
+  {
+    name:["minecraft:iron_axe"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b使用時 / "
     ]
   },
   {
