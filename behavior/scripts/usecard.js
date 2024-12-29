@@ -542,6 +542,15 @@ export const useCard = {
           sendPlayerMessage(player, "チェストを使用しました");
           decrementSlot(player, player.selectedSlotIndex);
           player.dimension.playSound("random.chestopen", player.location, {volume: 10});
+          if(getObject(player.hasTag("red") ? "blue" : "red").typeId == "minecraft:trapped_chest"){
+            if(Math.floor(Math.random() * 2) == 0){
+              player.dimension.playSound("mob.zombie.woodbreak", player.location, {volume: 10});
+              sendPlayerMessage(player, "トラップチェストだ！！");
+              setObject(mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]}[0]), "minecraft:air");
+              sendPlayerMessage(player, "相手のオブジェクトを破壊しました");
+              return;
+            }
+          }
           giveItem(player, new mc.ItemStack("minecraft:wooden_sword"));
           player.sendMessage("[入手] 木の剣");
           giveItem(player, new mc.ItemStack("minecraft:wooden_pickaxe"));
@@ -2334,7 +2343,30 @@ export const useCard = {
           player.sendMessage(error_slot);
           return;
         case P:
-          
+          if(!mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue")]}).find(entity=>{
+            return getCard(entity.typeId)?.attribute?.includes("残虐");
+          })){
+            player.sendMessage("§c自分のスロットに残虐属性のモブが存在しないため使用できません。");
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "トラップチェストを使用しました");
+          player.dimension.playSound("random.chestopen", player.location, {volume: 10});
+          giveItem(player, new mc.ItemStack("minecraft:ominous_bottle"));
+          player.sendMessage("[入手] 不吉な瓶");
+          giveItem(player, new mc.ItemStack("mcg:totem"));
+          player.sendMessage("[入手] 不死のトーテム");
+          giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
+          player.sendMessage("[入手] ニンジン付きの棒");
+          break;
+        case O:
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          setObject(player, "minecraft:trapped_chest");
+          player.dimension.playSound("random.chestopen", player.location, {volume: 10});
+          sendPlayerMessage(player, "トラップチェストを設置しました");
+          break;
       }
     }
   },

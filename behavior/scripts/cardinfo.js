@@ -1106,7 +1106,7 @@ export const cardList = [
   {
     name:["minecraft:pillager", "minecraft:pillager_spawn_egg"],
     type: "entity",
-    attribute: "ジェノサイド",
+    attribute: "残虐",
     hp: "45",
     atk: "-",
     Sact: "5",
@@ -1124,7 +1124,7 @@ export const cardList = [
     attribute: "アイテム・オブジェクト",
     Cact: "2",
     text: [
-      "§aこのカードは自分の場に「ジェノサイド」モブがいるときのみ使用できる。",
+      "§aこのカードは自分の場に「残虐」モブがいるときのみ使用できる。",
       "§b使用時 / 「不吉な瓶」「不死のトーテム」「ニンジン付きの棒」を入手する。",
       "§6オブジェクト効果 / 相手が「チェスト」を使用した際、50%の確率で以下の効果が発動する。",
       "§6相手の「チェスト」の効果を無効にし、このオブジェクトを破壊する。"
@@ -1133,7 +1133,7 @@ export const cardList = [
   {
     name:["minecraft:vindicator", "minecraft:vindicator_spawn_egg"],
     type: "entity",
-    attribute: "ジェノサイド・ガード・速攻",
+    attribute: "残虐・ガード・速攻",
     hp: "65",
     atk: "-",
     Sact: "5",
@@ -1147,7 +1147,7 @@ export const cardList = [
   {
     name:["minecraft:evocation_illager", "minecraft:evoker_spawn_egg"],
     type: "entity",
-    attribute: "ジェノサイド",
+    attribute: "残虐",
     hp: "35",
     atk: "-",
     Sact: "5",
@@ -1164,13 +1164,13 @@ export const cardList = [
   {
     name:["minecraft:vex", "minecraft:vex_spawn_egg"],
     type: "entity",
-    attribute: "ジェノサイド・浮遊",
+    attribute: "残虐・浮遊",
     hp: "20",
     atk: "20",
     Sact: "4",
     Bact: "2",
     text: [
-      "§bこのモブが存在する限り「ヴェックス」を除く自分の場の「ジェノサイド」",
+      "§bこのモブが存在する限り「ヴェックス」を除く自分の場の「残虐」",
       "§bモブが受けるダメージは半分になる。(小数点以下切り捨て)",
       "§bターン終了時効果 / 使用者に1ダメージ与える。"
     ]
@@ -1192,13 +1192,13 @@ export const cardList = [
   {
     name:["minecraft:ravager", "minecraft:ravager_spawn_egg"],
     type: "entity",
-    attribute: "ジェノサイド",
+    attribute: "残虐",
     hp: "100",
     atk: "70",
     Sact: "8",
     Bact: "4",
     text: [
-      "§aこのモブは自分の場に「ジェノサイド」カードがあるときのみ",
+      "§aこのモブは自分の場に「残虐」カードがあるときのみ",
       "§f白スロット§aに召喚できる。",
       "§b召喚時効果 / 使用者に4ダメージ与える。",
       "§bターン経過時効果 / 草ブロックを2枚入手する。"

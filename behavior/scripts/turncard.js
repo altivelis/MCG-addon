@@ -487,6 +487,24 @@ export const turnObject = {
         }
       }
     }
+  },
+  lit_pumpkin: {
+    /**
+     * ジャック・オ・ランタン
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {String} blockTag
+     */
+    run: (newPlayer, oldPlayer, blockTag) => {}
+  },
+  trapped_chest: {
+    /**
+     * トラップチェスト
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {String} blockTag
+     */
+    run: (newPlayer, oldPlayer, blockTag) => {}
   }
 }
 
