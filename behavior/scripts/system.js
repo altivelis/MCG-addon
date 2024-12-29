@@ -94,32 +94,6 @@ function setSign(color, player=null){
     }
   }
 }
-//ボタンを押したときの処理
-// mc.world.afterEvents.buttonPush.subscribe(data=>{
-//   const {block, source} = data;
-//   if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-61 -53 -2"){
-//     if(!mcg.queue.red){
-//       mcg.queue.red = source;
-//       if(mcg.queue.blue && mcg.queue.blue.id == source.id){
-//         mcg.queue.blue = null;
-//       }
-//     }
-//     else if(mcg.queue.red && mcg.queue.red.id == source.id){
-//       mcg.queue.red = null;
-//     }
-//   }
-//   else if(`${block.location.x} ${block.location.y} ${block.location.z}` == "-65 -53 -2"){
-//     if(!mcg.queue.blue){
-//       mcg.queue.blue = source;
-//       if(mcg.queue.red && mcg.queue.red.id == source.id){
-//         mcg.queue.red = null;
-//       }
-//     }
-//     else if(mcg.queue.blue && mcg.queue.blue.id == source.id){
-//       mcg.queue.blue = null;
-//     }
-//   }
-// })
 mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
   const {block, faceLocation, isFirstEvent, player} = data;
   if(!isFirstEvent) return;

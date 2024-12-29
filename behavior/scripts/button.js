@@ -196,28 +196,33 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
 })
 
 //観戦
-mc.world.afterEvents.buttonPush.subscribe(data=>{
-  /**
-   * @type {{source: mc.Player, block: mc.Block, dimension: mc.Dimension}}
-   */
-  let {source, block, dimension} = data;
-  if(block.typeId != "minecraft:cherry_button") return;
-  if(source.typeId != "minecraft:player") return;
+mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
+  let {block, faceLocation, isFirstEvent, player} = data;
+  if(!isFirstEvent) return;
   switch(`${block.location.x} ${block.location.y} ${block.location.z}`){
     case "-63 -53 -26": //ロビー=>観戦席
-      source.teleport({x:0.5, y:11, z:0.5});
-      giveItem(source, new mc.ItemStack("minecraft:spyglass"));
+      data.cancel = true;
+      mc.system.run(()=>{
+        player.teleport({x:0.5, y:11, z:0.5});
+        giveItem(player, new mc.ItemStack("minecraft:spyglass"));
+      })
       break;
     case "0 12 11": //観戦=>ロビー
     case "13 1 -11":
     case "-13 1 -11":
     case "-13 1 12":
     case "13 1 12":
-      source.teleport({x:-62.5, y:-53, z:-12.5});
-      decrementContainer(source, "minecraft:spyglass");
+      data.cancel = true;
+      mc.system.run(()=>{
+        player.teleport({x:-62.5, y:-53, z:-12.5});
+        decrementContainer(player, "minecraft:spyglass");
+      })
       break;
     case "0 12 -10": //スペクテイターモード
-      source.setGameMode(mc.GameMode.spectator);
+      data.cancel = true;
+      mc.system.run(()=>{
+        player.setGameMode(mc.GameMode.spectator);
+      })
       break;
   }
 })
