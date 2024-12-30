@@ -64,6 +64,10 @@ mc.system.runInterval(() => {
             text += (high ? drawList.nether.high : drawList.nether.low).join("\n");
             player.onScreenDisplay.setActionBar(text);
             break;
+          case "minecraft:dark_oak_log":
+            text += (high ? drawList.genocide.high : drawList.genocide.low).join("\n");
+            player.onScreenDisplay.setActionBar(text);
+            break;
         }
       }
     }

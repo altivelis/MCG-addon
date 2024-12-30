@@ -143,6 +143,32 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
       }
       giveItem(source, item);
       break;
+    case "minecraft:dark_oak_log":
+      decrementContainer(source, "minecraft:grass_block");
+      decrementContainer(source, "minecraft:packed_ice");
+      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
+        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
+      }
+      switch(Math.floor(Math.random()*4)){
+        case 0:
+          item = high ? new mc.ItemStack("minecraft:evoker_spawn_egg") : new mc.ItemStack("minecraft:pillager_spawn_egg");
+          source.sendMessage("ドロー: " + (high?"エヴォーカー":"略奪者"));
+          break;
+        case 1:
+          item = high ? new mc.ItemStack("minecraft:armor_stand") : new mc.ItemStack("minecraft:trapped_chest");
+          source.sendMessage("ドロー: " + (high?"防具立て":"トラップチェスト"));
+          break;
+        case 2:
+          item = high ? new mc.ItemStack("minecraft:ravager_spawn_egg") : new mc.ItemStack("minecraft:vindicator_spawn_egg");
+          source.sendMessage("ドロー: " + (high?"ラヴェジャー":"ヴィンディケーター"));
+          break;
+        case 3:
+          item = high ? new mc.ItemStack("minecraft:banner") : new mc.ItemStack("minecraft:vex_spawn_egg");
+          source.sendMessage("ドロー: " + (high?"不吉な旗":"ヴェックス"));
+          break;
+      }
+      giveItem(source, item);
+      break;
     default:
       return;
   }
