@@ -432,6 +432,20 @@ export const turnMob = {
         })
       }
     }
+  },
+  armor_stand: {
+    /**
+     * 防具立て
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        sendPlayerMessage(oldPlayer, "[防具立て] 破壊");
+        entity.kill();
+      }
+    }
   }
 }
 

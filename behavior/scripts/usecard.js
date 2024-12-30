@@ -2482,6 +2482,64 @@ export const useCard = {
       }
     }
   },
+  armor_stand: {
+    /**
+     * 防具立て
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      let mob;
+      switch(cardBlock.typeId){
+        case B:
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"],tags:[(player.hasTag("red")?"blue":"red"), "slotB"]}).length > 0){
+            player.sendMessage(error_mob);
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          mob = mc.world.getDimension("minecraft:overworld").spawnEntity(identifier, (player.hasTag("red") ? mcg.const.blue.slot.blue : mcg.const.red.slot.blue));
+          mob.addTag((player.hasTag("red") ? "blue" : "red"));
+          mob.addTag("slotB");
+          break;
+        case W:
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"],tags:[(player.hasTag("red")?"blue":"red"), "slotW"]}).length > 0){
+            player.sendMessage(error_mob);
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          mob = mc.world.getDimension("minecraft:overworld").spawnEntity(identifier, (player.hasTag("red") ? mcg.const.blue.slot.white : mcg.const.red.slot.white));
+          mob.addTag((player.hasTag("red") ? "blue" : "red"));
+          mob.addTag("slotW");
+          break;
+        case R:
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"],tags:[(player.hasTag("red")?"blue":"red"), "slotR"]}).length > 0){
+            player.sendMessage(error_mob);
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          mob = mc.world.getDimension("minecraft:overworld").spawnEntity(identifier, (player.hasTag("red") ? mcg.const.blue.slot.red : mcg.const.red.slot.red));
+          mob.addTag((player.hasTag("red") ? "blue" : "red"));
+          mob.addTag("slotR");
+          break;
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+      mob.addTag("fly");
+      mob.addTag("guard");
+      applyDamage(player, 5);
+      sendPlayerMessage(player, "防具立てを設置しました");
+    }
+  },
   snowball: {
     /**
      * 雪玉
