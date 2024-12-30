@@ -2409,6 +2409,24 @@ export const useCard = {
       }
     }
   },
+  vex_spawn_egg: {
+    /**
+     * ヴェックス
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:vex",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob)=>{
+          sendPlayerMessage(player, "ヴェックスを召喚しました");
+          mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
+        }
+      )
+    }
+  },
   snowball: {
     /**
      * 雪玉

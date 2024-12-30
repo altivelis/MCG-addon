@@ -274,6 +274,11 @@ export function getObject(tag){
  */
 export function applyDamage(target, value, options={cause:mc.EntityDamageCause.entityAttack}){
   let before = target.getComponent(mc.EntityHealthComponent.componentId).currentValue;
+  if(getCard(target.typeId).attribute.includes("残虐") && target.typeId != "minecraft:vex"){
+    if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:vex", tags:[target.hasTag("red")?"red":"blue"]}).length > 0){
+      value = Math.floor(value / 2.0);
+    }
+  }
   if(!target.applyDamage(value, options)) return;
   if(value > 0 && before == target.getComponent(mc.EntityHealthComponent.componentId).currentValue){
     myTimeout(1, ()=>{

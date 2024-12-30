@@ -382,6 +382,20 @@ export const turnMob = {
         applyDamage(newPlayer, 2);
       }
     }
+  },
+  vex: {
+    /**
+     * ヴェクス
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        sendPlayerMessage(oldPlayer, "[ヴェクス] スリップダメージ");
+        applyDamage(oldPlayer, 1);
+      }
+    }
   }
 }
 
