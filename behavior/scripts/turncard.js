@@ -446,6 +446,20 @@ export const turnMob = {
         entity.kill();
       }
     }
+  },
+  ravager: {
+    /**
+     * ラヴェジャー
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block", 2));
+        sendPlayerMessage(newPlayer, "[ラヴェジャー] 草ブロックx2を獲得");
+      }
+    }
   }
 }
 

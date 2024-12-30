@@ -2444,7 +2444,7 @@ export const useCard = {
             player.sendMessage("§c白スロットに村人が存在しないため使用できません。");
             return;
           }
-          summonCard(cardBlock, player, "minecraft:evoker",
+          summonCard(cardBlock, player, "minecraft:evocation_illager",
             /**
              * @param {mc.Entity} mob
              */
@@ -2538,6 +2538,38 @@ export const useCard = {
       mob.addTag("guard");
       applyDamage(player, 5);
       sendPlayerMessage(player, "防具立てを設置しました");
+    }
+  },
+  ravager_spawn_egg: {
+    /**
+     * ラヴェジャー
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+          player.sendMessage(error_slot);
+          return;
+        case W:
+          let geno = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue")]}).filter(e=>{
+            return getCard(e.typeId)?.attribute?.includes("残虐");
+          })
+          if(geno.length == 0){
+            player.sendMessage("§c自分の場に残虐属性のモブが存在しないため使用できません。");
+            return;
+          }
+          summonCard(cardBlock, player, "minecraft:ravager",
+            /**
+             * @param {mc.Entity} mob
+             */
+            (mob)=>{
+              sendPlayerMessage(player, "ラヴェジャーを召喚しました");
+              mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
+              applyDamage(player, 4);
+            }
+          )
+      }
     }
   },
   snowball: {
