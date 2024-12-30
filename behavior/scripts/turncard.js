@@ -396,6 +396,42 @@ export const turnMob = {
         applyDamage(oldPlayer, 1);
       }
     }
+  },
+  evocation_illager: {
+    /**
+     * エヴォーカー
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"red":"blue"), "slotB"]}).length == 0){
+          let mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (entity.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
+          mobb.addTag((entity.hasTag("red") ? "red" : "blue"));
+          mobb.addTag("slotB");
+          sendPlayerMessage(oldPlayer, "ヴェックスを召喚しました");
+          mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
+        }
+        if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"red":"blue"), "slotR"]}).length == 0){
+          let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
+          mobr.addTag((entity.hasTag("red") ? "red" : "blue"));
+          mobr.addTag("slotR");
+          sendPlayerMessage(oldPlayer, "ヴェックスを召喚しました");
+          mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
+        }
+      }
+      else if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        sendPlayerMessage(newPlayer, "[エヴォーカー] スリップダメージ");
+        applyDamage(newPlayer, 5);
+        mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotB"]}).forEach(target=>{
+          applyDamage(target, 20);
+        })
+        mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotR"]}).forEach(target=>{
+          applyDamage(target, 20);
+        })
+      }
+    }
   }
 }
 

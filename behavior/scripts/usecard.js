@@ -2427,6 +2427,61 @@ export const useCard = {
       )
     }
   },
+  evoker_spawn_egg: {
+    /**
+     * エヴォーカー
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      switch(cardBlock.typeId){
+        case B:
+          player.sendMessage(error_slot);
+          return;
+        case W:
+          let villager = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:villager_v2", tags:[(player.hasTag("red")?"red":"blue"), "slotW"]});
+          if(villager.length == 0){
+            player.sendMessage("§c白スロットに村人が存在しないため使用できません。");
+            return;
+          }
+          summonCard(cardBlock, player, "minecraft:evoker",
+            /**
+             * @param {mc.Entity} mob
+             */
+            (mob)=>{
+              villager.forEach(v=>{
+                v.kill();
+              })
+              sendPlayerMessage(player, "エヴォーカーを召喚しました");
+              mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
+              applyDamage(player, 3);
+              giveItem(player, new mc.ItemStack("minecraft:totem_of_undying"));
+              player.sendMessage("[入手] 不死のトーテム");
+              if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"]}).length == 0){
+                let mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
+                mobb.addTag((player.hasTag("red") ? "red" : "blue"));
+                mobb.addTag("slotB");
+                sendPlayerMessage(player, "ヴェックスを召喚しました");
+                mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
+              }
+              if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"]}).length == 0){
+                let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
+                mobr.addTag((player.hasTag("red") ? "red" : "blue"));
+                mobr.addTag("slotR");
+                sendPlayerMessage(player, "ヴェックスを召喚しました");
+                mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
+              }
+            }
+          )
+          break;
+        case R:
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
   snowball: {
     /**
      * 雪玉
