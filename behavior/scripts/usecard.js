@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, applyDamage, decrementContainer, decrementSlot, getAct, getCard, getObject, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setAct, setObject, swordDamage, swordName } from "./lib";
+import { addAct, applyDamage, changeHealthBoost, decrementContainer, decrementSlot, getAct, getCard, getObject, giveItem, giveSword, handItem, myTimeout, sendPlayerMessage, setAct, setObject, swordDamage, swordName } from "./lib";
 import { mcg } from "./system";
 
 const error_slot = "§cこのスロットには使用できません",
@@ -2569,6 +2569,90 @@ export const useCard = {
               applyDamage(player, 4);
             }
           )
+      }
+    }
+  },
+  banner: {
+    /**
+     * 不吉な旗
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      let mobs;
+      switch(cardBlock.typeId){
+        case B:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"]}).filter(e=>{
+            return ["pillager", "vindicator", "evocation_illager"].includes(e.typeId.slice(10));
+          });
+          if(mobs.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "不吉な旗を使用しました");
+          mobs.forEach(mob=>{
+            mob.addTag("ace");
+          })
+          player.addTag("raid");
+          player.dimension.playSound("raid.horn", player.location, {volume: 10});
+          mc.world.getPlayers().forEach(p=>{
+            p.onScreenDisplay.setTitle("§c§l襲撃モード");
+          })
+          changeHealthBoost(player, 2);
+          break;
+        case W:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotW"]}).filter(e=>{
+            return ["pillager", "vindicator", "evocation_illager"].includes(e.typeId.slice(10));
+          });
+          if(mobs.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "不吉な旗を使用しました");
+          mobs.forEach(mob=>{
+            mob.addTag("ace");
+          })
+          player.addTag("raid");
+          player.dimension.playSound("raid.horn", player.location, {volume: 10});
+          mc.world.getPlayers().forEach(p=>{
+            p.onScreenDisplay.setTitle("§c§l襲撃モード");
+          })
+          changeHealthBoost(player, 2);
+          break;
+        case R:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"]}).filter(e=>{
+            return ["pillager", "vindicator", "evocation_illager"].includes(e.typeId.slice(10));
+          });
+          if(mobs.length == 0){
+            player.sendMessage(error_slot);
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "不吉な旗を使用しました");
+          mobs.forEach(mob=>{
+            mob.addTag("ace");
+          })
+          player.addTag("raid");
+          player.dimension.playSound("raid.horn", player.location, {volume: 10});
+          mc.world.getPlayers().forEach(p=>{
+            p.onScreenDisplay.setTitle("§c§l襲撃モード");
+          })
+          changeHealthBoost(player, 2);
+          break;
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
       }
     }
   },

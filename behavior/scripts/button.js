@@ -218,7 +218,7 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     source.sendMessage("§c氷塊を所持している状態ではピンクのボタンを使用できません");
     return;
   }
-  useCard[handItem(source).typeId.slice(10)]?.run(cardBlock, source);
+  useCard[handItem(source).typeId.includes("minecraft:", 0) ? handItem(source).typeId.slice(10) : handItem(source).typeId.slice(4)]?.run(cardBlock, source);
 })
 
 //観戦

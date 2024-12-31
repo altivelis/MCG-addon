@@ -18,11 +18,23 @@ export function myTimeout(tick, func){
  * @param {number} count 
  */
 export function giveItem(player, item){
+  if(item.typeId == "minecraft:banner"){
+    if(player.runCommand("/loot spawn ~~~ loot ominous_banner")){
+      player.dimension.getEntities({type:"minecraft:item"}).forEach(e => {
+        /**@type {mc.ItemStack} */
+        let itemstack = e.getComponent(mc.EntityItemComponent.componentId).itemStack;
+        if(itemstack.typeId == "minecraft:banner" && itemstack.getLore().length == 0){
+          itemstack.setLore(cardInfo(itemstack.typeId));
+          e.dimension.spawnItem(itemstack, e.location);
+          e.remove();
+        }
+      })
+    }
+    return;
+  }
   if(cardInfo(item.typeId).length > 0){
     item.setLore(cardInfo(item.typeId));
   }
-  //player.getComponent(mc.EntityInventoryComponent.componentId).container.addItem(item);
-  //player.playSound("random.pop",{location:player.location, pitch:1.2});
   player.dimension.spawnItem(item, player.location).addTag("give");
 }
 
@@ -327,4 +339,21 @@ export function lineParticle(dimension, from, to, particleName, interval){
     dimension.spawnParticle(particleName, {x:from.x+vec.x*i, y:from.y+vec.y*i, z:from.z+vec.z*i});
   }
   return;
+}
+
+/**
+ * 体力増強レベル変更関数
+ * @param {mc.Player} player 
+ * @param {Number} value 
+ */
+export function changeHealthBoost(player, value){
+  /**@type {mc.EntityHealthComponent} */
+  let health = player.getComponent(mc.EntityHealthComponent.componentId);
+  let beforeHp = health.currentValue;
+  let currentLevel = player.getEffect(mc.EffectTypes.get("minecraft:health_boost"))?.amplifier;
+  let level = (!currentLevel) ? value-1 : currentLevel + value;
+  if(level < 0) return;
+  player.removeEffect(mc.EffectTypes.get("minecraft:health_boost"));
+  player.addEffect(mc.EffectTypes.get("minecraft:health_boost"), 20000000, {amplifier:level, showParticles:false});
+  health.setCurrentValue(beforeHp);
 }

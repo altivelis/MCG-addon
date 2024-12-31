@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline, cardInfo } from "./lib";
 import { turnItem, turnMob, turnObject } from "./turncard";
 
 export const mcg = {
@@ -679,9 +679,15 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:test") return;
-  /**@type {mc.ItemStack} */
-  let item = data.sourceEntity.getComponent(mc.EntityEquippableComponent.componentId).getEquipment(mc.EquipmentSlot.Mainhand);
-  item.getComponents().forEach(comp=>{
-    mc.world.sendMessage(comp.typeId);
-  })
+  if(data.sourceEntity.runCommand("/loot spawn ~~~ loot ominous_banner")){
+    data.sourceEntity.dimension.getEntities({type:"minecraft:item"}).forEach(item=>{
+      /**@type {mc.ItemStack} */
+      let itemstack = item.getComponent(mc.EntityItemComponent.componentId).itemStack;
+      if(itemstack.typeId == "minecraft:banner" && itemstack.getLore().length == 0){
+        itemstack.setLore(cardInfo(itemstack.typeId));
+        item.dimension.spawnItem(itemstack, item.location);
+        item.remove();
+      }
+    })
+  }
 })
