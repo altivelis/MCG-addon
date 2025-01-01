@@ -7,7 +7,13 @@
       "is_spawnable": true,
       "is_summonable": true
     },
-
+    "component_groups":{
+      "enhance":{
+        "minecraft:health": {
+          "max": 55
+        }
+      }
+    },
     "components": {
       "minecraft:is_hidden_when_invisible": {
       },
@@ -15,7 +21,6 @@
         "always_show": true
       },
 
-      // Zombie Components
       "minecraft:type_family": {
         "family": [ "zombie", "undead", "monster", "mob" ]
       },
@@ -262,7 +267,6 @@
         ]
       },
 
-      // Zombie Behaviors
       "minecraft:behavior.equip_item": {
         "priority": 2
       },
@@ -320,6 +324,13 @@
       },
       "minecraft:knockback_resistance": {
         "value": 1.0
+      }
+    },
+    "events": {
+      "enhance": {
+        "add": {
+          "component_groups": ["enhance"]
+        }
       }
     }
   }

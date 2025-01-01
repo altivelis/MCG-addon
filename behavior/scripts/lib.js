@@ -49,16 +49,24 @@ export function getCard(name){
 /**
  * カードテキスト取得関数
  * @param {String} name identifier
+ * @param {Boolean} enhance 強化情報表示
  * @returns {String[]} カードテキスト
  */
-export function cardInfo(name){
+export function cardInfo(name, enhance = false){
   const card = getCard(name);
   if(!card) return [];
   let text = [];
   if(card.type == "entity"){
-    text.push(`§3属性:${card.attribute}`);
-    text.push(`§aHP§r:${card.hp} §cATK§r:${card.atk} §eSact§r:${card.Sact} §6Bact§r:${card.Bact}`);
-    card.text.forEach(t => text.push(t));
+    if(enhance) {
+      text.push(`§3属性:${card.enhance.attribute}`);
+      text.push(`§aHP§r:${card.enhance.hp} §cATK§r:${card.enhance.atk} §eSact§r:${card.enhance.Sact} §6Bact§r:${card.enhance.Bact}`);
+      card.enhance.text.forEach(t => text.push(t));
+    }
+    else {
+      text.push(`§3属性:${card.attribute}`);
+      text.push(`§aHP§r:${card.hp} §cATK§r:${card.atk} §eSact§r:${card.Sact} §6Bact§r:${card.Bact}`);
+      card.text.forEach(t => text.push(t));
+    }
   }
   else if(card.type == "item"){
     text.push(`§3属性:${card.attribute}`);

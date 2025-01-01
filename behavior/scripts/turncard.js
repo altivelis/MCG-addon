@@ -89,8 +89,17 @@ export const turnMob = {
      */
     run: (newPlayer, oldPlayer, entity) => {
       if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"));
-        sendPlayerMessage(newPlayer, "[スケルトン] 矢を獲得");
+        if(entity.hasTag("enhance")){
+          let amount = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"red":"blue")]}).length;
+          if(amount){
+            giveItem(newPlayer, new mc.ItemStack("minecraft:arrow", amount));
+            sendPlayerMessage(newPlayer, "[スケルトン] 矢x" + amount + "を獲得");
+          }
+        }
+        else{
+          giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"));
+          sendPlayerMessage(newPlayer, "[スケルトン] 矢を獲得");
+        }
       }
     }
   },

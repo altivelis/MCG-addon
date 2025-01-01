@@ -8,6 +8,13 @@
       "is_summonable": true,
       "is_experimental": false
     },
+    "component_groups": {
+      "enhance": {
+        "minecraft:health": {
+          "max": 45
+        }
+      }
+    },
     "components": {
       "minecraft:damage_sensor": { },
       "minecraft:is_hidden_when_invisible": {
@@ -76,6 +83,13 @@
       },
       "minecraft:knockback_resistance": {
         "value": 1.0
+      }
+    },
+    "events": {
+      "enhance": {
+        "add": {
+          "component_groups": ["enhance"]
+        }
       }
     }
   }

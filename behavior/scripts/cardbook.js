@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { cardInfo } from "./lib";
+import { cardInfo, getCard } from "./lib";
 
 const cardBook_form = new ui.ActionFormData()
   .title("カード図鑑")
@@ -12,7 +12,8 @@ const cardBook_form = new ui.ActionFormData()
   .button("§l§2現世§r§lカード", "textures/blocks/grass_side_carried")
   .button("§l§8洞窟§r§lカード", "textures/blocks/stone")
   .button("§l§4ネザー§r§lカード", "textures/blocks/netherrack")
-  .button("§l§6アニマル§r§lカード", "textures/blocks/hay_block_side");
+  .button("§l§6アニマル§r§lカード", "textures/blocks/hay_block_side")
+  .button("§l§5襲撃§r§lカード", "textures/blocks/stripped_dark_oak_log_top")
 
 const cardLibrary = {
   normal: [
@@ -132,6 +133,31 @@ const cardLibrary = {
       {name: "ミルクバケツ", id: "minecraft:milk_bucket", icon: "textures/items/bucket_milk"},
       {name: "ボグド", id: "minecraft:bogged", icon: "textures/blocks/moss_block"},
     ]
+  },
+  raid: {
+    low: [
+      {name: "略奪者", id: "minecraft:pillager", icon: "textures/items/egg_pillager"},
+      {name: "トラップチェスト", id: "minecraft:trapped_chest", icon: "textures/blocks/trapped_chest_front"},
+      {name: "ヴィンディケーター", id: "minecraft:vindicator", icon: "textures/items/egg_vindicator"},
+      {name: "ヴェックス", id: "minecraft:vex", icon: "textures/items/egg_vex"}
+    ],
+    high: [
+      {name: "エヴォーカー", id: "minecraft:evocation_illager", icon: "textures/items/egg_evoker"},
+      {name: "防具立て", id: "minecraft:armor_stand", icon: "textures/items/armor_stand"},
+      {name: "ラヴェジャー", id: "minecraft:ravager", icon: "textures/items/egg_ravager"},
+      {name: "不吉な旗", id: "minecraft:banner", icon: "textures/blocks/vault_front_on_ominous"}
+    ],
+    other: [
+      {name: "鉄の斧", id: "minecraft:iron_axe", icon: "textures/items/iron_axe"},
+      {name: "不死のトーテム", id: "mcg:totem", icon: "textures/items/totem"},
+      {name: "不吉な瓶", id: "mcg:awkward_potion", icon: "textures/items/ominous_bottle"},
+      {name: "治癒のポーション", id: "mcg:heal_potion", icon: "textures/items/potion_bottle_heal"},
+      {name: "治癒のスプラッシュポーション", id: "mcg:heal_splash_potion", icon: "textures/items/potion_bottle_splash_heal"},
+      {name: "負傷のポーション", id: "mcg:damage_potion", icon: "textures/items/potion_bottle_harm"},
+      {name: "負傷のスプラッシュポーション", id: "mcg:damage_splash_potion", icon: "textures/items/potion_bottle_splash_harm"},
+      {name: "俊敏のポーション", id: "mcg:speed_potion", icon: "textures/items/potion_bottle_moveSpeed"},
+      {name: "耐火のポーション", id: "mcg:fireresistance_potion", icon: "textures/items/potion_bottle_fireResistance"}
+    ]
   }
 }
 
@@ -163,6 +189,9 @@ export function cardBookForm_home(player){
       case 4:
         form_animal(player);
         break;
+      case 5:
+        form_raid(player);
+        break
     }
   })
 }
@@ -241,7 +270,9 @@ function form_overworld_low(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.overworld.low[res.selection].name + "\n" + cardInfo(cardLibrary.overworld.low[res.selection].id).join("\n"))
+      .body(cardLibrary.overworld.low[res.selection].name + "\n" + cardInfo(cardLibrary.overworld.low[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.overworld.low[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.overworld.low[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -271,7 +302,9 @@ function form_overworld_high(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.overworld.high[res.selection].name + "\n" + cardInfo(cardLibrary.overworld.high[res.selection].id).join("\n"))
+      .body(cardLibrary.overworld.high[res.selection].name + "\n" + cardInfo(cardLibrary.overworld.high[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.overworld.high[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.overworld.high[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -301,7 +334,9 @@ function form_overworld_other(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.overworld.other[res.selection].name + "\n" + cardInfo(cardLibrary.overworld.other[res.selection].id).join("\n"))
+      .body(cardLibrary.overworld.other[res.selection].name + "\n" + cardInfo(cardLibrary.overworld.other[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.overworld.other[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.overworld.other[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -359,7 +394,9 @@ function form_cave_low(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.cave.low[res.selection].name + "\n" + cardInfo(cardLibrary.cave.low[res.selection].id).join("\n"))
+      .body(cardLibrary.cave.low[res.selection].name + "\n" + cardInfo(cardLibrary.cave.low[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.cave.low[res.selection].id)?.enhance)?"\n§d§l強化後§r\n"+cardInfo(cardLibrary.cave.low[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -389,7 +426,9 @@ function form_cave_high(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.cave.high[res.selection].name + "\n" + cardInfo(cardLibrary.cave.high[res.selection].id).join("\n"))
+      .body(cardLibrary.cave.high[res.selection].name + "\n" + cardInfo(cardLibrary.cave.high[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.cave.high[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.cave.high[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -419,7 +458,9 @@ function form_cave_other(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.cave.other[res.selection].name + "\n" + cardInfo(cardLibrary.cave.other[res.selection].id).join("\n"))
+      .body(cardLibrary.cave.other[res.selection].name + "\n" + cardInfo(cardLibrary.cave.other[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.cave.other[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.cave.other[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -477,7 +518,9 @@ function form_nether_low(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.nether.low[res.selection].name + "\n" + cardInfo(cardLibrary.nether.low[res.selection].id).join("\n"))
+      .body(cardLibrary.nether.low[res.selection].name + "\n" + cardInfo(cardLibrary.nether.low[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.nether.low[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.nether.low[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -507,7 +550,9 @@ function form_nether_high(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.nether.high[res.selection].name + "\n" + cardInfo(cardLibrary.nether.high[res.selection].id).join("\n"))
+      .body(cardLibrary.nether.high[res.selection].name + "\n" + cardInfo(cardLibrary.nether.high[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.nether.high[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.nether.high[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -537,7 +582,9 @@ function form_nether_other(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.nether.other[res.selection].name + "\n" + cardInfo(cardLibrary.nether.other[res.selection].id).join("\n"))
+      .body(cardLibrary.nether.other[res.selection].name + "\n" + cardInfo(cardLibrary.nether.other[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.nether.other[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.nether.other[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -595,7 +642,9 @@ function form_animal_low(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.animal.low[res.selection].name + "\n" + cardInfo(cardLibrary.animal.low[res.selection].id).join("\n"))
+      .body(cardLibrary.animal.low[res.selection].name + "\n" + cardInfo(cardLibrary.animal.low[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.animal.low[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.animal.low[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -625,7 +674,9 @@ function form_animal_high(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.animal.high[res.selection].name + "\n" + cardInfo(cardLibrary.animal.high[res.selection].id).join("\n"))
+      .body(cardLibrary.animal.high[res.selection].name + "\n" + cardInfo(cardLibrary.animal.high[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.animal.high[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.animal.high[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -655,7 +706,9 @@ function form_animal_other(player){
       return;
     }
     let form2 = new ui.MessageFormData().title("カード情報")
-      .body(cardLibrary.animal.other[res.selection].name + "\n" + cardInfo(cardLibrary.animal.other[res.selection].id).join("\n"))
+      .body(cardLibrary.animal.other[res.selection].name + "\n" + cardInfo(cardLibrary.animal.other[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.animal.other[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.animal.other[res.selection].id, true).join("\n"):"")
+    )
       .button1("§l§c図鑑を閉じる")
       .button2("§l§8戻る");
     form2.show(player).then(res2=>{
@@ -663,6 +716,130 @@ function form_animal_other(player){
       if(res2.selection == 0) return;
       if(res2.selection == 1) {
         form_animal_other(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_raid(player){
+  let form = new ui.ActionFormData().title("襲撃カード")
+    .button("§l§9ローコスト")
+    .button("§l§cハイコスト")
+    .button("§l§aドロー以外で入手可能なカード")
+    .button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    switch(res.selection){
+      case 0:
+        form_raid_low(player);
+        break;
+      case 1:
+        form_raid_high(player);
+        break;
+      case 2:
+        form_raid_other(player);
+        break;
+      case 3:
+        cardBookForm_home(player);
+        break;
+    }
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_raid_low(player){
+  let form = new ui.ActionFormData().title("襲撃カード(ローコスト)");
+  cardLibrary.raid.low.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.raid.low.length) {
+      form_raid(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.raid.low[res.selection].name + "\n" + cardInfo(cardLibrary.raid.low[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.raid.low[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.raid.low[res.selection].id, true).join("\n"):"")
+    )
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_raid_low(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_raid_high(player){
+  let form = new ui.ActionFormData().title("襲撃カード(ハイコスト)");
+  cardLibrary.raid.high.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.raid.high.length) {
+      form_raid(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.raid.high[res.selection].name + "\n" + cardInfo(cardLibrary.raid.high[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.raid.high[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.raid.high[res.selection].id, true).join("\n"):"")
+    )
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_raid_high(player);
+        return;
+      }
+    })
+  })
+}
+
+/**
+ * @param {mc.Player} player 
+ */
+function form_raid_other(player){
+  let form = new ui.ActionFormData().title("襲撃カード(ドロー以外)");
+  cardLibrary.raid.other.forEach(e=>{
+    form.button(e.name, e.icon);
+  })
+  form.button("§l§8戻る", "textures/ui/back_button_hover");
+  form.show(player).then(res=>{
+    if(res.canceled) return;
+    if(res.selection == cardLibrary.raid.other.length) {
+      form_raid(player);
+      return;
+    }
+    let form2 = new ui.MessageFormData().title("カード情報")
+      .body(cardLibrary.raid.other[res.selection].name + "\n" + cardInfo(cardLibrary.raid.other[res.selection].id).join("\n")
+      + ((getCard(cardLibrary.raid.other[res.selection].id)?.enhance)?"\n§d§l強化後\n"+cardInfo(cardLibrary.raid.other[res.selection].id, true).join("\n"):"")
+    )
+      .button1("§l§c図鑑を閉じる")
+      .button2("§l§8戻る");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      if(res2.selection == 0) return;
+      if(res2.selection == 1) {
+        form_raid_other(player);
         return;
       }
     })

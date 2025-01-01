@@ -28,7 +28,7 @@ mc.system.runInterval(() => {
         (target.hasTag("fly"))?"§2浮遊 ":"",
         (target.hasTag("call_pigman"))?"§2呼び声 ":"",
         "\n",
-        cardInfo(target.typeId).join("\n")
+        cardInfo(target.typeId, target.hasTag("enhance")).join("\n")
       ]);
     }
     else{

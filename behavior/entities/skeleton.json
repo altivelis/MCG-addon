@@ -7,7 +7,13 @@
       "is_spawnable": true,
       "is_summonable": true
     },
-
+    "component_groups":{
+      "enhance":{
+        "minecraft:health": {
+          "max": 45
+        }
+      }
+    },
     "components": {
       "minecraft:is_hidden_when_invisible": {
       },
@@ -298,6 +304,13 @@
       },
       "minecraft:knockback_resistance": {
         "value": 1.0
+      }
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "add": {
+          "component_groups": [ "enhance" ]
+        }
       }
     }
   }
