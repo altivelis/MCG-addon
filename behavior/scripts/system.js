@@ -538,6 +538,14 @@ export function turnChange(){
       giveSword(notTurnPlayer, info.atk, {translate: `entity.${entity.typeId.slice(10)}.name`});
     }
   })
+  //襲撃モード
+  if(notTurnPlayer.hasTag("raid")){
+    setAct(notTurnPlayer, 20);
+    sendPlayerMessage(notTurnPlayer, "[襲撃モード] actリセット");
+    giveSword(notTurnPlayer, "15", "襲撃モード");
+    giveItem(notTurnPlayer, new mc.ItemStack("minecraft:grass_block", 1));
+    sendPlayerMessage(notTurnPlayer, "[襲撃モード] 草ブロックを獲得");
+  }
   //タイマーリセット
   setAct("timer", mc.world.getDynamicProperty("time"));
   mc.world.setDynamicProperty("turn", mc.world.getDynamicProperty("turn")+1);
