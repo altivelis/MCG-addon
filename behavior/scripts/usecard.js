@@ -2656,6 +2656,64 @@ export const useCard = {
       }
     }
   },
+  iron_axe: {
+    /**
+     * 鉄の斧
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")], excludeTags:["fly", "guard"]}).length == 0){
+            player.sendMessage("§c相手の場に攻撃可能なモブが存在しません");
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "鉄の斧を使用しました");
+          player.dimension.playSound("mace.smash_ground", player.location, {volume: 10});
+          mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotB"], excludeTags:["fly", "guard"]}).forEach(mob=>{
+            mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
+              {translate: `entity.${mob.typeId.slice(10)}.name`},
+              `§r[鉄の斧]`
+            ])
+            applyDamage(mob, 15);
+            target.dimension.playSound("random.glass", mob.location, {volume: 10});
+          });
+          mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotW"], excludeTags:["fly", "guard"]}).forEach(mob=>{
+            mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
+              {translate: `entity.${mob.typeId.slice(10)}.name`},
+              `§r[鉄の斧]`
+            ])
+            applyDamage(mob, 35);
+            target.dimension.playSound("random.glass", mob.location, {volume: 10});
+          });
+          mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["fly", "guard"]}).forEach(mob=>{
+            mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
+              {translate: `entity.${mob.typeId.slice(10)}.name`},
+              `§r[鉄の斧]`
+            ])
+            applyDamage(mob, 15);
+            target.dimension.playSound("random.glass", mob.location, {volume: 10});
+          });
+          break;
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
   snowball: {
     /**
      * 雪玉
