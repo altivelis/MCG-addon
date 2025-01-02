@@ -171,6 +171,22 @@ const recipe = [
       "minecraft:carved_pumpkin",
       "minecraft:coal"
     ]
+  },
+  {
+    item: "mcg:heal_splash_potion",
+    name: "治癒のスプラッシュポーション",
+    materials: [
+      "mcg:heal_potion",
+      "minecraft:creeper_spawn_egg"
+    ]
+  },
+  {
+    item: "mcg:damage_splash_potion",
+    name: "負傷のスプラッシュポーション",
+    materials: [
+      "mcg:damage_potion",
+      "minecraft:creeper_spawn_egg"
+    ]
   }
 ]
 
