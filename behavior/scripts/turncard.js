@@ -137,6 +137,10 @@ export const turnMob = {
      */
     run: (newPlayer, oldPlayer, entity) => {
       if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        if(entity.hasTag("enhance")){
+          giveItem(newPlayer, new mc.ItemStack("mcg:awkward_potion"));
+          sendPlayerMessage(newPlayer, "[ウィッチ] 奇妙なポーションを獲得");
+        }
         entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
         sendPlayerMessage(newPlayer, "[ウィッチ] 体力回復");
       }

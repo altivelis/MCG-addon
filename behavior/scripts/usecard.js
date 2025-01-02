@@ -2752,6 +2752,121 @@ export const useCard = {
       }
     }
   },
+  ominous_bottle: {
+    /**
+     * 不吉な瓶
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      let mobs;
+      switch(cardBlock.typeId){
+        case B:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:witch", tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
+          if(mobs.length == 0){
+            player.sendMessage("§c青スロットにウィッチが存在しないため使用できません。");
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "不吉な瓶を使用しました");
+          enhance["witch"].run(mobs[0], player);
+          break;
+        case W:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:witch", tags:[(player.hasTag("red")?"red":"blue"), "slotW"]});
+          if(mobs.length == 0){
+            player.sendMessage("§c白スロットにウィッチが存在しないため使用できません。");
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "不吉な瓶を使用しました");
+          enhance["witch"].run(mobs[0], player);
+          break;
+        case R:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:witch", tags:[(player.hasTag("red")?"red":"blue"), "slotR"]});
+          if(mobs.length == 0){
+            player.sendMessage("§c赤スロットにウィッチが存在しないため使用できません。");
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "不吉な瓶を使用しました");
+          enhance["witch"].run(mobs[0], player);
+          break;
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
+  awkward_potion: {
+    /**
+     * 奇妙なポーション
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(parseInt(info.Cact) > getAct(player) + 1){
+        player.sendMessage(error_act);
+        return;
+      }
+      const allow_mobs = ["zombie", "skeleton", "creeper"];
+      let mobs;
+      switch(cardBlock.typeId){
+        case B:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotB"]}).filter(e=>{
+            return allow_mobs.includes(e.typeId.slice(10));
+          })
+          if(mobs.length == 0){
+            player.sendMessage("§c青スロットに対象のモブが存在しないため使用できません。");
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "奇妙なポーションを使用しました");
+          enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
+          break;
+        case W:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotW"]}).filter(e=>{
+            return allow_mobs.includes(e.typeId.slice(10));
+          })
+          if(mobs.length == 0){
+            player.sendMessage("§c白スロットに対象のモブが存在しないため使用できません。");
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "奇妙なポーションを使用しました");
+          enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
+          break;
+        case R:
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotR"]}).filter(e=>{
+            return allow_mobs.includes(e.typeId.slice(10));
+          })
+          if(mobs.length == 0){
+            player.sendMessage("§c赤スロットに対象のモブが存在しないため使用できません。");
+            return;
+          }
+          addAct(player, -parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "奇妙なポーションを使用しました");
+          enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
+          break;
+        case P:
+        case O:
+          player.sendMessage(error_slot);
+          return;
+      }
+    }
+  },
   snowball: {
     /**
      * 雪玉
@@ -2797,6 +2912,76 @@ export const useCard = {
           player.sendMessage(error_slot);
           return;
       }
+    }
+  }
+}
+
+const enhance = {
+  zombie: {
+    /**
+     * ゾンビ
+     * @param {mc.Entity} mob
+     * @param {mc.Player} player
+     */
+    run: (mob, player) => {
+      mob.triggerEvent("enhance");
+      mob.addTag("enhance");
+      /**@type {mc.EntityHealthComponent} */
+      let health = mob.getComponent(mc.EntityHealthComponent.componentId);
+      health.resetToMaxValue();
+      mob.dimension.playSound("block.enchanting_table.use", mob.location, {volume: 10});
+      sendPlayerMessage(player, "ゾンビを強化しました");
+      giveItem(player, new mc.ItemStack("minecraft:grass_block", 3));
+      player.sendMessage("[入手] 草ブロック x3");
+    }
+  },
+  skeleton: {
+    /**
+     * スケルトン
+     * @param {mc.Entity} mob
+     * @param {mc.Player} player
+     */
+    run: (mob, player) => {
+      mob.triggerEvent("enhance");
+      mob.addTag("enhance");
+      mob.dimension.playSound("block.enchanting_table.use", mob.location, {volume: 10});
+      sendPlayerMessage(player, "スケルトンを強化しました");
+      giveItem(player, new mc.ItemStack("minecraft:arrow"));
+      player.sendMessage("[入手] 矢");
+    }
+  },
+  creeper: {
+    /**
+     * クリーパー
+     * @param {mc.Entity} mob
+     * @param {mc.Player} player
+     */
+    run: (mob, player) => {
+      sendPlayerMessage(player, "クリーパーを強化しました");
+      sendPlayerMessage(player, "[クリーパー] ドカーン！");
+      mob.dimension.spawnParticle("minecraft:huge_explosion_emitter", mob.location);
+      mob.dimension.playSound("cauldron.explode", mob.location, {volume: 10});
+      mob.dimension.getEntities({excludeTypes:["minecraft:player", "minecraft:item"], excludeTags:["fly", "guard"]}).forEach(e=>{
+        applyDamage(e, 20);
+      })
+      getObject("red").setType("minecraft:air");
+      getObject("blue").setType("minecraft:air");
+      sendPlayerMessage(player, "全てのオブジェクトが破壊された！");
+    }
+  },
+  witch: {
+    /**
+     * ウィッチ
+     * @param {mc.Entity} mob
+     * @param {mc.Player} player
+     */
+    run: (mob, player) => {
+      mob.triggerEvent("enhance");
+      mob.addTag("enhance");
+      mob.dimension.playSound("block.enchanting_table.use", mob.location, {volume: 10});
+      sendPlayerMessage(player, "ウィッチを強化しました");
+      giveItem(player, new mc.ItemStack("mcg:awkward_potion", 2));
+      player.sendMessage("[入手] 奇妙なポーション x2");
     }
   }
 }
