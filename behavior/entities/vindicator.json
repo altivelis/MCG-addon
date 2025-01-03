@@ -12,18 +12,6 @@
     },
 
     "components": {
-      "minecraft:equip_item": {
-      },
-      "minecraft:shareables": {
-        "items": [
-          {
-            "item": "minecraft:banner:15",
-            "want_amount": 1,
-            "surplus_amount": 1,
-            "priority": 0
-          }
-        ]
-      },
       "minecraft:is_hidden_when_invisible": {
       },
       "minecraft:experience_reward": {
@@ -34,19 +22,7 @@
       "minecraft:conditional_bandwidth_optimization": {
       },
       "minecraft:nameable": {
-        "default_trigger": {
-          "event": "minecraft:stop_johnny",
-          "target": "self"
-        },
-        "name_actions": [
-          {
-            "name_filter": "Johnny",
-            "on_named": {
-              "event": "minecraft:start_johnny",
-              "target": "self"
-            }
-          }
-        ]
+        "always_show": true
       },
       "minecraft:type_family": {
         "family": [ "vindicator", "monster", "illager", "mob" ]
@@ -79,7 +55,7 @@
         "damage": 8
       },
       "minecraft:movement": {
-        "value": 0.35
+        "value": 0.0
       },
       "minecraft:navigation.walk": {
         "can_path_over_water": true
@@ -108,15 +84,6 @@
         "priority": 10,
         "look_distance": 8,
         "probability": 0.02
-      },
-      "minecraft:behavior.equip_item": {
-        "priority": 3
-      },
-      "minecraft:behavior.pickup_items": {
-        "priority": 7,
-        "max_dist": 3,
-        "goal_radius": 2,
-        "speed_multiplier": 1.0
       },
       "minecraft:physics": {
       },

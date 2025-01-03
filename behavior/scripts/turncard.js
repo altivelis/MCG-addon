@@ -92,7 +92,7 @@ export const turnMob = {
         if(entity.hasTag("enhance")){
           let amount = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"red":"blue")]}).length;
           if(amount){
-            giveItem(newPlayer, new mc.ItemStack("minecraft:arrow", amount));
+            giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"), amount);
             sendPlayerMessage(newPlayer, "[スケルトン] 矢x" + amount + "を獲得");
           }
         }
@@ -182,7 +182,7 @@ export const turnMob = {
      */
     run: (newPlayer, oldPlayer, entity) => {
       if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow", 2));
+        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"), 2);
         sendPlayerMessage(newPlayer, "[ストレイ] 矢x2を獲得");
       }
     }
@@ -371,9 +371,9 @@ export const turnMob = {
      */
     run: (newPlayer, oldPlayer, entity) => {
       if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block", 1));
+        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"));
         sendPlayerMessage(newPlayer, "[略奪者] 草ブロックを獲得");
-        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow", 2));
+        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"), 2);
         sendPlayerMessage(newPlayer, "[略奪者] 矢x2を獲得");
         sendPlayerMessage(newPlayer, "[略奪者] スリップダメージ");
         applyDamage(newPlayer, 2);
@@ -469,7 +469,7 @@ export const turnMob = {
      */
     run: (newPlayer, oldPlayer, entity) => {
       if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block", 2));
+        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"), 2);
         sendPlayerMessage(newPlayer, "[ラヴェジャー] 草ブロックx2を獲得");
       }
     }
@@ -537,7 +537,7 @@ export const turnObject = {
      */
     run: (newPlayer, oldPlayer, blockTag) => {
       if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block", 3));
+        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"), 3);
         sendPlayerMessage(newPlayer, "[エンダーチェスト] 草ブロックx3を獲得");
       }
     }

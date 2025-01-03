@@ -27,6 +27,7 @@ mc.system.runInterval(() => {
         (target.hasTag("guard"))?"§2ガード ":"",
         (target.hasTag("fly"))?"§2浮遊 ":"",
         (target.hasTag("call_pigman"))?"§2呼び声 ":"",
+        (target.hasTag("ace"))?"§2大将 ":"",
         "\n",
         cardInfo(target.typeId, target.hasTag("enhance")).join("\n")
       ]);
@@ -79,6 +80,10 @@ mc.system.runInterval(() => {
      */
     let hp = entity.getComponent(mc.EntityHealthComponent.componentId);
     entity.nameTag = `${Math.floor(hp.currentValue*10)/10}/${hp.effectiveMax} §l§a${"|".repeat(Math.floor(20 * (hp.currentValue / hp.effectiveMax)))}§c${"|".repeat(20 * (1 - hp.currentValue / hp.effectiveMax))}`;
+  })
+  //ヴェックス固定
+  mc.world.getDimension("overworld").getEntities({type:"minecraft:vex"}).forEach(entity=>{
+    entity.teleport(entity.location, {keepVelocity:false});
   })
 })
 

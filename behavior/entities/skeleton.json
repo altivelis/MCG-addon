@@ -10,6 +10,7 @@
     "component_groups":{
       "enhance":{
         "minecraft:health": {
+          "value": 45,
           "max": 45
         }
       }
@@ -307,7 +308,7 @@
       }
     },
     "events": {
-      "minecraft:entity_spawned": {
+      "enhance": {
         "add": {
           "component_groups": [ "enhance" ]
         }

@@ -515,7 +515,7 @@ export const useCard = {
         (mob)=>{
         sendPlayerMessage(player, "村人を召喚しました");
         mob.dimension.playSound("mob.chicken.plop", mob.location, {volume: 10});
-        giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
+        giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
         player.sendMessage("[入手] 草ブロック x2");
       });
     }
@@ -844,7 +844,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ゾンビを召喚しました");
           mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
+          giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
           player.sendMessage("[入手] 草ブロック x2");
         }
       )
@@ -1030,15 +1030,15 @@ export const useCard = {
               player.sendMessage("[入手] エンチャントされた金のリンゴ");
               break;
             case 1:
-              giveItem(player, new mc.ItemStack("minecraft:stray_spawn_egg",2));
+              giveItem(player, new mc.ItemStack("minecraft:stray_spawn_egg"),2);
               player.sendMessage("[入手] ストレイ x2");
               break;
             case 2:
-              giveItem(player, new mc.ItemStack("minecraft:husk_spawn_egg",2));
+              giveItem(player, new mc.ItemStack("minecraft:husk_spawn_egg"),2);
               player.sendMessage("[入手] ハスク x2");
               break;
             case 3:
-              giveItem(player, new mc.ItemStack("minecraft:phantom_spawn_egg",2));
+              giveItem(player, new mc.ItemStack("minecraft:phantom_spawn_egg"),2);
               player.sendMessage("[入手] ファントム x2");
               break;
           }
@@ -1086,7 +1086,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ストレイを召喚しました");
           mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:arrow", 2));
+          giveItem(player, new mc.ItemStack("minecraft:arrow"), 2);
           player.sendMessage("[入手] 矢 x2");
         }
       )
@@ -1186,7 +1186,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ゾンビピッグマンを召喚しました");
           mob.dimension.playSound("mob.blaze.shoot", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
+          giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
           player.sendMessage("[入手] 草ブロック x2");
           if(!player.hasTag("nether")){
             player.addTag("nether");
@@ -1322,7 +1322,7 @@ export const useCard = {
           setAct(player, 40);
           setAct(enemy, 30);
           applyDamage(player, 8, {cause:mc.EntityDamageCause.wither});
-          giveItem(player, new mc.ItemStack("minecraft:grass_block", 3));
+          giveItem(player, new mc.ItemStack("minecraft:grass_block"), 3);
           player.sendMessage("[入手] 草ブロック x3");
           enemyEntities.forEach(entity=>{
             applyDamage(entity, 20);
@@ -1521,7 +1521,7 @@ export const useCard = {
           mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 10});
           mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
-          giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
+          giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
           player.sendMessage("[入手] 草ブロック x2");
           switch(Math.floor(Math.random() * 4)){
             case 0:
@@ -1568,7 +1568,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "ミツバチの巣を使用しました");
           player.dimension.playSound("block.beehive.enter", player.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:bee_spawn_egg", 2));
+          giveItem(player, new mc.ItemStack("minecraft:bee_spawn_egg"), 2);
           player.sendMessage("[入手] ミツバチ x2");
           break;
         case O:
@@ -1993,9 +1993,9 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           sendPlayerMessage(player, "鉄のクワを使用しました");
           player.dimension.playSound("dig.gravel", player.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:wheat", 2));
+          giveItem(player, new mc.ItemStack("minecraft:wheat"), 2);
           player.sendMessage("[入手] 小麦 x2");
-          giveItem(player, new mc.ItemStack("minecraft:grass_block", 3));
+          giveItem(player, new mc.ItemStack("minecraft:grass_block"), 3);
           player.sendMessage("[入手] 草ブロック x3");
           for(let i=0; i<2; i++){
             switch(Math.floor(Math.random() * 4)){
@@ -2241,7 +2241,7 @@ export const useCard = {
           sendPlayerMessage(player, "ボグドを召喚しました");
           mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
           if(getObject(player.hasTag("red")?"red":"blue").typeId != "minecraft:air"){
-            giveItem(player, new mc.ItemStack("minecraft:arrow", 3));
+            giveItem(player, new mc.ItemStack("minecraft:arrow"), 3);
             player.sendMessage("[入手] 矢 x3");
           }
         }
@@ -2302,21 +2302,24 @@ export const useCard = {
             player.sendMessage("§c赤スロットに村人が存在しないため使用できません。");
             return;
           }
-          summonCard(cardBlock, player, "minecraft:pillager",
-            /**
-             * @param {mc.Entity} mob
-             */
-            (mob)=>{
-              villager.forEach(v=>{
-                v.kill();
-              })
-              sendPlayerMessage(player, "略奪者を召喚しました");
-              mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
-              applyDamage(player, 3);
-              giveItem(player, new mc.ItemStack("minecraft:grass_block", 2));
-              player.sendMessage("[入手] 草ブロック x2");
-            }
-          )
+          let info = getCard(handItem(player).typeId);
+          if(parseInt(info.Sact) > getAct(player) + 1){
+            player.sendMessage(error_act);
+            return;
+          }
+          addAct(player, -parseInt(info.Sact));
+          decrementSlot(player, player.selectedSlotIndex);
+          let mob = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:pillager", (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
+          mob.addTag((player.hasTag("red") ? "red" : "blue"));
+          mob.addTag("slotR");
+          villager.forEach(v=>{
+            v.kill();
+          })
+          sendPlayerMessage(player, "略奪者を召喚しました");
+          mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
+          applyDamage(player, 3);
+          giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
+          player.sendMessage("[入手] 草ブロック x2");
           break;
         case P:
         case O:
@@ -2385,21 +2388,24 @@ export const useCard = {
             player.sendMessage("§c青スロットに村人が存在しないため使用できません。");
             return;
           }
-          summonCard(cardBlock, player, "minecraft:vindicator",
-            /**
-             * @param {mc.Entity} mob
-             */
-            (mob)=>{
-              villager.forEach(v=>{
-                v.kill();
-              })
-              sendPlayerMessage(player, "ヴィンディケーターを召喚しました");
-              mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
-              applyDamage(player, 4);
-              giveItem(player, new mc.ItemStack("minecraft:iron_axe"));
-              player.sendMessage("[入手] 鉄の斧");
-            }
-          )
+          let info = getCard(handItem(player).typeId);
+          if(parseInt(info.Sact) > getAct(player) + 1){
+            player.sendMessage(error_act);
+            return;
+          }
+          addAct(player, -parseInt(info.Sact));
+          decrementSlot(player, player.selectedSlotIndex);
+          let mob = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vindicator", (player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
+          mob.addTag((player.hasTag("red") ? "red" : "blue"));
+          mob.addTag("slotB");
+          villager.forEach(v=>{
+            v.kill();
+          })
+          sendPlayerMessage(player, "ヴィンディケーターを召喚しました");
+          mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
+          applyDamage(player, 4);
+          giveItem(player, new mc.ItemStack("minecraft:iron_axe"));
+          player.sendMessage("[入手] 鉄の斧");
           break;
         case W:
         case R:
@@ -2422,6 +2428,7 @@ export const useCard = {
          * @param {mc.Entity} mob
          */
         (mob)=>{
+          mob.teleport({...mob.location, y: mob.location.y + 1});
           sendPlayerMessage(player, "ヴェックスを召喚しました");
           mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
         }
@@ -2445,35 +2452,38 @@ export const useCard = {
             player.sendMessage("§c白スロットに村人が存在しないため使用できません。");
             return;
           }
-          summonCard(cardBlock, player, "minecraft:evocation_illager",
-            /**
-             * @param {mc.Entity} mob
-             */
-            (mob)=>{
-              villager.forEach(v=>{
-                v.kill();
-              })
-              sendPlayerMessage(player, "エヴォーカーを召喚しました");
-              mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
-              applyDamage(player, 3);
-              giveItem(player, new mc.ItemStack("minecraft:totem_of_undying"));
-              player.sendMessage("[入手] 不死のトーテム");
-              if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"]}).length == 0){
-                let mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
-                mobb.addTag((player.hasTag("red") ? "red" : "blue"));
-                mobb.addTag("slotB");
-                sendPlayerMessage(player, "ヴェックスを召喚しました");
-                mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
-              }
-              if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"]}).length == 0){
-                let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
-                mobr.addTag((player.hasTag("red") ? "red" : "blue"));
-                mobr.addTag("slotR");
-                sendPlayerMessage(player, "ヴェックスを召喚しました");
-                mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
-              }
-            }
-          )
+          let info = getCard(handItem(player).typeId);
+          if(parseInt(info.Sact) > getAct(player) + 1){
+            player.sendMessage(error_act);
+            return;
+          }
+          addAct(player, -parseInt(info.Sact));
+          decrementSlot(player, player.selectedSlotIndex);
+          let mob = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:evocation_illager", (player.hasTag("red") ? mcg.const.red.slot.white : mcg.const.blue.slot.white));
+          mob.addTag((player.hasTag("red") ? "red" : "blue"));
+          mob.addTag("slotW");
+          villager.forEach(v=>{
+            v.kill();
+          })
+          sendPlayerMessage(player, "エヴォーカーを召喚しました");
+          mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
+          applyDamage(player, 3);
+          giveItem(player, new mc.ItemStack("mcg:totem"));
+          player.sendMessage("[入手] 不死のトーテム");
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"]}).length == 0){
+            let mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
+            mobb.addTag((player.hasTag("red") ? "red" : "blue"));
+            mobb.addTag("slotB");
+            sendPlayerMessage(player, "ヴェックスを召喚しました");
+            mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
+          }
+          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"]}).length == 0){
+            let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
+            mobr.addTag((player.hasTag("red") ? "red" : "blue"));
+            mobr.addTag("slotR");
+            sendPlayerMessage(player, "ヴェックスを召喚しました");
+            mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
+          }
           break;
         case R:
         case P:
@@ -2504,7 +2514,7 @@ export const useCard = {
           }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
-          mob = mc.world.getDimension("minecraft:overworld").spawnEntity(identifier, (player.hasTag("red") ? mcg.const.blue.slot.blue : mcg.const.red.slot.blue));
+          mob = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:armor_stand", (player.hasTag("red") ? mcg.const.blue.slot.blue : mcg.const.red.slot.blue));
           mob.addTag((player.hasTag("red") ? "blue" : "red"));
           mob.addTag("slotB");
           break;
@@ -2515,7 +2525,7 @@ export const useCard = {
           }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
-          mob = mc.world.getDimension("minecraft:overworld").spawnEntity(identifier, (player.hasTag("red") ? mcg.const.blue.slot.white : mcg.const.red.slot.white));
+          mob = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:armor_stand", (player.hasTag("red") ? mcg.const.blue.slot.white : mcg.const.red.slot.white));
           mob.addTag((player.hasTag("red") ? "blue" : "red"));
           mob.addTag("slotW");
           break;
@@ -2526,7 +2536,7 @@ export const useCard = {
           }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
-          mob = mc.world.getDimension("minecraft:overworld").spawnEntity(identifier, (player.hasTag("red") ? mcg.const.blue.slot.red : mcg.const.red.slot.red));
+          mob = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:armor_stand", (player.hasTag("red") ? mcg.const.blue.slot.red : mcg.const.red.slot.red));
           mob.addTag((player.hasTag("red") ? "blue" : "red"));
           mob.addTag("slotR");
           break;
@@ -2583,6 +2593,10 @@ export const useCard = {
       let info = getCard(handItem(player).typeId);
       if(parseInt(info.Cact) > getAct(player) + 1){
         player.sendMessage(error_act);
+        return;
+      }
+      if(mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "ace"]}).length > 0){
+        player.sendMessage("§c既に大将が存在するため使用できません。");
         return;
       }
       let mobs;
@@ -2690,7 +2704,7 @@ export const useCard = {
               `§r[鉄の斧]`
             ])
             applyDamage(mob, 15);
-            target.dimension.playSound("random.glass", mob.location, {volume: 10});
+            mob.dimension.playSound("random.glass", mob.location, {volume: 10});
           });
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotW"], excludeTags:["fly", "guard"]}).forEach(mob=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
@@ -2698,7 +2712,7 @@ export const useCard = {
               `§r[鉄の斧]`
             ])
             applyDamage(mob, 35);
-            target.dimension.playSound("random.glass", mob.location, {volume: 10});
+            mob.dimension.playSound("random.glass", mob.location, {volume: 10});
           });
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["fly", "guard"]}).forEach(mob=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
@@ -2706,7 +2720,7 @@ export const useCard = {
               `§r[鉄の斧]`
             ])
             applyDamage(mob, 15);
-            target.dimension.playSound("random.glass", mob.location, {volume: 10});
+            mob.dimension.playSound("random.glass", mob.location, {volume: 10});
           });
           break;
         case O:
@@ -2766,6 +2780,9 @@ export const useCard = {
         return;
       }
       let mobs;
+      /**@type {mc.EntityHealthComponent} */
+      let health;
+      let hp;
       switch(cardBlock.typeId){
         case B:
           mobs = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:witch", tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
@@ -2776,11 +2793,16 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "不吉な瓶を使用しました");
+          health = mobs[0].getComponent(mc.EntityHealthComponent.componentId);
+          hp = health.currentValue;
           mobs[0].triggerEvent("enhance");
           mobs[0].addTag("enhance");
+          myTimeout(1,()=>{
+            health.setCurrentValue(hp);
+          })
           mobs[0].dimension.playSound("block.enchanting_table.use", mobs[0].location, {volume: 10});
           sendPlayerMessage(player, "ウィッチを強化しました");
-          giveItem(player, new mc.ItemStack("mcg:awkward_potion", 2));
+          giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 2);
           player.sendMessage("[入手] 奇妙なポーション x2");
           break;
         case W:
@@ -2792,11 +2814,16 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "不吉な瓶を使用しました");
+          health = mobs[0].getComponent(mc.EntityHealthComponent.componentId);
+          hp = health.currentValue;
           mobs[0].triggerEvent("enhance");
           mobs[0].addTag("enhance");
+          myTimeout(1,()=>{
+            health.setCurrentValue(hp);
+          })
           mobs[0].dimension.playSound("block.enchanting_table.use", mobs[0].location, {volume: 10});
           sendPlayerMessage(player, "ウィッチを強化しました");
-          giveItem(player, new mc.ItemStack("mcg:awkward_potion", 2));
+          giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 2);
           player.sendMessage("[入手] 奇妙なポーション x2");
           break;
         case R:
@@ -2808,11 +2835,16 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "不吉な瓶を使用しました");
+          health = mobs[0].getComponent(mc.EntityHealthComponent.componentId);
+          hp = health.currentValue;
           mobs[0].triggerEvent("enhance");
           mobs[0].addTag("enhance");
+          myTimeout(1,()=>{
+            health.setCurrentValue(hp);
+          })
           mobs[0].dimension.playSound("block.enchanting_table.use", mobs[0].location, {volume: 10});
           sendPlayerMessage(player, "ウィッチを強化しました");
-          giveItem(player, new mc.ItemStack("mcg:awkward_potion", 2));
+          giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 2);
           player.sendMessage("[入手] 奇妙なポーション x2");
           break;
         case P:
@@ -2895,7 +2927,7 @@ export const useCard = {
         player.sendMessage(error_act);
         return;
       }
-      let mobs;
+      let mobs = [];
       switch(cardBlock.typeId){
         case B:
           mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
@@ -2940,7 +2972,7 @@ export const useCard = {
           player.sendMessage(error_slot);
           return;
       }
-      if(mobs.length == 0) return;
+      if(mobs?.length == 0) return;
       mobs.forEach(mob=>{
         mob.dimension.playSound("random.drink", mob.location, {volume: 10});
         if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
@@ -3299,7 +3331,7 @@ const enhance = {
       health.resetToMaxValue();
       mob.dimension.playSound("block.enchanting_table.use", mob.location, {volume: 10});
       sendPlayerMessage(player, "ゾンビを強化しました");
-      giveItem(player, new mc.ItemStack("minecraft:grass_block", 3));
+      giveItem(player, new mc.ItemStack("minecraft:grass_block"), 3);
       player.sendMessage("[入手] 草ブロック x3");
     }
   },
@@ -3310,8 +3342,14 @@ const enhance = {
      * @param {mc.Player} player
      */
     run: (mob, player) => {
+      /**@type {mc.EntityHealthComponent} */
+      let health = mob.getComponent(mc.EntityHealthComponent.componentId);
+      let hp = health.currentValue;
       mob.triggerEvent("enhance");
       mob.addTag("enhance");
+      myTimeout(1,()=>{
+        health.setCurrentValue(hp);
+      })
       mob.dimension.playSound("block.enchanting_table.use", mob.location, {volume: 10});
       sendPlayerMessage(player, "スケルトンを強化しました");
       giveItem(player, new mc.ItemStack("minecraft:arrow"));
@@ -3335,6 +3373,7 @@ const enhance = {
       getObject("red").setType("minecraft:air");
       getObject("blue").setType("minecraft:air");
       sendPlayerMessage(player, "全てのオブジェクトが破壊された！");
+      mob.kill();
     }
   },
   witch: {

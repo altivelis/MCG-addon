@@ -15,9 +15,9 @@ export function myTimeout(tick, func){
  * テキスト付きアイテムを渡す関数
  * @param {mc.Player} player 
  * @param {mc.ItemStack} item 
- * @param {number} count 
+ * @param {number} amount
  */
-export function giveItem(player, item){
+export function giveItem(player, item, amount = 1){
   if(item.typeId == "minecraft:banner"){
     if(player.runCommand("/loot spawn ~~~ loot ominous_banner")){
       player.dimension.getEntities({type:"minecraft:item"}).forEach(e => {
@@ -35,7 +35,9 @@ export function giveItem(player, item){
   if(cardInfo(item.typeId).length > 0){
     item.setLore(cardInfo(item.typeId));
   }
-  player.dimension.spawnItem(item, player.location).addTag("give");
+  for(let i=0; i<amount; i++){
+    player.dimension.spawnItem(item, player.location).addTag("give");
+  }
 }
 
 /**
@@ -204,12 +206,16 @@ export function giveSword(player, atk, name="不明"){
       return;
   }
   if(texts.length == 2){
-    for(let i=0; i<parseInt(texts[1]); i++){
-      giveItem(player, sword);
-      mc.world.sendMessage([
-        (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r: [", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}
-      ])
-    }
+    giveItem(player, sword, parseInt(texts[1]));
+    mc.world.sendMessage([
+      (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r: [", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}, " x", texts[1]
+    ])
+    // for(let i=0; i<parseInt(texts[1]); i++){
+    //   giveItem(player, sword);
+    //   mc.world.sendMessage([
+    //     (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r: [", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}
+    //   ])
+    // }
   }else{
     giveItem(player, sword);
     mc.world.sendMessage([
@@ -294,7 +300,7 @@ export function getObject(tag){
  */
 export function applyDamage(target, value, options={cause:mc.EntityDamageCause.entityAttack}){
   let before = target.getComponent(mc.EntityHealthComponent.componentId).currentValue;
-  if(getCard(target.typeId).attribute.includes("残虐") && target.typeId != "minecraft:vex"){
+  if(getCard(target.typeId)?.attribute?.includes("残虐") && target.typeId != "minecraft:vex"){
     if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:vex", tags:[target.hasTag("red")?"red":"blue"]}).length > 0){
       value = Math.floor(value / 2.0);
     }

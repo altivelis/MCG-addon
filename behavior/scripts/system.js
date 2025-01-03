@@ -50,6 +50,10 @@ export const mcg = {
         green: {x:-8, y:0, z:1},
         black: {x:-8, y:0, z:2}
       }
+    },
+    rgb:{
+      red: {red:1, green:0.2, blue:0.3},
+      blue: {red:0, green:0.7, blue:0.9}
     }
   },
   queue:{
@@ -103,7 +107,7 @@ mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
       mcg.queue.red = player;
       mc.system.run(()=>{
         let variable = new mc.MolangVariableMap();
-        variable.setColorRGB("variable.color", {red:1, green:0.2, blue:0.3});
+        variable.setColorRGB("variable.color", mcg.const.rgb.red);
         block.dimension.spawnParticle("mcg:custom_explosion_emitter", faceLocation, variable);
       })
       if(mcg.queue.blue && mcg.queue.blue.id == player.id){
@@ -120,7 +124,7 @@ mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
       mcg.queue.blue = player;
       mc.system.run(()=>{
         let variable = new mc.MolangVariableMap();
-        variable.setColorRGB("variable.color", {red:0, green:0.7, blue:0.9});
+        variable.setColorRGB("variable.color", mcg.const.rgb.blue);
         block.dimension.spawnParticle("mcg:custom_explosion_emitter", faceLocation, variable);
       })
       if(mcg.queue.red && mcg.queue.red.id == player.id){
@@ -145,8 +149,13 @@ mc.system.runInterval(()=>{
   //プレイヤーパーティクル
   if(mcg.queue.red && mcg.queue.red.getGameMode() != mc.GameMode.spectator) mcg.queue.red.dimension.spawnParticle("minecraft:raid_omen_emitter",mcg.queue.red.location);
   if(mcg.queue.blue && mcg.queue.blue.getGameMode() != mc.GameMode.spectator) mcg.queue.blue.dimension.spawnParticle("minecraft:trial_omen_emitter",mcg.queue.blue.location);
-  mc.world.getPlayers({tags:["turn"]}).forEach(tp=>{
-    tp.dimension.spawnParticle("minecraft:heart_particle",{...tp.location, y:tp.location.y+2});
+  mc.world.getPlayers().forEach(player=>{
+    if(player.hasTag("turn")) {
+      player.dimension.spawnParticle("minecraft:heart_particle",{...player.location, y:player.location.y+2});
+    }
+    if(player.hasTag("raid")) {
+      player.dimension.spawnParticle("minecraft:lava_particle", player.location);
+    }
   })
   //属性パーティクル
   mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"]}).forEach(entity=>{
@@ -161,6 +170,9 @@ mc.system.runInterval(()=>{
     }
     if(entity.hasTag("call_pigman")){
       entity.dimension.spawnParticle("minecraft:infested_emitter", {...entity.location, y: entity.location.y+1});
+    }
+    if(entity.hasTag("ace")){
+      entity.dimension.spawnParticle("minecraft:lava_particle", entity.location);
     }
   })
 },10)
@@ -207,6 +219,7 @@ function reset(){
     player.removeTag("blue");
     player.removeTag("turn");
     player.removeTag("nether");
+    player.removeTag("raid");
     player.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
     mc.EffectTypes.getAll().forEach(effect=>{
       player.removeEffect(effect);
@@ -260,6 +273,8 @@ function start(){
   blue.addTag("blue");
   red.removeTag("nether");
   blue.removeTag("nether");
+  red.removeTag("raid");
+  blue.removeTag("raid");
   //ゲームモード変更
   red.setGameMode(mc.GameMode.adventure);
   blue.setGameMode(mc.GameMode.adventure);
@@ -389,11 +404,11 @@ function start(){
                 }
                 first.addTag("turn");
                 //草ブロック配布
-                giveItem(first, new mc.ItemStack("minecraft:grass_block", mc.world.getDynamicProperty("first_draw")));
-                giveItem(second, new mc.ItemStack("minecraft:grass_block", mc.world.getDynamicProperty("second_draw")));
+                giveItem(first, new mc.ItemStack("minecraft:grass_block"), mc.world.getDynamicProperty("first_draw"));
+                giveItem(second, new mc.ItemStack("minecraft:grass_block"), mc.world.getDynamicProperty("second_draw"));
                 //イベントアイテム配布
-                if(mc.world.getDynamicProperty("event")) giveItem(first, new mc.ItemStack("minecraft:snowball", 1));
-                if(mc.world.getDynamicProperty("event")) giveItem(second, new mc.ItemStack("minecraft:snowball", 1));
+                if(mc.world.getDynamicProperty("event")) giveItem(first, new mc.ItemStack("minecraft:snowball"));
+                if(mc.world.getDynamicProperty("event")) giveItem(second, new mc.ItemStack("minecraft:snowball"));
                 //タイトル表示
                 first.onScreenDisplay.setTitle("あなたは§b先攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
                 second.onScreenDisplay.setTitle("あなたは§c後攻§fです",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
@@ -546,7 +561,7 @@ export function turnChange(){
     setAct(notTurnPlayer, 20);
     sendPlayerMessage(notTurnPlayer, "[襲撃モード] actリセット");
     giveSword(notTurnPlayer, "15", "襲撃モード");
-    giveItem(notTurnPlayer, new mc.ItemStack("minecraft:grass_block", 1));
+    giveItem(notTurnPlayer, new mc.ItemStack("minecraft:grass_block"));
     sendPlayerMessage(notTurnPlayer, "[襲撃モード] 草ブロックを獲得");
   }
   //タイマーリセット
@@ -576,8 +591,8 @@ export function turnChange(){
       turnPlayer.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Offhand);
       break;
   }
-  giveItem(notTurnPlayer, new mc.ItemStack("minecraft:compass", 1));
-  giveItem(notTurnPlayer, new mc.ItemStack("minecraft:grass_block", 1));
+  giveItem(notTurnPlayer, new mc.ItemStack("minecraft:compass"));
+  giveItem(notTurnPlayer, new mc.ItemStack("minecraft:grass_block"));
   //タイトル表示
   turnPlayer.onScreenDisplay.setTitle("Turn End",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
   notTurnPlayer.onScreenDisplay.setTitle("Your Turn",{fadeInDuration:10, stayDuration:40, fadeOutDuration:10});
@@ -617,9 +632,13 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
   winner.removeTag("red");
   winner.removeTag("blue");
   winner.removeTag("turn");
+  winner.removeTag("nether");
+  winner.removeTag("raid");
   loser.removeTag("red");
   loser.removeTag("blue");
   loser.removeTag("turn");
+  loser.removeTag("nether");
+  loser.removeTag("raid");
   //アイテム消去
   winner.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
   loser.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
@@ -690,15 +709,16 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
 
 mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
   if(data.id != "mcg:test") return;
-  if(data.sourceEntity.runCommand("/loot spawn ~~~ loot ominous_banner")){
-    data.sourceEntity.dimension.getEntities({type:"minecraft:item"}).forEach(item=>{
-      /**@type {mc.ItemStack} */
-      let itemstack = item.getComponent(mc.EntityItemComponent.componentId).itemStack;
-      if(itemstack.typeId == "minecraft:banner" && itemstack.getLore().length == 0){
-        itemstack.setLore(cardInfo(itemstack.typeId));
-        item.dimension.spawnItem(itemstack, item.location);
-        item.remove();
-      }
+  /**@type {mc.Player} */
+  let player = data.sourceEntity;
+  player.dimension.getEntities({type:"minecraft:witch"}).forEach(entity=>{
+    /**@type {mc.EntityHealthComponent} */
+    let health = entity.getComponent(mc.EntityHealthComponent.componentId);
+    let hp = health.currentValue;
+    entity.triggerEvent("enhance");
+    myTimeout(1, ()=>{
+      health.setCurrentValue(hp);
+      mc.world.sendMessage(hp+"");
     })
-  }
+  })
 })
