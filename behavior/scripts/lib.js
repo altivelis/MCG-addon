@@ -167,7 +167,7 @@ export function setAct(target, value){
 export function addAct(target, value){
   if(getAct(target) + value < 0){
     mc.world.sendMessage((target.hasTag("red")?"§c":"§b")+target.nameTag+"§r:[オーバーコストペナルティー]");
-    target.applyDamage(5, {cause:mc.EntityDamageCause.suicide});
+    applyDamage(target, 5, {cause:mc.EntityDamageCause.none});
     return mc.world.scoreboard.getObjective("act").setScore(target, 0);
   }
   return mc.world.scoreboard.getObjective("act").addScore(target, value);
@@ -282,6 +282,7 @@ export function setObject(player, blockid){
     if(test) sendPlayerMessage(player, "[ミツバチの巣] ハチミツ入りの瓶をすべて消費しました");
   }
   mc.world.getDimension("minecraft:overworld").setBlockPermutation((player.hasTag("red")?mcg.const.red.slot.object:mcg.const.blue.slot.object), mc.BlockPermutation.resolve(blockid));
+  mc.world.getDimension("minecraft:overworld").spawnParticle("mcg:knockback_roar_particle", player.hasTag("red")?mcg.const.red.slot.object:mcg.const.blue.slot.object, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
 }
 
 /**
@@ -343,14 +344,15 @@ export function isOnline(){
  * @param {mc.Vector3} to 
  * @param {String} particleName 
  * @param {Number} interval 
+ * @param {mc.MolangVariableMap} molang
  */
-export function lineParticle(dimension, from, to, particleName, interval){
+export function lineParticle(dimension, from, to, particleName, interval, molang = undefined){
   let vec = {x:to.x-from.x, y:to.y-from.y, z:to.z-from.z};
   let distance = Math.sqrt(vec.x**2 + vec.y**2 + vec.z**2);
   let count = Math.ceil(distance / interval);
   vec.x /= count; vec.y /= count; vec.z /= count;
   for(let i=0; i<count; i++){
-    dimension.spawnParticle(particleName, {x:from.x+vec.x*i, y:from.y+vec.y*i, z:from.z+vec.z*i});
+    dimension.spawnParticle(particleName, {x:from.x+vec.x*i, y:from.y+vec.y*i, z:from.z+vec.z*i}, molang);
   }
   return;
 }
@@ -370,4 +372,14 @@ export function changeHealthBoost(player, value){
   player.removeEffect(mc.EffectTypes.get("minecraft:health_boost"));
   player.addEffect(mc.EffectTypes.get("minecraft:health_boost"), 20000000, {amplifier:level, showParticles:false});
   health.setCurrentValue(beforeHp);
+}
+
+/**
+ * パーティクル用変数生成関数
+ * @param {mc.RGB} color
+ */
+export function createColor(color){
+  let variable = new mc.MolangVariableMap();
+  variable.setColorRGB("variable.color", color);
+  return variable;
 }

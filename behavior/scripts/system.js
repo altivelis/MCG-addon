@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline, cardInfo } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline, cardInfo, createColor, lineParticle } from "./lib";
 import { turnItem, turnMob, turnObject } from "./turncard";
 
 export const mcg = {
@@ -106,9 +106,7 @@ mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
     if(!mcg.queue.red){
       mcg.queue.red = player;
       mc.system.run(()=>{
-        let variable = new mc.MolangVariableMap();
-        variable.setColorRGB("variable.color", mcg.const.rgb.red);
-        block.dimension.spawnParticle("mcg:custom_explosion_emitter", faceLocation, variable);
+        block.dimension.spawnParticle("mcg:custom_explosion_emitter", faceLocation, createColor(mcg.const.rgb.red));
       })
       if(mcg.queue.blue && mcg.queue.blue.id == player.id){
         mcg.queue.blue = null;
@@ -123,9 +121,7 @@ mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
     if(!mcg.queue.blue){
       mcg.queue.blue = player;
       mc.system.run(()=>{
-        let variable = new mc.MolangVariableMap();
-        variable.setColorRGB("variable.color", mcg.const.rgb.blue);
-        block.dimension.spawnParticle("mcg:custom_explosion_emitter", faceLocation, variable);
+        block.dimension.spawnParticle("mcg:custom_explosion_emitter", faceLocation, createColor(mcg.const.rgb.blue));
       })
       if(mcg.queue.red && mcg.queue.red.id == player.id){
         mcg.queue.red = null;
@@ -554,6 +550,7 @@ export function turnChange(){
     if(info){
       addAct(notTurnPlayer, parseInt(info.Bact));
       giveSword(notTurnPlayer, info.atk, {translate: `entity.${entity.typeId.slice(10)}.name`});
+      lineParticle(notTurnPlayer.dimension, entity.location, notTurnPlayer.location, "mcg:custom_explosion_emitter", createColor(mcg.const.rgb[notTurnPlayer.hasTag("red")?"red":"blue"]));
     }
   })
   //襲撃モード
@@ -583,6 +580,9 @@ export function turnChange(){
       tp_inv.setItem(i);
     }
     if(tp_inv.getItem(i)?.typeId == "minecraft:snowball"){
+      tp_inv.setItem(i);
+    }
+    if(tp_inv.getItem(i)?.typeId == "minecraft:iron_axe"){
       tp_inv.setItem(i);
     }
   }

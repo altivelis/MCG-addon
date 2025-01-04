@@ -88,7 +88,12 @@ mc.system.runInterval(() => {
 })
 
 mc.world.afterEvents.entityHurt.subscribe(data=>{
-  mc.world.sendMessage([(data.hurtEntity.typeId == "minecraft:player")?data.hurtEntity.nameTag:{translate: `entity.${data.hurtEntity.typeId.slice(10)}.name`}, `に${Math.floor(data.damage*10)/10}ダメージ!`]);
+  if(data.damageSource.cause == mc.EntityDamageCause.selfDestruct) {
+    if(mc.world.getDynamicProperty("status") == 2) mc.world.sendMessage(["[除外] ", (data.hurtEntity.typeId == "minecraft:player")?data.hurtEntity.nameTag:{translate: `entity.${data.hurtEntity.typeId.slice(10)}.name`}])
+  }
+  else {
+    mc.world.sendMessage([(data.hurtEntity.typeId == "minecraft:player")?data.hurtEntity.nameTag:{translate: `entity.${data.hurtEntity.typeId.slice(10)}.name`}, `に${Math.floor(data.damage*10)/10}ダメージ!`]);
+  }
 })
 
 mc.world.beforeEvents.itemUse.subscribe(data=>{
