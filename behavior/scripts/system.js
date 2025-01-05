@@ -542,7 +542,7 @@ export function turnChange(){
   //アイテム効果
   turnItem(notTurnPlayer, turnPlayer);
   //Bact、攻撃力変換
-  mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:item"], tags:[(notTurnPlayer.hasTag("red")?"red":"blue")]}).forEach(entity=>{
+  mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:armor_stand"], tags:[(notTurnPlayer.hasTag("red")?"red":"blue")]}).forEach(entity=>{
     let info = getCard(entity.typeId);
     if(info?.enhance){
       info = info.enhance;
@@ -550,7 +550,7 @@ export function turnChange(){
     if(info){
       addAct(notTurnPlayer, parseInt(info.Bact));
       giveSword(notTurnPlayer, info.atk, {translate: `entity.${entity.typeId.slice(10)}.name`});
-      lineParticle(notTurnPlayer.dimension, entity.location, notTurnPlayer.location, "mcg:custom_explosion_emitter", createColor(mcg.const.rgb[notTurnPlayer.hasTag("red")?"red":"blue"]));
+      lineParticle(notTurnPlayer.dimension, entity.location, notTurnPlayer.location, "mcg:custom_explosion_emitter", 1.0, createColor(mcg.const.rgb[notTurnPlayer.hasTag("red")?"red":"blue"]));
     }
   })
   //襲撃モード

@@ -49,7 +49,7 @@ function summonCard(cardBlock, player, identifier, event){
       mob.addTag((player.hasTag("red") ? "red" : "blue"));
       mob.addTag("slotB");
       event(mob);
-      lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+      lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       break;
     case W:
@@ -63,7 +63,7 @@ function summonCard(cardBlock, player, identifier, event){
       mob.addTag((player.hasTag("red") ? "red" : "blue"));
       mob.addTag("slotW");
       event(mob);
-      lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+      lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       break;
     case R:
@@ -77,7 +77,7 @@ function summonCard(cardBlock, player, identifier, event){
       mob.addTag((player.hasTag("red") ? "red" : "blue"));
       mob.addTag("slotR");
       event(mob);
-      lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+      lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       break;
     case P:
@@ -178,7 +178,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               `§r[${swordName[sword.slice(10)]}]`
             ])
-            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             target.dimension.spawnParticle("mcg:knockback_roar_particle", target.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             applyDamage(target,swordDamage[sword.slice(10)]);
             target.dimension.playSound("random.glass", target.location, {volume: 10});
@@ -197,7 +197,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               `§r[${swordName[sword.slice(10)]}]`
             ])
-            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             target.dimension.spawnParticle("mcg:knockback_roar_particle", target.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             applyDamage(target,swordDamage[sword.slice(10)]);
             target.dimension.playSound("random.glass", target.location, {volume: 10});
@@ -216,7 +216,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               `§r[${swordName[sword.slice(10)]}]`
             ])
-            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             target.dimension.spawnParticle("mcg:knockback_roar_particle", target.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             applyDamage(target,swordDamage[sword.slice(10)]);
             target.dimension.playSound("random.glass", target.location, {volume: 10});
@@ -236,7 +236,7 @@ export const useCard = {
               enemy.nameTag,
               `§r[${swordName[sword.slice(10)]}]`
             ])
-            lineParticle(enemy.dimension, player.location, enemy.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(enemy.dimension, player.location, enemy.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             enemy.dimension.spawnParticle("mcg:knockback_roar_particle", enemy.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             applyDamage(enemy, swordDamage[sword.slice(10)] / 5);
             enemy.dimension.playSound("random.glass", enemy.location, {volume: 10});
@@ -436,7 +436,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               "§r: [矢]"
             ])
-            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             applyDamage(target, 30);
           })
           break;
@@ -455,7 +455,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               "§r: [矢]"
             ])
-            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             applyDamage(target, 30);
           })
           break;
@@ -474,7 +474,7 @@ export const useCard = {
               {translate: `entity.${target.typeId.slice(10)}.name`},
               "§r: [矢]"
             ])
-            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(target.dimension, player.location, target.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             applyDamage(target, 30);
           })
           break;
@@ -489,7 +489,7 @@ export const useCard = {
               enemy.nameTag,
               "§r: [矢]"
             ])
-            lineParticle(enemy.dimension, player.location, enemy.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(enemy.dimension, player.location, enemy.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             applyDamage(enemy, 1);
           })
           break;
@@ -1042,7 +1042,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           player.dimension.playSound("random.enderchestopen", player.location, {volume: 10});
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")], excludeTags:["fly", "guard"]}).forEach(entity=>{
-            lineParticle(player.dimension, player.location, entity.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(player.dimension, player.location, entity.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             entity.dimension.spawnParticle("mcg:knockback_roar_particle", entity.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             applyDamage(entity, 10);
           })
@@ -1268,7 +1268,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "泣く黒曜石を使用しました");
           player.dimension.playSound("mob.ghast.scream", player.location, {volume: 10});
-          lineParticle(player.dimension, player.location, entities[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, entities[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           entities[0].dimension.spawnParticle("mcg:knockback_roar_particle", entities[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           entities[0].addTag("call_pigman");
           break;
@@ -1282,7 +1282,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "泣く黒曜石を使用しました");
           player.dimension.playSound("mob.ghast.scream", player.location, {volume: 10});
-          lineParticle(player.dimension, player.location, entities[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, entities[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           entities[0].dimension.spawnParticle("mcg:knockback_roar_particle", entities[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           entities[0].addTag("call_pigman");
           break;
@@ -1296,7 +1296,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "泣く黒曜石を使用しました");
           player.dimension.playSound("mob.ghast.scream", player.location, {volume: 10});
-          lineParticle(player.dimension, player.location, entities[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, entities[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           entities[0].dimension.spawnParticle("mcg:knockback_roar_particle", entities[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           entities[0].addTag("call_pigman");
           break;
@@ -1470,7 +1470,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "鞍を使用しました");
           myStriders.forEach(strider=>{
-            lineParticle(strider.dimension, strider.location, target[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(strider.dimension, strider.location, target[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             if(!strider.hasTag("protect")) strider.kill();
             strider.dimension.playSound("random.fizz", strider.location, {volume: 10});
           })
@@ -1487,7 +1487,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "鞍を使用しました");
           myStriders.forEach(strider=>{
-            lineParticle(strider.dimension, strider.location, target[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(strider.dimension, strider.location, target[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             if(!strider.hasTag("protect")) strider.kill();
             strider.dimension.playSound("random.fizz", strider.location, {volume: 10});
           })
@@ -1504,7 +1504,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "鞍を使用しました");
           myStriders.forEach(strider=>{
-            lineParticle(strider.dimension, strider.location, target[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(strider.dimension, strider.location, target[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             if(!strider.hasTag("protect")) strider.kill();
             strider.dimension.playSound("random.fizz", strider.location, {volume: 10});
           })
@@ -1695,7 +1695,7 @@ export const useCard = {
           mob.dimension.playSound("dig.grass", mob.location, {volume: 10});
           let object = getObject(player.hasTag("red")?"blue":"red");
           if(object.typeId != "minecraft:air"){
-            lineParticle(object.dimension, mob.location, object.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(object.dimension, mob.location, object.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             setObject(mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]})[0], "minecraft:air");
             sendPlayerMessage(player, "カエルが相手のオブジェクトを食べてしまった！");
             mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), (mob.hasTag("slotB")?"slotB":mob.hasTag("slotW")?"slotW":"slotR")]}).forEach(entity=>{
@@ -2229,7 +2229,7 @@ export const useCard = {
           sendPlayerMessage(player, "ミルクバケツを使用しました");
           player.dimension.playSound("random.drink", player.location, {volume: 10});
           mobs.forEach(mob=>{
-            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.addTag("guard");
           })
@@ -2244,7 +2244,7 @@ export const useCard = {
           sendPlayerMessage(player, "ミルクバケツを使用しました");
           player.dimension.playSound("random.drink", player.location, {volume: 10});
           mobs.forEach(mob=>{
-            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.addTag("guard");
           })
@@ -2259,7 +2259,7 @@ export const useCard = {
           sendPlayerMessage(player, "ミルクバケツを使用しました");
           player.dimension.playSound("random.drink", player.location, {volume: 10});
           mobs.forEach(mob=>{
-            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.addTag("guard");
           })
@@ -2366,7 +2366,7 @@ export const useCard = {
           applyDamage(player, 3);
           giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
           player.sendMessage("[入手] 草ブロック x2");
-          lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           break;
         case P:
@@ -2455,7 +2455,7 @@ export const useCard = {
           applyDamage(player, 4);
           giveItem(player, new mc.ItemStack("minecraft:iron_axe"));
           player.sendMessage("[入手] 鉄の斧");
-          lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           break;
         case W:
@@ -2479,6 +2479,7 @@ export const useCard = {
          * @param {mc.Entity} mob
          */
         (mob)=>{
+          mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
           sendPlayerMessage(player, "ヴェックスを召喚しました");
           mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
@@ -2522,12 +2523,13 @@ export const useCard = {
           applyDamage(player, 3);
           giveItem(player, new mc.ItemStack("mcg:totem"));
           player.sendMessage("[入手] 不死のトーテム");
-          lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"]}).length == 0){
             let mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
             mobb.addTag((player.hasTag("red") ? "red" : "blue"));
             mobb.addTag("slotB");
+            mobb.addTag("fly");
             mobb.teleport(mobb.location, {facingLocation: {x:0, y:0, z:0}});
             sendPlayerMessage(player, "ヴェックスを召喚しました");
             mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
@@ -2536,6 +2538,7 @@ export const useCard = {
             let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
             mobr.addTag((player.hasTag("red") ? "red" : "blue"));
             mobr.addTag("slotR");
+            mobr.addTag("fly");
             mobr.teleport(mobr.location, {facingLocation: {x:0, y:0, z:0}});
             sendPlayerMessage(player, "ヴェックスを召喚しました");
             mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
@@ -2606,7 +2609,7 @@ export const useCard = {
       mob.teleport(mob.location, {facingLocation: {x:0, y:0, z:0}});
       applyDamage(player, 5);
       sendPlayerMessage(player, "防具立てを設置しました");
-      lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+      lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
     }
   },
@@ -2672,7 +2675,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "不吉な旗を使用しました");
           mobs.forEach(mob=>{
-            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.addTag("ace");
           })
@@ -2695,7 +2698,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "不吉な旗を使用しました");
           mobs.forEach(mob=>{
-            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.addTag("ace");
           })
@@ -2718,7 +2721,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "不吉な旗を使用しました");
           mobs.forEach(mob=>{
-            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.addTag("ace");
           })
@@ -2752,8 +2755,6 @@ export const useCard = {
         case B:
         case W:
         case R:
-          player.sendMessage(error_slot);
-          return;
         case P:
           if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")], excludeTags:["fly", "guard"]}).length == 0){
             player.sendMessage("§c相手の場に攻撃可能なモブが存在しません");
@@ -2763,7 +2764,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "鉄の斧を使用しました");
           player.dimension.playSound("mace.smash_ground", player.location, {volume: 10});
-          lineParticle(player.dimension, player.location, player.hasTag("red")?mcg.const.blue.slot.white:mcg.const.red.slot.white, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, player.hasTag("red")?mcg.const.blue.slot.white:mcg.const.red.slot.white, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           player.dimension.spawnParticle("minecraft:smash_ground_particle", player.hasTag("red")?mcg.const.blue.slot.white:mcg.const.red.slot.white);
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotB"], excludeTags:["fly", "guard"]}).forEach(mob=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
@@ -2858,6 +2859,10 @@ export const useCard = {
             player.sendMessage("§c青スロットにウィッチが存在しないため使用できません。");
             return;
           }
+          if(mobs[0].hasTag("enhance")){
+            player.sendMessage("§cすでに強化されているため使用できません。");
+            return;
+          }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "不吉な瓶を使用しました");
@@ -2865,7 +2870,7 @@ export const useCard = {
           hp = health.currentValue;
           mobs[0].triggerEvent("enhance");
           mobs[0].addTag("enhance");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           myTimeout(1,()=>{
             health.setCurrentValue(hp);
@@ -2881,6 +2886,10 @@ export const useCard = {
             player.sendMessage("§c白スロットにウィッチが存在しないため使用できません。");
             return;
           }
+          if(mobs[0].hasTag("enhance")){
+            player.sendMessage("§cすでに強化されているため使用できません。");
+            return;
+          }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "不吉な瓶を使用しました");
@@ -2888,7 +2897,7 @@ export const useCard = {
           hp = health.currentValue;
           mobs[0].triggerEvent("enhance");
           mobs[0].addTag("enhance");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           myTimeout(1,()=>{
             health.setCurrentValue(hp);
@@ -2904,6 +2913,10 @@ export const useCard = {
             player.sendMessage("§c赤スロットにウィッチが存在しないため使用できません。");
             return;
           }
+          if(mobs[0].hasTag("enhance")){
+            player.sendMessage("§cすでに強化されているため使用できません。");
+            return;
+          }
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "不吉な瓶を使用しました");
@@ -2911,7 +2924,7 @@ export const useCard = {
           hp = health.currentValue;
           mobs[0].triggerEvent("enhance");
           mobs[0].addTag("enhance");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           myTimeout(1,()=>{
             health.setCurrentValue(hp);
@@ -2954,7 +2967,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "奇妙なポーションを使用しました");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
           break;
@@ -2969,7 +2982,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "奇妙なポーションを使用しました");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
           break;
@@ -2984,7 +2997,7 @@ export const useCard = {
           addAct(player, -parseInt(info.Cact));
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "奇妙なポーションを使用しました");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
           break;
@@ -3056,7 +3069,7 @@ export const useCard = {
       if(mobs?.length == 0) return;
       mobs.forEach(mob=>{
         mob.dimension.playSound("random.drink", mob.location, {volume: 10});
-        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
         mob.dimension.spawnParticle("minecraft:crop_growth_area_emitter", mob.location);
         if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
           applyDamage(mob, 15, {cause:mc.EntityDamageCause.magic});
@@ -3128,7 +3141,7 @@ export const useCard = {
       }
       mobs.forEach(mob=>{
         mob.dimension.playSound("random.glass", mob.location, {volume: 10});
-        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
         mob.dimension.spawnParticle("minecraft:crop_growth_area_emitter", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
         if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
           applyDamage(mob, 15, {cause:mc.EntityDamageCause.magic});
@@ -3229,7 +3242,7 @@ export const useCard = {
       if(mobs.length == 0) return;
       mobs.forEach(mob=>{
         mob.dimension.playSound("random.drink", mob.location, {volume: 10});
-        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
         mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
         if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
           /**@type {mc.EntityHealthComponent} */
@@ -3283,7 +3296,7 @@ export const useCard = {
           sendPlayerMessage(player, "負傷のスプラッシュポーションを使用しました");
           mobs.forEach(mob=>{
             mob.dimension.playSound("random.glass", mob.location, {volume: 10});
-            lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
               /**@type {mc.EntityHealthComponent} */
@@ -3358,7 +3371,7 @@ export const useCard = {
       mobs.forEach(mob=>{
         mob.dimension.playSound("random.drink", mob.location, {volume: 10});
         mob.addTag("guard");
-        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
         mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       })
     }
@@ -3383,7 +3396,7 @@ export const useCard = {
             let mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:snow_golem", (player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
             mobb.addTag((player.hasTag("red") ? "red" : "blue"));
             mobb.addTag("slotB");
-            lineParticle(player.dimension, player.location, mobb.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(player.dimension, player.location, mobb.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mobb.dimension.spawnParticle("mcg:knockback_roar_particle", mobb.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             sendPlayerMessage(player, "スノーゴーレムを召喚しました");
             mobb.dimension.playSound("beacon.activate", mobb.location, {volume: 10});
@@ -3393,7 +3406,7 @@ export const useCard = {
             let mobw = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:snow_golem", (player.hasTag("red") ? mcg.const.red.slot.white : mcg.const.blue.slot.white));
             mobw.addTag((player.hasTag("red") ? "red" : "blue"));
             mobw.addTag("slotW");
-            lineParticle(player.dimension, player.location, mobw.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(player.dimension, player.location, mobw.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mobw.dimension.spawnParticle("mcg:knockback_roar_particle", mobw.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             sendPlayerMessage(player, "スノーゴーレムを召喚しました");
             mobw.dimension.playSound("beacon.activate", mobw.location, {volume: 10});
@@ -3403,7 +3416,7 @@ export const useCard = {
             let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:snow_golem", (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
             mobr.addTag((player.hasTag("red") ? "red" : "blue"));
             mobr.addTag("slotR");
-            lineParticle(player.dimension, player.location, mobr.location, "mcg:custom_explosion_emitter", 0.5, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+            lineParticle(player.dimension, player.location, mobr.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mobr.dimension.spawnParticle("mcg:knockback_roar_particle", mobr.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             sendPlayerMessage(player, "スノーゴーレムを召喚しました");
             mobr.dimension.playSound("beacon.activate", mobr.location, {volume: 10});

@@ -4,6 +4,7 @@ import { changeHealthBoost, getObject, sendPlayerMessage } from "./lib";
 mc.world.afterEvents.entityDie.subscribe(data=>{
   const {deadEntity, damageSource} = data;
   if(deadEntity.typeId == "minecraft:player") return;
+  if(deadEntity.typeId == "minecraft:item") return;
   if(deadEntity.hasTag("ace")){
     let aces = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"],tags:[(deadEntity.hasTag("red")?"red":"blue"), "ace"]});
     if(aces.length == 0){

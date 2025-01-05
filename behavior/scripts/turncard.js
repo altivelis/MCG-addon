@@ -427,7 +427,7 @@ export const turnMob = {
           mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
         }
         if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"red":"blue"), "slotR"]}).length == 0){
-          let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
+          let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (entity.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
           mobr.addTag((entity.hasTag("red") ? "red" : "blue"));
           mobr.addTag("slotR");
           sendPlayerMessage(oldPlayer, "ヴェックスを召喚しました");
@@ -437,10 +437,10 @@ export const turnMob = {
       else if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
         sendPlayerMessage(newPlayer, "[エヴォーカー] スリップダメージ");
         applyDamage(newPlayer, 5);
-        mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotB"]}).forEach(target=>{
+        mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotB"], excludeTags:["guard", "fly"]}).forEach(target=>{
           applyDamage(target, 20);
         })
-        mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotR"]}).forEach(target=>{
+        mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["guard", "fly"]}).forEach(target=>{
           applyDamage(target, 20);
         })
       }

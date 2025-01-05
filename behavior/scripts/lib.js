@@ -368,7 +368,10 @@ export function changeHealthBoost(player, value){
   let beforeHp = health.currentValue;
   let currentLevel = player.getEffect(mc.EffectTypes.get("minecraft:health_boost"))?.amplifier;
   let level = (!currentLevel) ? value-1 : currentLevel + value;
-  if(level < 0) return;
+  if(level < 0) {
+    player.removeEffect(mc.EffectTypes.get("minecraft:health_boost"));
+    return;
+  }
   player.removeEffect(mc.EffectTypes.get("minecraft:health_boost"));
   player.addEffect(mc.EffectTypes.get("minecraft:health_boost"), 20000000, {amplifier:level, showParticles:false});
   health.setCurrentValue(beforeHp);
