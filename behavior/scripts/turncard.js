@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { addAct, applyDamage, getObject, giveItem, giveSword, hasItem, myTimeout, sendPlayerMessage, setObject } from "./lib";
+import { addAct, applyDamage, createColor, getObject, giveItem, giveSword, hasItem, lineParticle, myTimeout, sendPlayerMessage, setObject } from "./lib";
 import { mcg } from "./system";
 
 export const turnMob = {
@@ -438,9 +438,15 @@ export const turnMob = {
         sendPlayerMessage(newPlayer, "[エヴォーカー] スリップダメージ");
         applyDamage(newPlayer, 5);
         mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotB"], excludeTags:["guard", "fly"]}).forEach(target=>{
+          lineParticle(entity.dimension, entity.location, target.location, "mcg:custom_explosion_emitter", 1, createColor(entity.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          target.dimension.spawnParticle("mcg:knockback_roar_particle", target.location, createColor(entity.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          target.dimension.playSound("mob.evocation_fangs.attack", target.location, {volume: 10});
           applyDamage(target, 20);
         })
         mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["guard", "fly"]}).forEach(target=>{
+          lineParticle(entity.dimension, entity.location, target.location, "mcg:custom_explosion_emitter", 1, createColor(entity.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          target.dimension.spawnParticle("mcg:knockback_roar_particle", target.location, createColor(entity.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+          target.dimension.playSound("mob.evocation_fangs.attack", target.location, {volume: 10});
           applyDamage(target, 20);
         })
       }
