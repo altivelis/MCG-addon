@@ -544,8 +544,8 @@ export function turnChange(){
   //Bact、攻撃力変換
   mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:armor_stand"], tags:[(notTurnPlayer.hasTag("red")?"red":"blue")]}).forEach(entity=>{
     let info = getCard(entity.typeId);
-    if(info?.enhance){
-      info = info.enhance;
+    if(entity.hasTag("enhance")){
+      info = info?.enhance;
     }
     if(info){
       addAct(notTurnPlayer, parseInt(info.Bact));

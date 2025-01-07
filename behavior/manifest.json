@@ -1,10 +1,10 @@
 {
 	"format_version": 2,
 	"header": {
-		"name": "MCGアドオンver1.0.8",
+		"name": "MCGアドオンver1.1.1",
 		"description": "MinecraftCardGameのスクリプト化用アドオン",
 		"uuid": "9acf4ee1-1ab6-4417-a3de-62c5b43fb03d",
-		"version": [1, 0, 8],
+		"version": [1, 1, 1],
 		"min_engine_version": [1, 21, 50]
 	},
 	"modules": [

@@ -565,7 +565,8 @@ export const useCard = {
             if(Math.floor(Math.random() * 2) == 0){
               player.dimension.playSound("mob.zombie.woodbreak", player.location, {volume: 10});
               sendPlayerMessage(player, "トラップチェストだ！！");
-              setObject(mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]}[0]), "minecraft:air");
+              applyDamage(player, 4);
+              setObject(mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]})[0], "minecraft:air");
               sendPlayerMessage(player, "相手のオブジェクトを破壊しました");
               return;
             }
@@ -2446,6 +2447,7 @@ export const useCard = {
           let mob = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vindicator", (player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
           mob.addTag((player.hasTag("red") ? "red" : "blue"));
           mob.addTag("slotB");
+          mob.addTag("guard");
           mob.teleport(mob.location, {facingLocation: {x:0, y:0, z:0}});
           villager.forEach(v=>{
             v.kill();
@@ -2805,7 +2807,7 @@ export const useCard = {
      */
     run: (cardBlock, player) => {
       let info = getCard(handItem(player).typeId);
-      if(parseInt(info.Cact) > getAct(player) + 1){
+      if(parseInt(info.Cact) > getAct(player)){
         player.sendMessage(error_act);
         return;
       }
