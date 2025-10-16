@@ -2680,6 +2680,8 @@ export const useCard = {
             lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.addTag("ace");
+            let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
+            healthComponent.resetToMaxValue();
           })
           player.addTag("raid");
           player.dimension.playSound("raid.horn", player.location, {volume: 10});
@@ -2703,6 +2705,8 @@ export const useCard = {
             lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.addTag("ace");
+            let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
+            healthComponent.resetToMaxValue();
           })
           player.addTag("raid");
           player.dimension.playSound("raid.horn", player.location, {volume: 10});
@@ -2726,6 +2730,8 @@ export const useCard = {
             lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.addTag("ace");
+            let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
+            healthComponent.resetToMaxValue();
           })
           player.addTag("raid");
           player.dimension.playSound("raid.horn", player.location, {volume: 10});
