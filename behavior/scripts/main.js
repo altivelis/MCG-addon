@@ -99,6 +99,7 @@ mc.world.afterEvents.entityHurt.subscribe(data=>{
 mc.world.beforeEvents.itemUse.subscribe(data=>{
   if(data.itemStack.typeId == "minecraft:book") return;
   if(data.itemStack.typeId == "minecraft:compass") return;
+  if(data.itemStack.typeId == "minecraft:spyglass") return;
   data.cancel = true;
 })
 
