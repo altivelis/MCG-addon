@@ -2,19 +2,6 @@ import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 import { cardInfo, getCard } from "./lib";
 
-const cardBook_form = new ui.ActionFormData()
-  .title("カード図鑑")
-  .body(
-    "ドローによって入手できるカードの内、消費actの§9低い§rカードは§9ローコスト§r、§c高い§rカードは§cハイコスト§rといいます。\n" +
-    "効果で「+OO = XX」と書かれているカードはクラフト可能です。\n"
-  )
-  .button("§l一般カード", "textures/items/wood_sword")
-  .button("§l§2現世§r§lカード", "textures/blocks/grass_side_carried")
-  .button("§l§8洞窟§r§lカード", "textures/blocks/stone")
-  .button("§l§4ネザー§r§lカード", "textures/blocks/netherrack")
-  .button("§l§6アニマル§r§lカード", "textures/blocks/hay_block_side")
-  .button("§l§5襲撃§r§lカード", "textures/blocks/stripped_dark_oak_log_top")
-
 const cardLibrary = {
   normal: [
     {name: "ウィザースケルトンの頭", id: "minecraft:wither_skeleton_skull", icon: "textures/gui/newgui/mob_effects/wither_effect"},
@@ -171,6 +158,19 @@ const cardLibrary = {
  * @param {mc.Player} player 
  */
 export function cardBookForm_home(player){
+  const cardBook_form = new ui.ActionFormData()
+    .title("カード図鑑")
+    .body(
+      "ドローによって入手できるカードの内、消費actの§9低い§rカードは§9ローコスト§r、§c高い§rカードは§cハイコスト§rといいます。\n" +
+      "効果で「+OO = XX」と書かれているカードはクラフト可能です。\n"
+    )
+    .button("§l一般カード", "textures/items/wood_sword")
+    .button("§l§2現世§r§lカード", "textures/blocks/grass_side_carried")
+    .button("§l§8洞窟§r§lカード", "textures/blocks/stone")
+    .button("§l§4ネザー§r§lカード", "textures/blocks/netherrack")
+    .button("§l§6アニマル§r§lカード", "textures/blocks/hay_block_side")
+    .button("§l§5襲撃§r§lカード", "textures/blocks/stripped_dark_oak_log_top")
+
   cardBook_form.show(player).then(res=>{
     if(res.canceled) return;
     switch(res.selection){

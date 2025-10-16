@@ -68,7 +68,11 @@ export const mcg = {
   }
 }
 
-const button_permutation = mc.BlockPermutation.resolve("wooden_button",{"facing_direction":1});
+/**@type {mc.BlockPermutation} */
+let button_permutation;
+mc.world.afterEvents.worldLoad.subscribe(data => {
+  button_permutation = mc.BlockPermutation.resolve("wooden_button",{"facing_direction":1});
+})
 
 //参加受付
 /**
@@ -134,8 +138,8 @@ mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
 })
 //看板の文字を更新
 mc.system.runInterval(()=>{
-  if(!mcg.queue.red?.isValid()) mcg.queue.red = null;
-  if(!mcg.queue.blue?.isValid()) mcg.queue.blue = null;
+  if(!mcg.queue.red?.isValid) mcg.queue.red = null;
+  if(!mcg.queue.blue?.isValid) mcg.queue.blue = null;
   
   setSign("red", mcg.queue.red);
   setSign("blue", mcg.queue.blue);
@@ -683,14 +687,14 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
   })
 })
 
-const surrender_form = new ui.MessageFormData()
-  .title("§l§cサレンダー")
-  .body("降参しようとしています。\n本当によろしいですか?")
-  .button1("§l§cはい")
-  .button2("§lいいえ");
 
 //サレンダー
 mc.world.afterEvents.buttonPush.subscribe(data=>{
+  const surrender_form = new ui.MessageFormData()
+    .title("§l§cサレンダー")
+    .body("降参しようとしています。\n本当によろしいですか?")
+    .button1("§l§cはい")
+    .button2("§lいいえ");
   /**
    * @type {{source: mc.Player, block: mc.Block, dimension: mc.Dimension}}
    */

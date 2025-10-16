@@ -178,12 +178,6 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
   }
 })
 
-const compass_form = new ui.MessageFormData()
-  .title("§l§cターンを終了しようとしています")
-  .body("本当にターンを終了しますか？")
-  .button1("§l§cはい")
-  .button2("§lいいえ");
-
 //カード使用
 mc.world.afterEvents.buttonPush.subscribe(data=>{
   /**
@@ -204,6 +198,11 @@ mc.world.afterEvents.buttonPush.subscribe(data=>{
     return;
   };
   if(handItem(source)?.typeId == "minecraft:compass" && source.hasTag("turn")){
+    const compass_form = new ui.MessageFormData()
+      .title("§l§cターンを終了しようとしています")
+      .body("本当にターンを終了しますか？")
+      .button1("§l§cはい")
+      .button2("§lいいえ");
     compass_form.show(source).then(res=>{
       if(res.canceled) return;
       if(res.selection == 0){
@@ -247,15 +246,15 @@ mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
     case "0 12 -10": //スペクテイターモード
       data.cancel = true;
       mc.system.run(()=>{
-        player.setGameMode(mc.GameMode.spectator);
+        player.setGameMode(mc.GameMode.Spectator);
       })
       break;
   }
 })
 
 mc.system.runInterval(()=>{
-  mc.world.getDimension("minecraft:overworld").getPlayers({gameMode:mc.GameMode.spectator, location:{x:0, y:12, z:-13}, maxDistance:2}).forEach(player=>{
-    player.setGameMode(mc.GameMode.adventure);
+  mc.world.getDimension("minecraft:overworld").getPlayers({gameMode:mc.GameMode.Spectator, location:{x:0, y:12, z:-13}, maxDistance:2}).forEach(player=>{
+    player.setGameMode(mc.GameMode.Adventure);
     player.teleport({x:0.5, y:11, z:0.5});
   })
 })
@@ -266,6 +265,11 @@ mc.world.afterEvents.itemUse.subscribe(data=>{
   if(itemStack.typeId != "minecraft:compass") return;
   if(!(source.hasTag("red") || source.hasTag("blue"))) return;
   if(!source.hasTag("turn")) return;
+  const compass_form = new ui.MessageFormData()
+    .title("§l§cターンを終了しようとしています")
+    .body("本当にターンを終了しますか？")
+    .button1("§l§cはい")
+    .button2("§lいいえ");
   compass_form.show(source).then(res=>{
     if(res.canceled) return;
     if(res.selection == 0){
