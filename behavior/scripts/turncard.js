@@ -404,9 +404,9 @@ export const turnMob = {
      * @param {mc.Entity} entity
      */
     run: (newPlayer, oldPlayer, entity) => {
-      if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        sendPlayerMessage(oldPlayer, "[ヴェクス] スリップダメージ");
-        applyDamage(oldPlayer, 1);
+      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+        sendPlayerMessage(newPlayer, "[ヴェックス] スリップダメージ");
+        applyDamage(newPlayer, 1);
       }
     }
   },
@@ -423,6 +423,8 @@ export const turnMob = {
           let mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (entity.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
           mobb.addTag((entity.hasTag("red") ? "red" : "blue"));
           mobb.addTag("slotB");
+          mobb.addTag("fly");
+          mobb.teleport({...mobb.location, y: mobb.location.y + 1});
           sendPlayerMessage(oldPlayer, "ヴェックスを召喚しました");
           mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
         }
@@ -430,6 +432,8 @@ export const turnMob = {
           let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (entity.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
           mobr.addTag((entity.hasTag("red") ? "red" : "blue"));
           mobr.addTag("slotR");
+          mobr.addTag("fly");
+          mobr.teleport({...mobr.location, y: mobr.location.y + 1});
           sendPlayerMessage(oldPlayer, "ヴェックスを召喚しました");
           mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
         }
@@ -475,8 +479,8 @@ export const turnMob = {
      */
     run: (newPlayer, oldPlayer, entity) => {
       if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"), 2);
-        sendPlayerMessage(newPlayer, "[ラヴェジャー] 草ブロックx2を獲得");
+        sendPlayerMessage(newPlayer, "[ラヴェジャー] スリップダメージ");
+        newPlayer.applyDamage(4)
       }
     }
   }
