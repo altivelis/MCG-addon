@@ -150,7 +150,6 @@ mc.world.afterEvents.playerHotbarSelectedSlotChange.subscribe(data => {
 
   if (text.length > 0) {
     player.onScreenDisplay.setHudVisibility(mc.HudVisibility.Hide, [mc.HudElement.ItemText]);
-    player.onScreenDisplay.setActionBar(text.join("\n"));
   } else {
     player.onScreenDisplay.setHudVisibility(mc.HudVisibility.Reset, [mc.HudElement.ItemText]);
   }
