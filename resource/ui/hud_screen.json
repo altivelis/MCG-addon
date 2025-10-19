@@ -1,0 +1,78 @@
+{
+  "namespace": "hud",
+  "top_score_display": {
+    "type": "image",
+    "size": [ "100%c + 12px", "100%c + 5px" ],
+    "anchor_from": "top_right",
+    "anchor_to": "top_right",
+    "offset": [ -10, 10 ],
+    "texture": "textures/ui/hud_tip_text_background",
+    "$actionbar_text_background_alpha|default": 0.6,
+    "alpha": "$actionbar_text_background_alpha",
+    "layer": 2,
+    "controls": [
+      {
+        "content_stack": {
+          "type": "stack_panel",
+          "orientation": "horizontal",
+          "size": [ "100%c", "50%c" ],
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "controls": [
+            {
+              "label": {
+                "type": "label",
+                "text": "残り時間: ",
+                "color": "$tool_tip_text",
+                "layer": 31,
+                "shadow": true,
+                "localize": false,
+                "size": [ "default", "default" ],
+                "font_scale_factor": 1.5
+              }
+            },
+            {
+              "score": {
+                "type": "label",
+                "text": "#top_score",
+                "color": "$experience_text_color",
+                "layer": 31,
+                "shadow": true,
+                "localize": false,
+                "size": [ "default", "default" ],
+                "font_scale_factor": 1.5,
+                "bindings": [
+                  {
+                    "binding_name": "#player_score",
+                    "binding_name_override": "#top_score",
+                    "binding_type": "collection",
+                    "binding_collection_name": "scoreboard_scored_list_collection",
+                    "binding_collection_prefix": "[0]"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "binding_name": "(not #player_list_screen_visible)",
+        "binding_name_override": "#visible"
+      }
+    ]
+  },
+
+  "root_panel": {
+    "modifications": [
+      {
+        "array_name": "controls",
+        "operation": "insert_front",
+        "value": [
+          { "top_score_display@hud.top_score_display": {} }
+        ]
+      }
+    ]
+  }
+}
