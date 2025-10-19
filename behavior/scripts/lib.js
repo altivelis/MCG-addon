@@ -1,6 +1,7 @@
 import * as mc from "@minecraft/server";
 import { cardList } from "./cardinfo";
 import { mcg } from "./system";
+import { SWORD_DAMAGE_MAP, SWORD_NAMES } from "./constants";
 
 /**
  * Timeoutを見やすくする関数
@@ -106,7 +107,7 @@ export function decrementSlot(player, index){
    */
   const container = player.getComponent(mc.EntityInventoryComponent.componentId).container;
   const item = container.getItem(index);
-  if(item.amount > 1){
+  if(item?.amount > 1){
     item.amount--;
     container.setItem(index, item);
   }
@@ -210,12 +211,6 @@ export function giveSword(player, atk, name="不明"){
     mc.world.sendMessage([
       (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r: [", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}, " x", texts[1]
     ])
-    // for(let i=0; i<parseInt(texts[1]); i++){
-    //   giveItem(player, sword);
-    //   mc.world.sendMessage([
-    //     (player.hasTag("red")?"§c":"§b")+player.nameTag+"§r: [", name, "] ", {translate:`item.${sword.typeId.slice(10)}.name`}
-    //   ])
-    // }
   }else{
     giveItem(player, sword);
     mc.world.sendMessage([
@@ -225,23 +220,10 @@ export function giveSword(player, atk, name="不明"){
   return;
 }
 
-export const swordDamage = {
-  wooden_sword: 5,
-  stone_sword: 15,
-  golden_sword: 20,
-  iron_sword: 30,
-  diamond_sword: 50,
-  netherite_sword: 70
-}
-
-export const swordName = {
-  wooden_sword: "木の剣",
-  stone_sword: "石の剣",
-  golden_sword: "金の剣",
-  iron_sword: "鉄の剣",
-  diamond_sword: "ダイヤモンドの剣",
-  netherite_sword: "ネザライトの剣"
-}
+// DEPRECATED: これらの定数はconstants.jsに移動されました
+// 後方互換性のため再エクスポート
+export const swordDamage = SWORD_DAMAGE_MAP;
+export const swordName = SWORD_NAMES;
 
 /**
  * 全体通知ログ関数
@@ -385,4 +367,48 @@ export function createColor(color){
   let variable = new mc.MolangVariableMap();
   variable.setColorRGB("variable.color", color);
   return variable;
+}
+
+/**
+ * エンティティの表示名を取得（プレイヤーはnameTag、それ以外は翻訳キー）
+ * @param {mc.Entity | mc.Player} entity
+ * @returns {string | mc.RawMessage}
+ */
+export function getEntityDisplayName(entity){
+  return entity.typeId === "minecraft:player"
+    ? entity.nameTag
+    : { translate: `entity.${entity.typeId.slice(10)}.name` };
+}
+
+/**
+ * プレイヤーのカラーコード付き名前を取得
+ * @param {mc.Player} player
+ * @returns {string}
+ */
+export function getPlayerColoredName(player){
+  const colorCode = player.hasTag("red") ? "§c" : "§b";
+  return colorCode + player.nameTag + "§r";
+}
+
+/**
+ * 残り時間設定関数
+ * @param {number} time 
+ */
+export function setTime(time){
+  mc.world.scoreboard.getObjective("time").setScore("timer", time)
+}
+
+/**
+ * 残り時間取得関数
+ * @returns {number}
+ */
+export function getTime(){
+  return mc.world.scoreboard.getObjective("time").getScore("timer");
+}
+
+/**
+ * 残り時間進行関数
+ */
+export function progressTime(){
+  return mc.world.scoreboard.getObjective("time").addScore("timer", -1);
 }

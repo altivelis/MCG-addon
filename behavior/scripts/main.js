@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import { drawList, cardList } from "./cardinfo";
-import { cardInfo } from "./lib";
+import { cardInfo, getEntityDisplayName } from "./lib";
 import "./system";
 import "./button";
 import "./craft";
@@ -8,100 +8,254 @@ import "./config";
 import "./rulebook";
 import "./die";
 import { mcg } from "./system";
+import { VIEW_DISTANCE, EXCLUDE_TYPES, HP_DISPLAY, ALLOWED_ITEMS } from "./constants";
 
+/**
+ * プレイヤーが見ているターゲットの情報を表示
+ * @param {mc.Player} player 
+ */
+function updatePlayerDisplay(player) {
+  const target = getViewTarget(player);
+  
+  if (target) {
+    displayTargetInfo(player, target);
+  } else {
+    displayBlockInfo(player);
+  }
+}
+
+/**
+ * プレイヤーの視線先のエンティティを取得
+ * @param {mc.Player} player 
+ * @returns {mc.Entity | undefined}
+ */
+function getViewTarget(player) {
+  return player.getEntitiesFromViewDirection({
+    maxDistance: VIEW_DISTANCE.ENTITY,
+    ignoreBlockCollision: true,
+    excludeTypes: EXCLUDE_TYPES.DROPPED_ITEMS
+  }).find((e) => {
+    return (e.entity.typeId != "minecraft:player" ||
+      mc.world.getPlayers().find(p => p.id == e.entity.id)?.getGameMode() != mc.GameMode.Spectator
+    );
+  })?.entity;
+}
+
+/**
+ * ターゲットエンティティの情報を表示
+ * @param {mc.Player} player 
+ * @param {mc.Entity} target 
+ */
+function displayTargetInfo(player, target) {
+  const hp = target.getComponent(mc.EntityHealthComponent.componentId);
+  if (!hp) return;
+
+  const displayName = getEntityDisplayName(target);
+  const statusTags = getStatusTags(target);
+  
+  player.onScreenDisplay.setActionBar([
+    displayName,
+    ` ${Math.floor(hp.currentValue * HP_DISPLAY.DECIMAL_PLACES) / HP_DISPLAY.DECIMAL_PLACES}/${Math.floor(hp.defaultValue * HP_DISPLAY.DECIMAL_PLACES) / HP_DISPLAY.DECIMAL_PLACES} `,
+    ...statusTags,
+    "\n",
+    cardInfo(target.typeId, target.hasTag("enhance")).join("\n")
+  ]);
+}
+
+/**
+ * エンティティの状態タグを取得
+ * @param {mc.Entity} target 
+ * @returns {string[]}
+ */
+function getStatusTags(target) {
+  const tags = [];
+  if (target.hasTag("protect")) tags.push("§2除外無効 ");
+  if (target.hasTag("guard")) tags.push("§2ガード ");
+  if (target.hasTag("fly")) tags.push("§2浮遊 ");
+  if (target.hasTag("call_pigman")) tags.push("§2呼び声 ");
+  if (target.hasTag("ace")) tags.push("§2大将 ");
+  return tags;
+}
+
+/**
+ * プレイヤーが見ているブロックの情報を表示
+ * @param {mc.Player} player 
+ */
+function displayBlockInfo(player) {
+  const block = player.getBlockFromViewDirection({
+    excludeTypes: EXCLUDE_TYPES.BARRIER_BUTTONS,
+    maxDistance: VIEW_DISTANCE.BLOCK
+  })?.block;
+
+  if (!block) return;
+
+  if (isObjectCard(block)) {
+    displayObjectCard(player, block);
+  } else if (isWoolCard(block)) {
+    displayWoolCard(player, block);
+  } else if (player.hasTag("red") || player.hasTag("blue")) {
+    displayDrawInfo(player, block);
+  }
+}
+
+/**
+ * ブロックがオブジェクトカードかどうか
+ * @param {mc.Block} block 
+ * @returns {boolean}
+ */
+function isObjectCard(block) {
+  return cardList.some((e) => e.name.includes(block.typeId) && e.attribute.includes("オブジェクト"));
+}
+
+/**
+ * ブロックが羊毛カードかどうか
+ * @param {mc.Block} block 
+ * @returns {boolean}
+ */
+function isWoolCard(block) {
+  return cardList.some((e) => e.name.includes(block.typeId) && block.typeId.includes("wool"));
+}
+
+/**
+ * オブジェクトカードの情報を表示
+ * @param {mc.Player} player 
+ * @param {mc.Block} block 
+ */
+function displayObjectCard(player, block) {
+  player.onScreenDisplay.setActionBar([
+    { translate: `tile.${block.typeId.slice(10)}.name` },
+    "\n",
+    cardInfo(block.typeId).join("\n")
+  ]);
+}
+
+/**
+ * 羊毛カードの情報を表示
+ * @param {mc.Player} player 
+ * @param {mc.Block} block 
+ */
+function displayWoolCard(player, block) {
+  player.onScreenDisplay.setActionBar([
+    { translate: `tile.wool.${block.typeId.slice(10, -5)}.name` },
+    "\n",
+    cardInfo(block.typeId).join("\n")
+  ]);
+}
+
+// 手に持ったカードの情報を表示
+mc.world.afterEvents.playerHotbarSelectedSlotChange.subscribe(data => {
+  const {itemStack, player, newSlotSelected, previousSlotSelected} = data;
+  if (!itemStack) return;
+  let text = cardInfo(itemStack.typeId);
+
+  if (text.length > 0) {
+    player.onScreenDisplay.setHudVisibility(mc.HudVisibility.Hide, [mc.HudElement.ItemText]);
+    player.onScreenDisplay.setActionBar(text.join("\n"));
+  } else {
+    player.onScreenDisplay.setHudVisibility(mc.HudVisibility.Reset, [mc.HudElement.ItemText]);
+  }
+})
+
+/**
+ * ドロー可能なカードの情報を表示
+ * @param {mc.Player} player 
+ * @param {mc.Block} block 
+ */
+function displayDrawInfo(player, block) {
+  const leverBlock = player.hasTag("red") ? mcg.const.red.lever : mcg.const.blue.lever;
+  const high = player.dimension.getBlock(leverBlock).permutation.getState("open_bit");
+  
+  const drawInfo = getDrawInfo(block.typeId, high, player.hasTag("nether"));
+  if (drawInfo) {
+    player.onScreenDisplay.setActionBar(drawInfo);
+  }
+}
+
+/**
+ * ブロックタイプに応じたドロー情報を取得
+ * @param {string} blockType 
+ * @param {boolean} high 
+ * @param {boolean} hasNether 
+ * @returns {string | null}
+ */
+function getDrawInfo(blockType, high, hasNether) {
+  let text = "§bドロー可能なカード\n§3";
+  
+  switch (blockType) {
+    case "minecraft:grass_block":
+      return text + (high ? drawList.grass.high : drawList.grass.low).join("\n");
+    case "minecraft:stone":
+      return text + (high ? drawList.stone.high : drawList.stone.low).join("\n");
+    case "minecraft:hay_block":
+      return text + (high ? drawList.hay.high : drawList.hay.low).join("\n");
+    case "minecraft:netherrack":
+      const prefix = hasNether ? "" : "§cゾンビピッグマンかウィザースケルトンを召喚すると開放\n";
+      return prefix + text + (high ? drawList.nether.high : drawList.nether.low).join("\n");
+    case "minecraft:dark_oak_log":
+      return text + (high ? drawList.genocide.high : drawList.genocide.low).join("\n");
+    default:
+      return null;
+  }
+}
+
+/**
+ * エンティティの名前タグ（HP表示）を更新
+ */
+function updateEntityNameTags() {
+  mc.world.getDimension("overworld").getEntities({
+    excludeTypes: EXCLUDE_TYPES.PLAYERS_ONLY,
+    families: ["mob"]
+  }).forEach(entity => {
+    const hp = entity.getComponent(mc.EntityHealthComponent.componentId);
+    const hpRatio = hp.currentValue / hp.effectiveMax;
+    const greenBars = Math.floor(HP_DISPLAY.BAR_LENGTH * hpRatio);
+    const redBars = HP_DISPLAY.BAR_LENGTH - greenBars;
+    
+    entity.nameTag = `${Math.floor(hp.currentValue * HP_DISPLAY.DECIMAL_PLACES) / HP_DISPLAY.DECIMAL_PLACES}/${hp.effectiveMax} §l§a${"|".repeat(greenBars)}§c${"|".repeat(redBars)}`;
+  });
+}
+
+/**
+ * ヴェックスの位置を固定
+ */
+function updateVexPosition() {
+  mc.world.getDimension("overworld").getEntities({ type: "minecraft:vex" }).forEach(entity => {
+    entity.teleport(entity.location, { keepVelocity: false });
+  });
+}
+
+// メインループ
 mc.system.runInterval(() => {
-  let players = mc.world.getPlayers();
+  const players = mc.world.getPlayers();
   players.forEach(player => {
-    //見ているモブの情報表示
-    const target = player.getEntitiesFromViewDirection({maxDistance:64, ignoreBlockCollision:true, 
-      excludeTypes:["minecraft:item"]
-    }).find((e)=>{return (e.entity.typeId != "minecraft:player" || 
-      mc.world.getPlayers().find(p => p.id == e.entity.id)?.getGameMode() != mc.GameMode.spectator
-    )})?.entity;
-    if(target){
-      const hp = target.getComponent(mc.EntityHealthComponent.componentId);
-      if(hp) player.onScreenDisplay.setActionBar([
-        (target.typeId == "minecraft:player")?target.nameTag:{translate: `entity.${target.typeId.slice(10)}.name`},
-        ` ${Math.floor(hp.currentValue*10)/10}/${Math.floor(hp.defaultValue*10)/10} `,
-        (target.hasTag("protect"))?"§2除外無効 ":"",
-        (target.hasTag("guard"))?"§2ガード ":"",
-        (target.hasTag("fly"))?"§2浮遊 ":"",
-        (target.hasTag("call_pigman"))?"§2呼び声 ":"",
-        (target.hasTag("ace"))?"§2大将 ":"",
-        "\n",
-        cardInfo(target.typeId, target.hasTag("enhance")).join("\n")
-      ]);
-    }
-    else{
-      //見ているブロックの情報表示
-      const block = player.getBlockFromViewDirection({excludeTypes:["minecraft:barrier","minecraft:wooden_button","minecraft:stone_button"], maxDistance:64})?.block;
-      if(block && cardList.some((e)=>e.name.includes(block.typeId) && e.attribute.includes("オブジェクト"))){
-        player.onScreenDisplay.setActionBar([{translate: `tile.${block.typeId.slice(10)}.name`}, "\n", cardInfo(block.typeId).join("\n")]);
-      }
-      else if(block && cardList.some((e)=>e.name.includes(block.typeId) && block.typeId.includes("wool"))){
-        player.onScreenDisplay.setActionBar([{translate: `tile.wool.${block.typeId.slice(10, -5)}.name`}, "\n", cardInfo(block.typeId).join("\n")]);
-      }
-      else if(block && (player.hasTag("red") || player.hasTag("blue"))){
-        /**
-         * @type {Boolean}
-         */
-        let high = player.dimension.getBlock(player.hasTag("red") ? mcg.const.red.lever : mcg.const.blue.lever).permutation.getState("open_bit");
-        let text = "§bドロー可能なカード\n§3";
-        switch(block.typeId){
-          case "minecraft:grass_block":
-            text += (high ? drawList.grass.high : drawList.grass.low).join("\n");
-            player.onScreenDisplay.setActionBar(text);
-            break;
-          case "minecraft:stone":
-            text += (high ? drawList.stone.high : drawList.stone.low).join("\n");
-            player.onScreenDisplay.setActionBar(text);
-            break;
-          case "minecraft:hay_block":
-            text += (high ? drawList.hay.high : drawList.hay.low).join("\n");
-            player.onScreenDisplay.setActionBar(text);
-            break;
-          case "minecraft:netherrack":
-            text = (player.hasTag("nether")?"":"§cゾンビピッグマンかウィザースケルトンを召喚すると開放\n") + text;
-            text += (high ? drawList.nether.high : drawList.nether.low).join("\n");
-            player.onScreenDisplay.setActionBar(text);
-            break;
-          case "minecraft:dark_oak_log":
-            text += (high ? drawList.genocide.high : drawList.genocide.low).join("\n");
-            player.onScreenDisplay.setActionBar(text);
-            break;
-        }
-      }
+    if (player.getComponent(mc.EntityEquippableComponent.componentId).getEquipment(mc.EquipmentSlot.Mainhand)?.typeId == "minecraft:spyglass") {
+      updatePlayerDisplay(player);
     }
   });
-  //HP表示
-  mc.world.getDimension("overworld").getEntities({excludeTypes:["minecraft:player"], families:["mob"]}).forEach(entity=>{
-    /**
-     * @type {mc.EntityHealthComponent}
-     */
-    let hp = entity.getComponent(mc.EntityHealthComponent.componentId);
-    entity.nameTag = `${Math.floor(hp.currentValue*10)/10}/${hp.effectiveMax} §l§a${"|".repeat(Math.floor(20 * (hp.currentValue / hp.effectiveMax)))}§c${"|".repeat(20 * (1 - hp.currentValue / hp.effectiveMax))}`;
-  })
-  //ヴェックス固定
-  mc.world.getDimension("overworld").getEntities({type:"minecraft:vex"}).forEach(entity=>{
-    entity.teleport(entity.location, {keepVelocity:false});
-  })
-})
+  
+  updateEntityNameTags();
+  updateVexPosition();
+});
 
-mc.world.afterEvents.entityHurt.subscribe(data=>{
-  if(data.damageSource.cause == mc.EntityDamageCause.selfDestruct) {
-    if(mc.world.getDynamicProperty("status") == 2) mc.world.sendMessage(["[除外] ", (data.hurtEntity.typeId == "minecraft:player")?data.hurtEntity.nameTag:{translate: `entity.${data.hurtEntity.typeId.slice(10)}.name`}])
+// ダメージイベント
+mc.world.afterEvents.entityHurt.subscribe(data => {
+  const entityName = getEntityDisplayName(data.hurtEntity);
+  
+  if (data.damageSource.cause == mc.EntityDamageCause.selfDestruct) {
+    if (mc.world.getDynamicProperty("status") == 2) {
+      mc.world.sendMessage(["[除外] ", entityName]);
+    }
+  } else {
+    mc.world.sendMessage([entityName, `に${Math.floor(data.damage * 10) / 10}ダメージ!`]);
   }
-  else {
-    mc.world.sendMessage([(data.hurtEntity.typeId == "minecraft:player")?data.hurtEntity.nameTag:{translate: `entity.${data.hurtEntity.typeId.slice(10)}.name`}, `に${Math.floor(data.damage*10)/10}ダメージ!`]);
-  }
-})
+});
 
-mc.world.beforeEvents.itemUse.subscribe(data=>{
-  if(data.itemStack.typeId == "minecraft:book") return;
-  if(data.itemStack.typeId == "minecraft:compass") return;
-  if(data.itemStack.typeId == "minecraft:spyglass") return;
-  data.cancel = true;
-})
+// アイテム使用制限
+mc.world.beforeEvents.itemUse.subscribe(data => {
+  if (!ALLOWED_ITEMS.includes(data.itemStack.typeId)) {
+    data.cancel = true;
+  }
+});
 
 //デバッグを開始
 //"/script debugger connect localhost 19144"

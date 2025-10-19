@@ -3,279 +3,340 @@ import * as ui from "@minecraft/server-ui";
 import { mcg, turnChange } from "./system";
 import { hasItem, decrementContainer, giveItem, handItem, addAct, sendPlayerMessage, isOnline, applyDamage } from "./lib";
 import { useCard } from "./usecard";
+import { ERROR_MESSAGES, SPECTATOR_COORDS, LOBBY_COORDS } from "./constants";
 
-//ドロー
-mc.world.afterEvents.buttonPush.subscribe(data=>{
-  /**
-   * @type {{source: mc.Player, block: mc.Block, dimension: mc.Dimension}}
-   */
-  const {source, block, dimension} = data;
-  if(block.typeId != "minecraft:stone_button") return;
-  if(source.typeId != "minecraft:player") return;
-  block.setPermutation(mc.BlockPermutation.resolve("minecraft:stone_button", {"facing_direction":1}));
-  if(!(source.hasTag("red") || source.hasTag("blue"))) return;
-  if(!source.hasTag("turn")) {
-    source.sendMessage("あなたのターンではありません");
-    return;
-  };
-  if(!hasItem(source, "minecraft:grass_block")) {
-    source.sendMessage("草ブロックがありません");
-    return;
-  };
-  const drawBlock = block.below();
-  /**
-   * @type {Boolean}
-   */
-  let high = dimension.getBlock(source.hasTag("red") ? mcg.const.red.lever : mcg.const.blue.lever).permutation.getState("open_bit");
-  /**
-   * @type {mc.ItemStack}
-   */
-  let item;
-  switch(drawBlock.typeId){
-    case "minecraft:grass_block":
-      decrementContainer(source, "minecraft:grass_block");
-      decrementContainer(source, "minecraft:packed_ice");
-      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
-        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
-      }
-      switch(Math.floor(Math.random()*4)){
-        case 0:
-          item = high ? new mc.ItemStack("minecraft:wolf_spawn_egg") : new mc.ItemStack("minecraft:pig_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"オオカミ":"ブタ"));
-          break;
-        case 1:
-          item = high ? new mc.ItemStack("minecraft:bell") : new mc.ItemStack("minecraft:villager_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"鐘":"村人"));
-          break;
-        case 2:
-          item = high ? new mc.ItemStack("minecraft:allay_spawn_egg") : new mc.ItemStack("minecraft:chest");
-          source.sendMessage("ドロー: " + (high?"アレイ":"チェスト"));
-          break;
-        case 3:
-          item = high ? new mc.ItemStack("minecraft:panda_spawn_egg") : new mc.ItemStack("minecraft:carved_pumpkin");
-          source.sendMessage("ドロー: " + (high?"パンダ":"くり抜かれたカボチャ"));
-          break;
-      }
-      giveItem(source, item);
-      break;
+// ========== ドローカードデータ ==========
 
-    case "minecraft:stone":
-      decrementContainer(source, "minecraft:grass_block");
-      decrementContainer(source, "minecraft:packed_ice");
-      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
-        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
-      }
-      switch(Math.floor(Math.random()*4)){
-        case 0:
-          item = high ? new mc.ItemStack("minecraft:mob_spawner") : new mc.ItemStack("minecraft:zombie_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"モンスタースポナー":"ゾンビ"));
-          break;
-        case 1:
-          item = high ? new mc.ItemStack("minecraft:phantom_spawn_egg") : new mc.ItemStack("minecraft:skeleton_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"ファントム":"スケルトン"));
-          break;
-        case 2:
-          item = high ? new mc.ItemStack("minecraft:breeze_spawn_egg") : new mc.ItemStack("minecraft:creeper_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"ブリーズ":"クリーパー"));
-          break;
-        case 3:
-          item = high ? new mc.ItemStack("minecraft:ender_chest") : new mc.ItemStack("minecraft:witch_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"エンダーチェスト":"ウィッチ"));
-          break;
-      }
-      giveItem(source, item);
-      break;
-
-    case "minecraft:hay_block":
-      decrementContainer(source, "minecraft:grass_block");
-      decrementContainer(source, "minecraft:packed_ice");
-      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
-        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
-      }
-      switch(Math.floor(Math.random()*4)){
-        case 0:
-          item = high ? new mc.ItemStack("minecraft:fox_spawn_egg") : new mc.ItemStack("minecraft:chicken_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"キツネ":"ニワトリ"));
-          break;
-        case 1:
-          item = high ? new mc.ItemStack("minecraft:frog_spawn_egg") : new mc.ItemStack("minecraft:parrot_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"カエル":"オウム"));
-          break;
-        case 2:
-          item = high ? new mc.ItemStack("minecraft:mooshroom_spawn_egg") : new mc.ItemStack("minecraft:bee_nest");
-          source.sendMessage("ドロー: " + (high?"ムーシュルーム":"ミツバチの巣"));
-          break;
-        case 3:
-          item = high ? new mc.ItemStack("minecraft:polar_bear_spawn_egg") : new mc.ItemStack("minecraft:composter");
-          source.sendMessage("ドロー: " + (high?"シロクマ":"コンポスター"));
-          break;
-      }
-      giveItem(source, item);
-      break;
-
-    case "minecraft:netherrack":
-      if(!source.hasTag("nether")){
-        source.sendMessage("ネザーカードが開放されていません")
-        return;
-      }
-      decrementContainer(source, "minecraft:grass_block");
-      decrementContainer(source, "minecraft:packed_ice");
-      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
-        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
-      }
-      switch(Math.floor(Math.random()*4)){
-        case 0:
-          item = high ? new mc.ItemStack("minecraft:strider_spawn_egg") : new mc.ItemStack("minecraft:zombie_pigman_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"ストライダー":"ゾンビピッグマン"));
-          break;
-        case 1:
-          item = high ? new mc.ItemStack("minecraft:lava_bucket") : new mc.ItemStack("minecraft:wither_skeleton_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"溶岩バケツ":"ウィザースケルトン"));
-          break;
-        case 2:
-          item = high ? new mc.ItemStack("minecraft:potato") : new mc.ItemStack("minecraft:crying_obsidian");
-          source.sendMessage("ドロー: " + (high?"ジャガイモ":"泣く黒曜石"));
-          break;
-        case 3:
-          item = high ? new mc.ItemStack("minecraft:netherite_ingot") : new mc.ItemStack("minecraft:wither_rose");
-          source.sendMessage("ドロー: " + (high?"ネザライトインゴット":"ウィザーローズ"));
-          break;
-      }
-      giveItem(source, item);
-      break;
-    case "minecraft:dark_oak_log":
-      decrementContainer(source, "minecraft:grass_block");
-      decrementContainer(source, "minecraft:packed_ice");
-      if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(source.hasTag("red")?"blue":"red")]}).length > 0){
-        applyDamage(source, 1, {cause: mc.EntityDamageCause.fire});
-      }
-      switch(Math.floor(Math.random()*4)){
-        case 0:
-          item = high ? new mc.ItemStack("minecraft:evoker_spawn_egg") : new mc.ItemStack("minecraft:pillager_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"エヴォーカー":"略奪者"));
-          break;
-        case 1:
-          item = high ? new mc.ItemStack("minecraft:armor_stand") : new mc.ItemStack("minecraft:trapped_chest");
-          source.sendMessage("ドロー: " + (high?"防具立て":"トラップチェスト"));
-          break;
-        case 2:
-          item = high ? new mc.ItemStack("minecraft:ravager_spawn_egg") : new mc.ItemStack("minecraft:vindicator_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"ラヴェジャー":"ヴィンディケーター"));
-          break;
-        case 3:
-          item = high ? new mc.ItemStack("minecraft:banner") : new mc.ItemStack("minecraft:vex_spawn_egg");
-          source.sendMessage("ドロー: " + (high?"不吉な旗":"ヴェックス"));
-          break;
-      }
-      giveItem(source, item);
-      break;
-    default:
-      return;
+const DRAW_CARDS = {
+  "minecraft:grass_block": {
+    low: [
+      { item: "minecraft:pig_spawn_egg", name: "ブタ" },
+      { item: "minecraft:villager_spawn_egg", name: "村人" },
+      { item: "minecraft:chest", name: "チェスト" },
+      { item: "minecraft:carved_pumpkin", name: "くり抜かれたカボチャ" }
+    ],
+    high: [
+      { item: "minecraft:wolf_spawn_egg", name: "オオカミ" },
+      { item: "minecraft:bell", name: "鐘" },
+      { item: "minecraft:allay_spawn_egg", name: "アレイ" },
+      { item: "minecraft:panda_spawn_egg", name: "パンダ" }
+    ]
+  },
+  "minecraft:stone": {
+    low: [
+      { item: "minecraft:zombie_spawn_egg", name: "ゾンビ" },
+      { item: "minecraft:skeleton_spawn_egg", name: "スケルトン" },
+      { item: "minecraft:creeper_spawn_egg", name: "クリーパー" },
+      { item: "minecraft:witch_spawn_egg", name: "ウィッチ" }
+    ],
+    high: [
+      { item: "minecraft:mob_spawner", name: "モンスタースポナー" },
+      { item: "minecraft:phantom_spawn_egg", name: "ファントム" },
+      { item: "minecraft:breeze_spawn_egg", name: "ブリーズ" },
+      { item: "minecraft:ender_chest", name: "エンダーチェスト" }
+    ]
+  },
+  "minecraft:hay_block": {
+    low: [
+      { item: "minecraft:chicken_spawn_egg", name: "ニワトリ" },
+      { item: "minecraft:parrot_spawn_egg", name: "オウム" },
+      { item: "minecraft:bee_nest", name: "ミツバチの巣" },
+      { item: "minecraft:composter", name: "コンポスター" }
+    ],
+    high: [
+      { item: "minecraft:fox_spawn_egg", name: "キツネ" },
+      { item: "minecraft:frog_spawn_egg", name: "カエル" },
+      { item: "minecraft:mooshroom_spawn_egg", name: "ムーシュルーム" },
+      { item: "minecraft:polar_bear_spawn_egg", name: "シロクマ" }
+    ]
+  },
+  "minecraft:netherrack": {
+    low: [
+      { item: "minecraft:zombie_pigman_spawn_egg", name: "ゾンビピッグマン" },
+      { item: "minecraft:wither_skeleton_spawn_egg", name: "ウィザースケルトン" },
+      { item: "minecraft:crying_obsidian", name: "泣く黒曜石" },
+      { item: "minecraft:wither_rose", name: "ウィザーローズ" }
+    ],
+    high: [
+      { item: "minecraft:strider_spawn_egg", name: "ストライダー" },
+      { item: "minecraft:lava_bucket", name: "溶岩バケツ" },
+      { item: "minecraft:potato", name: "ジャガイモ" },
+      { item: "minecraft:netherite_ingot", name: "ネザライトインゴット" }
+    ],
+    requiresTag: "nether"
+  },
+  "minecraft:dark_oak_log": {
+    low: [
+      { item: "minecraft:pillager_spawn_egg", name: "略奪者" },
+      { item: "minecraft:trapped_chest", name: "トラップチェスト" },
+      { item: "minecraft:vindicator_spawn_egg", name: "ヴィンディケーター" },
+      { item: "minecraft:vex_spawn_egg", name: "ヴェックス" }
+    ],
+    high: [
+      { item: "minecraft:evoker_spawn_egg", name: "エヴォーカー" },
+      { item: "minecraft:armor_stand", name: "防具立て" },
+      { item: "minecraft:ravager_spawn_egg", name: "ラヴェジャー" },
+      { item: "minecraft:banner", name: "不吉な旗" }
+    ]
   }
-  if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:allay", tags:[(source.hasTag("red")?"red":"blue")]}).length >0){
+};
+
+// ========== ドロー処理 ==========
+
+/**
+ * ドロー前の検証
+ * @param {mc.Player} source 
+ * @returns {boolean}
+ */
+function validateDraw(source) {
+  if (!(source.hasTag("red") || source.hasTag("blue"))) return false;
+  
+  if (!source.hasTag("turn")) {
+    source.sendMessage(ERROR_MESSAGES.NOT_YOUR_TURN);
+    return false;
+  }
+  
+  if (!hasItem(source, "minecraft:grass_block")) {
+    source.sendMessage(ERROR_MESSAGES.NO_GRASS_BLOCK);
+    return false;
+  }
+  
+  return true;
+}
+
+/**
+ * ドロー共通処理
+ * @param {mc.Player} source 
+ * @param {mc.Block} drawBlock 
+ * @param {boolean} high 
+ */
+function performDraw(source, drawBlock, high) {
+  const cardData = DRAW_CARDS[drawBlock.typeId];
+  if (!cardData) return;
+
+  // ネザーカード特殊チェック
+  if (cardData.requiresTag && !source.hasTag(cardData.requiresTag)) {
+    source.sendMessage(ERROR_MESSAGES.NETHER_LOCKED);
+    return;
+  }
+
+  // アイテム消費
+  decrementContainer(source, "minecraft:grass_block");
+  decrementContainer(source, "minecraft:packed_ice");
+
+  // ブレイズダメージチェック
+  checkBlazeEffect(source);
+
+  // カードを引く
+  const cards = high ? cardData.high : cardData.low;
+  const randomIndex = Math.floor(Math.random() * cards.length);
+  const selectedCard = cards[randomIndex];
+
+  giveItem(source, new mc.ItemStack(selectedCard.item));
+  source.sendMessage("ドロー: " + selectedCard.name);
+
+  // アレイボーナス
+  checkAllayBonus(source);
+}
+
+/**
+ * ブレイズの効果をチェック
+ * @param {mc.Player} source 
+ */
+function checkBlazeEffect(source) {
+  const oppositeTeam = source.hasTag("red") ? "blue" : "red";
+  const blazeExists = mc.world.getDimension("minecraft:overworld")
+    .getEntities({ type: "minecraft:blaze", tags: [oppositeTeam] }).length > 0;
+
+  if (blazeExists) {
+    applyDamage(source, 1, { cause: mc.EntityDamageCause.fire });
+  }
+}
+
+/**
+ * アレイボーナスをチェック
+ * @param {mc.Player} source 
+ */
+function checkAllayBonus(source) {
+  const playerTeam = source.hasTag("red") ? "red" : "blue";
+  const allayExists = mc.world.getDimension("minecraft:overworld")
+    .getEntities({ type: "minecraft:allay", tags: [playerTeam] }).length > 0;
+
+  if (allayExists) {
     addAct(source, 4);
     sendPlayerMessage(source, "[アレイ] act+4");
   }
-})
+}
 
-//カード使用
-mc.world.afterEvents.buttonPush.subscribe(data=>{
-  /**
-   * @type {{source: mc.Player, block: mc.Block, dimension: mc.Dimension}}
-   */
-  const {source, block, dimension} = data;
-  if(block.typeId != "minecraft:wooden_button") return;
-  if(source.typeId != "minecraft:player") return;
-  if(!isOnline()){
-    source.sendMessage("対戦相手が復帰するまでお待ち下さい");
-    return;
-  }
-  block.setPermutation(mc.BlockPermutation.resolve("minecraft:wooden_button", {"facing_direction":1}));
-  if(!handItem(source)) return;
-  if(!(source.hasTag("red") || source.hasTag("blue"))) return;
-  if(!source.hasTag("turn")) {
-    source.sendMessage("あなたのターンではありません");
-    return;
-  };
-  if(handItem(source)?.typeId == "minecraft:compass" && source.hasTag("turn")){
-    const compass_form = new ui.MessageFormData()
-      .title("§l§cターンを終了しようとしています")
-      .body("本当にターンを終了しますか？")
-      .button1("§l§cはい")
-      .button2("§lいいえ");
-    compass_form.show(source).then(res=>{
-      if(res.canceled) return;
-      if(res.selection == 0){
-        if(!source.hasTag("turn")) return;
-        turnChange();
-      }
-      if(res.selection == 1) return;
-    })
-  }
-  const cardBlock = block.below();
-  if(hasItem(source, "minecraft:packed_ice") && cardBlock.typeId == "minecraft:pink_concrete"){
-    source.sendMessage("§c氷塊を所持している状態ではピンクのボタンを使用できません");
-    return;
-  }
-  useCard[handItem(source).typeId.includes("minecraft:", 0) ? handItem(source).typeId.slice(10) : handItem(source).typeId.slice(4)]?.run(cardBlock, source);
-})
+// ========== ドローボタン処理 ==========
 
-//観戦
-mc.world.beforeEvents.playerInteractWithBlock.subscribe(data=>{
-  let {block, faceLocation, isFirstEvent, player} = data;
-  if(!isFirstEvent) return;
-  switch(`${block.location.x} ${block.location.y} ${block.location.z}`){
-    case "-63 -53 -26": //ロビー=>観戦席
-      data.cancel = true;
-      mc.system.run(()=>{
-        player.teleport({x:0.5, y:11, z:0.5});
-        giveItem(player, new mc.ItemStack("minecraft:spyglass"));
-      })
-      break;
-    case "0 12 11": //観戦=>ロビー
-    case "13 1 -11":
-    case "-13 1 -11":
-    case "-13 1 12":
-    case "13 1 12":
-      data.cancel = true;
-      mc.system.run(()=>{
-        player.teleport({x:-62.5, y:-53, z:-12.5});
-        decrementContainer(player, "minecraft:spyglass");
-      })
-      break;
-    case "0 12 -10": //スペクテイターモード
-      data.cancel = true;
-      mc.system.run(()=>{
-        player.setGameMode(mc.GameMode.Spectator);
-      })
-      break;
-  }
-})
+mc.world.afterEvents.buttonPush.subscribe(data => {
+  const { source, block, dimension } = data;
+  if (block.typeId !== "minecraft:stone_button") return;
+  if (source.typeId !== "minecraft:player") return;
 
-mc.system.runInterval(()=>{
-  mc.world.getDimension("minecraft:overworld").getPlayers({gameMode:mc.GameMode.Spectator, location:{x:0, y:12, z:-13}, maxDistance:2}).forEach(player=>{
-    player.setGameMode(mc.GameMode.Adventure);
-    player.teleport({x:0.5, y:11, z:0.5});
-  })
-})
+  block.setPermutation(mc.BlockPermutation.resolve("minecraft:stone_button", { "facing_direction": 1 }));
 
-//コンパス
-mc.world.afterEvents.itemUse.subscribe(data=>{
-  const {source, itemStack} = data;
-  if(itemStack.typeId != "minecraft:compass") return;
-  if(!(source.hasTag("red") || source.hasTag("blue"))) return;
-  if(!source.hasTag("turn")) return;
-  const compass_form = new ui.MessageFormData()
+  if (!validateDraw(source)) return;
+
+  const drawBlock = block.below();
+  const leverPos = source.hasTag("red") ? mcg.const.red.lever : mcg.const.blue.lever;
+  const high = dimension.getBlock(leverPos).permutation.getState("open_bit");
+
+  performDraw(source, drawBlock, high);
+});
+
+// ========== カード使用処理 ==========
+
+/**
+ * コンパス確認ダイアログを表示
+ * @param {mc.Player} source 
+ */
+function showCompassDialog(source) {
+  const compassForm = new ui.MessageFormData()
     .title("§l§cターンを終了しようとしています")
     .body("本当にターンを終了しますか？")
     .button1("§l§cはい")
     .button2("§lいいえ");
-  compass_form.show(source).then(res=>{
-    if(res.canceled) return;
-    if(res.selection == 0){
-      if(!source.hasTag("turn")) return;
+
+  compassForm.show(source).then(res => {
+    if (res.canceled || res.selection === 1) return;
+    if (res.selection === 0 && source.hasTag("turn")) {
       turnChange();
     }
-    if(res.selection == 1) return;
-  })
-})
+  });
+}
+
+/**
+ * カード使用の検証
+ * @param {mc.Player} source 
+ * @returns {boolean}
+ */
+function validateCardUse(source) {
+  if (!isOnline()) {
+    source.sendMessage(ERROR_MESSAGES.WAIT_FOR_OPPONENT);
+    return false;
+  }
+
+  if (!handItem(source)) return false;
+
+  if (!(source.hasTag("red") || source.hasTag("blue"))) return false;
+
+  if (!source.hasTag("turn")) {
+    source.sendMessage(ERROR_MESSAGES.NOT_YOUR_TURN);
+    return false;
+  }
+
+  return true;
+}
+
+mc.world.afterEvents.buttonPush.subscribe(data => {
+  const { source, block } = data;
+  if (block.typeId !== "minecraft:wooden_button") return;
+  if (source.typeId !== "minecraft:player") return;
+
+  block.setPermutation(mc.BlockPermutation.resolve("minecraft:wooden_button", { "facing_direction": 1 }));
+
+  if (!validateCardUse(source)) return;
+
+  // コンパスの場合
+  if (handItem(source)?.typeId === "minecraft:compass") {
+    showCompassDialog(source);
+    return;
+  }
+
+  const cardBlock = block.below();
+
+  // 氷塊制限チェック
+  if (hasItem(source, "minecraft:packed_ice") && cardBlock.typeId === "minecraft:pink_concrete") {
+    source.sendMessage(ERROR_MESSAGES.ICE_RESTRICTION);
+    return;
+  }
+
+  // カード使用
+  const itemType = handItem(source).typeId;
+  const cardKey = itemType.includes("minecraft:") ? itemType.slice(10) : itemType.slice(4);
+  useCard[cardKey]?.run(cardBlock, source);
+});
+
+// ========== 観戦モード処理 ==========
+
+const SPECTATOR_TELEPORTS = {
+  [`${SPECTATOR_COORDS.LOBBY_TO_SPECTATOR.x} ${SPECTATOR_COORDS.LOBBY_TO_SPECTATOR.y} ${SPECTATOR_COORDS.LOBBY_TO_SPECTATOR.z}`]: { // ロビー => 観戦席
+    action: (player) => {
+      player.teleport(LOBBY_COORDS.SPECTATOR);
+      giveItem(player, new mc.ItemStack("minecraft:spyglass"));
+    }
+  },
+  [`${SPECTATOR_COORDS.SPECTATOR_TO_LOBBY.x} ${SPECTATOR_COORDS.SPECTATOR_TO_LOBBY.y} ${SPECTATOR_COORDS.SPECTATOR_TO_LOBBY.z}`]: { // 観戦 => ロビー
+    action: (player) => {
+      player.teleport(LOBBY_COORDS.WINNER_RETURN);
+      decrementContainer(player, "minecraft:spyglass");
+    }
+  },
+  [`${SPECTATOR_COORDS.ARENA_EXITS[0].x} ${SPECTATOR_COORDS.ARENA_EXITS[0].y} ${SPECTATOR_COORDS.ARENA_EXITS[0].z}`]: { // アリーナ出口1
+    action: (player) => {
+      player.teleport(LOBBY_COORDS.WINNER_RETURN);
+      decrementContainer(player, "minecraft:spyglass");
+    }
+  },
+  [`${SPECTATOR_COORDS.ARENA_EXITS[1].x} ${SPECTATOR_COORDS.ARENA_EXITS[1].y} ${SPECTATOR_COORDS.ARENA_EXITS[1].z}`]: { // アリーナ出口2
+    action: (player) => {
+      player.teleport(LOBBY_COORDS.WINNER_RETURN);
+      decrementContainer(player, "minecraft:spyglass");
+    }
+  },
+  [`${SPECTATOR_COORDS.ARENA_EXITS[2].x} ${SPECTATOR_COORDS.ARENA_EXITS[2].y} ${SPECTATOR_COORDS.ARENA_EXITS[2].z}`]: { // アリーナ出口3
+    action: (player) => {
+      player.teleport(LOBBY_COORDS.WINNER_RETURN);
+      decrementContainer(player, "minecraft:spyglass");
+    }
+  },
+  [`${SPECTATOR_COORDS.ARENA_EXITS[3].x} ${SPECTATOR_COORDS.ARENA_EXITS[3].y} ${SPECTATOR_COORDS.ARENA_EXITS[3].z}`]: { // アリーナ出口4
+    action: (player) => {
+      player.teleport(LOBBY_COORDS.WINNER_RETURN);
+      decrementContainer(player, "minecraft:spyglass");
+    }
+  },
+  [`${SPECTATOR_COORDS.SPECTATOR_MODE_TOGGLE.x} ${SPECTATOR_COORDS.SPECTATOR_MODE_TOGGLE.y} ${SPECTATOR_COORDS.SPECTATOR_MODE_TOGGLE.z}`]: { // スペクテイターモード切替
+    action: (player) => {
+      player.setGameMode(mc.GameMode.Spectator);
+    }
+  }
+};
+
+mc.world.beforeEvents.playerInteractWithBlock.subscribe(data => {
+  const { block, isFirstEvent, player } = data;
+  if (!isFirstEvent) return;
+
+  const blockPos = `${block.location.x} ${block.location.y} ${block.location.z}`;
+  const teleportData = SPECTATOR_TELEPORTS[blockPos];
+
+  if (teleportData) {
+    data.cancel = true;
+    mc.system.run(() => {
+      teleportData.action(player);
+    });
+  }
+});
+
+// スペクテイターモード自動復帰
+mc.system.runInterval(() => {
+  mc.world.getDimension("minecraft:overworld")
+    .getPlayers({ gameMode: mc.GameMode.Spectator, location: { x: 0, y: 12, z: -13 }, maxDistance: 2 })
+    .forEach(player => {
+      player.setGameMode(mc.GameMode.Adventure);
+      player.teleport(LOBBY_COORDS.SPECTATOR);
+    });
+});
+
+// ========== コンパス直接使用 ==========
+
+mc.world.afterEvents.itemUse.subscribe(data => {
+  const { source, itemStack } = data;
+  if (itemStack.typeId !== "minecraft:compass") return;
+  if (!(source.hasTag("red") || source.hasTag("blue"))) return;
+  if (!source.hasTag("turn")) return;
+
+  showCompassDialog(source);
+});

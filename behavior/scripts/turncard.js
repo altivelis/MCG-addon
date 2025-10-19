@@ -1,666 +1,379 @@
 import * as mc from "@minecraft/server";
-import { addAct, applyDamage, createColor, getObject, giveItem, giveSword, hasItem, lineParticle, myTimeout, sendPlayerMessage, setObject } from "./lib";
+import { addAct, applyDamage, hasItem, giveSword, giveItem, sendPlayerMessage, myTimeout, setObject, getObject } from "./lib";
+import { 
+  isSameTeam, isOpponentTeam, getPlayerTeam, getOpponentTeam,
+  playCardEffect, giveItemWithMessage, getAllTeamMobs, summonMobInSlot
+} from "./card-helpers";
 import { mcg } from "./system";
 
+/**
+ * ターン経過時のモブ効果
+ * 同じチームのモブならnewPlayerに効果、相手チームならoldPlayerに効果
+ */
 export const turnMob = {
-  pig: {
-    /**
-     * ブタ
-     * @param {mc.Player} newPlayer 
-     * @param {mc.Player} oldPlayer 
-     * @param {mc.Entity} entity 
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
+  pig: { run: () => {} },
+  
   villager_v2: {
-    /**
-     * 村人
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"));
+      if (isSameTeam(entity, newPlayer)) {
+        giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
         sendPlayerMessage(newPlayer, "[村人] 草ブロックを獲得");
       }
     }
   },
-  wolf: {
-    /**
-     * オオカミ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  allay: {
-    /**
-     * アレイ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  panda: {
-    /**
-     * パンダ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  snow_golem: {
-    /**
-     * スノーゴーレム
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  iron_golem: {
-    /**
-     * アイアンゴーレム
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  zombie: {
-    /**
-     * ゾンビ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
+  
+  wolf: { run: () => {} },
+  allay: { run: () => {} },
+  panda: { run: () => {} },
+  snow_golem: { run: () => {} },
+  iron_golem: { run: () => {} },
+  zombie: { run: () => {} },
+  
   skeleton: {
-    /**
-     * スケルトン
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        if(entity.hasTag("enhance")){
-          let amount = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"red":"blue")]}).length;
-          if(amount){
-            giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"), amount);
-            sendPlayerMessage(newPlayer, "[スケルトン] 矢x" + amount + "を獲得");
-          }
+      if (!isSameTeam(entity, newPlayer)) return;
+      
+      if (entity.hasTag("enhance")) {
+        const team = getPlayerTeam(newPlayer);
+        const amount = getAllTeamMobs(newPlayer).length;
+        if (amount > 0) {
+          giveItemWithMessage(newPlayer, "minecraft:arrow", amount, "矢");
+          sendPlayerMessage(newPlayer, `[スケルトン] 矢x${amount}を獲得`);
         }
-        else{
-          giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"));
-          sendPlayerMessage(newPlayer, "[スケルトン] 矢を獲得");
-        }
+      } else {
+        giveItemWithMessage(newPlayer, "minecraft:arrow", 1, "矢");
+        sendPlayerMessage(newPlayer, "[スケルトン] 矢を獲得");
       }
     }
   },
+  
   creeper: {
-    /**
-     * クリーパー
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        myTimeout(entity.hasTag("slotB") ? 0 : entity.hasTag("slotW") ? 20 : 40, ()=>{
-          sendPlayerMessage(newPlayer, "[クリーパー] ドカーン！");
-          entity.dimension.spawnParticle("minecraft:huge_explosion_emitter", entity.location);
-          entity.dimension.playSound("cauldron.explode", entity.location);
-          mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red")], excludeTags:["fly", "guard"]}).forEach(target=>{
-            target.applyDamage(5, {cause:mc.EntityDamageCause.entityExplosion});
-          })
-          let oldPlayerObject = getObject(oldPlayer.hasTag("red") ? "red" : "blue");
-          if(oldPlayerObject?.typeId != "minecraft:air"){
-            setObject(oldPlayer, "minecraft:air");
-            sendPlayerMessage(newPlayer, "[クリーパー] 相手のオブジェクトを破壊");
-          }
-        })
-      }
-    }
-  },
-  witch: {
-    /**
-     * ウィッチ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        if(entity.hasTag("enhance")){
-          giveItem(newPlayer, new mc.ItemStack("mcg:awkward_potion"));
-          sendPlayerMessage(newPlayer, "[ウィッチ] 奇妙なポーションを獲得");
+      if (!isSameTeam(entity, newPlayer)) return;
+      
+      const delay = entity.hasTag("slotB") ? 0 : entity.hasTag("slotW") ? 20 : 40;
+      const opponentTeam = getOpponentTeam(newPlayer);
+      
+      myTimeout(delay, () => {
+        sendPlayerMessage(newPlayer, "[クリーパー] ドカーン！");
+        entity.dimension.spawnParticle("minecraft:huge_explosion_emitter", entity.location);
+        entity.dimension.playSound("cauldron.explode", entity.location);
+        
+        // 相手チームの全モブにダメージ
+        mc.world.getDimension("minecraft:overworld")
+          .getEntities({ excludeTypes: ["minecraft:player"], tags: [opponentTeam], excludeTags: ["fly", "guard"] })
+          .forEach(target => target.applyDamage(5, { cause: mc.EntityDamageCause.entityExplosion }));
+        
+        // 相手のオブジェクトを破壊
+        const opponentObjectTeam = getPlayerTeam(oldPlayer);
+        const opponentObject = getObject(opponentObjectTeam);
+        if (opponentObject?.typeId !== "minecraft:air") {
+          setObject(oldPlayer, "minecraft:air");
+          sendPlayerMessage(newPlayer, "[クリーパー] 相手のオブジェクトを破壊");
         }
-        entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
-        sendPlayerMessage(newPlayer, "[ウィッチ] 体力回復");
-      }
+      });
     }
   },
-  phantom: {
-    /**
-     * ファントム
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  breeze: {
-    /**
-     * ブリーズ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  husk: {
-    /**
-     * ハスク
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  stray: {
-    /**
-     * ストレイ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
+  
+  witch: {
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"), 2);
+      if (!isSameTeam(entity, newPlayer)) return;
+      
+      if (entity.hasTag("enhance")) {
+        giveItemWithMessage(newPlayer, "mcg:awkward_potion", 1, "奇妙なポーション");
+        sendPlayerMessage(newPlayer, "[ウィッチ] 奇妙なポーションを獲得");
+      }
+      entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
+      sendPlayerMessage(newPlayer, "[ウィッチ] 体力回復");
+    }
+  },
+  
+  phantom: { run: () => {} },
+  breeze: { run: () => {} },
+  husk: { run: () => {} },
+  
+  stray: {
+    run: (newPlayer, oldPlayer, entity) => {
+      if (isSameTeam(entity, newPlayer)) {
+        giveItemWithMessage(newPlayer, "minecraft:arrow", 2, "矢");
         sendPlayerMessage(newPlayer, "[ストレイ] 矢x2を獲得");
       }
     }
   },
-  cave_spider: {
-    /**
-     * 洞窟クモ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  zombie_pigman: {
-    /**
-     * ゾンビピッグマン
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  wither_skeleton: {
-    /**
-     * ウィザースケルトン
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  strider: {
-    /**
-     * ストライダー
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  blaze: {
-    /**
-     * ブレイズ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {
-      // let teamBlazes = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:blaze", tags:[(entity.hasTag("red")?"red":"blue")]});
-      // let test = false;
-      // teamBlazes.forEach(blaze=>{
-      //   if(blaze.hasTag("processed")) test = true;
-      // })
-      // if(test) return;
-      // if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-      //   applyDamage(oldPlayer, 2, {cause:mc.EntityDamageCause.fire});
-      // }else{
-      //   applyDamage(newPlayer, 2, {cause:mc.EntityDamageCause.fire});
-      // }
-      // entity.addTag("processed");
-      // myTimeout(20, ()=>{
-      //   entity.removeTag("processed");
-      // })
-    }
-  },
+  
+  cave_spider: { run: () => {} },
+  zombie_pigman: { run: () => {} },
+  wither_skeleton: { run: () => {} },
+  strider: { run: () => {} },
+  blaze: { run: () => {} },
+  
   chicken: {
-    /**
-     * ニワトリ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:egg"));
+      if (isSameTeam(entity, newPlayer)) {
+        giveItemWithMessage(newPlayer, "minecraft:egg", 1, "卵");
         sendPlayerMessage(newPlayer, "[ニワトリ] 卵を獲得");
       }
     }
   },
-  parrot: {
-    /**
-     * オウム
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  fox: {
-    /**
-     * キツネ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  frog: {
-    /**
-     * カエル
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  mooshroom: {
-    /**
-     * ムーシュルーム
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
+  
+  parrot: { run: () => {} },
+  fox: { run: () => {} },
+  frog: { run: () => {} },
+  mooshroom: { run: () => {} },
+  
   polar_bear: {
-    /**
-     * ホッキョクグマ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        let snowgolems = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:snow_golem", tags:[(entity.hasTag("red")?"red":"blue")]});
-        let ice = new mc.ItemStack("minecraft:packed_ice", 4 + snowgolems.length * 4);
-        ice.lockMode = mc.ItemLockMode.inventory;
-        /**
-         * @type {mc.Container}
-         */
-        let inv = newPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
-        if(inv.emptySlotsCount == 0){
-          let processed = false;
-          while(!processed){
-            let index = Math.floor(Math.random() * inv.size);
-            if(inv.getItem(index).typeId.includes("spawn_egg")){
-              inv.setItem(index, ice);
-              newPlayer.sendMessage("§cインベントリに空きがないため、ランダムなスポーンエッグを置き換えました。")
-              processed = true;
-            }
+      if (!isOpponentTeam(entity, newPlayer)) return;
+      
+      const team = getPlayerTeam(entity);
+      const snowgolems = mc.world.getDimension("minecraft:overworld")
+        .getEntities({ type: "minecraft:snow_golem", tags: [team] });
+      
+      const ice = new mc.ItemStack("minecraft:packed_ice", 4 + snowgolems.length * 4);
+      ice.lockMode = mc.ItemLockMode.inventory;
+      
+      const inv = newPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
+      if (inv.emptySlotsCount === 0) {
+        // インベントリ満杯時：ランダムなスポーンエッグと交換
+        let processed = false;
+        while (!processed) {
+          const index = Math.floor(Math.random() * inv.size);
+          const item = inv.getItem(index);
+          if (item?.typeId.includes("spawn_egg")) {
+            inv.setItem(index, ice);
+            newPlayer.sendMessage("§cインベントリに空きがないため、ランダムなスポーンエッグを置き換えました。");
+            processed = true;
           }
-        }else{
-          inv.addItem(ice);
         }
+      } else {
+        inv.addItem(ice);
       }
     }
   },
-  bee: {
-    /**
-     * ミツバチ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
-  sheep: {
-    /**
-     * 羊
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
-    run: (newPlayer, oldPlayer, entity) => {}
-  },
+  
+  bee: { run: () => {} },
+  sheep: { run: () => {} },
+  
   bogged: {
-    /**
-     * ボグド
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"));
+      if (isSameTeam(entity, newPlayer)) {
+        giveItemWithMessage(newPlayer, "minecraft:arrow", 1, "矢");
         sendPlayerMessage(newPlayer, "[ボグド] 矢を獲得");
       }
     }
   },
+  
   pillager: {
-    /**
-     * 略奪者
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"));
-        sendPlayerMessage(newPlayer, "[略奪者] 草ブロックを獲得");
-        giveItem(newPlayer, new mc.ItemStack("minecraft:arrow"), 2);
-        sendPlayerMessage(newPlayer, "[略奪者] 矢x2を獲得");
-        sendPlayerMessage(newPlayer, "[略奪者] スリップダメージ");
-        applyDamage(newPlayer, 2);
-      }
+      if (!isSameTeam(entity, newPlayer)) return;
+      
+      giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
+      sendPlayerMessage(newPlayer, "[略奪者] 草ブロックを獲得");
+      giveItemWithMessage(newPlayer, "minecraft:arrow", 2, "矢");
+      sendPlayerMessage(newPlayer, "[略奪者] 矢x2を獲得");
+      sendPlayerMessage(newPlayer, "[略奪者] スリップダメージ");
+      applyDamage(newPlayer, 2);
     }
   },
+  
   vindicator: {
-    /**
-     * ヴィンディケーター
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:iron_axe"));
-        sendPlayerMessage(newPlayer, "[ヴィンディケーター] 鉄の斧を獲得");
-        sendPlayerMessage(newPlayer, "[ヴィンディケーター] スリップダメージ");
-        applyDamage(newPlayer, 2);
-      }
+      if (!isSameTeam(entity, newPlayer)) return;
+      
+      giveItemWithMessage(newPlayer, "minecraft:iron_axe", 1, "鉄の斧");
+      sendPlayerMessage(newPlayer, "[ヴィンディケーター] 鉄の斧を獲得");
+      sendPlayerMessage(newPlayer, "[ヴィンディケーター] スリップダメージ");
+      applyDamage(newPlayer, 2);
     }
   },
+  
   vex: {
-    /**
-     * ヴェクス
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+      if (isSameTeam(entity, newPlayer)) {
         sendPlayerMessage(newPlayer, "[ヴェックス] スリップダメージ");
         applyDamage(newPlayer, 1);
       }
     }
   },
+  
   evocation_illager: {
-    /**
-     * エヴォーカー
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
-        if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"red":"blue"), "slotB"]}).length == 0){
-          let mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (entity.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue));
-          mobb.addTag((entity.hasTag("red") ? "red" : "blue"));
-          mobb.addTag("slotB");
-          mobb.addTag("fly");
-          mobb.teleport({...mobb.location, y: mobb.location.y + 1});
+      const team = getPlayerTeam(entity);
+      const opponentTeam = getOpponentTeam(newPlayer);
+      
+      // ターン終了プレイヤーと同じチーム → ヴェックス召喚
+      if (isOpponentTeam(entity, newPlayer)) {
+        const dimension = mc.world.getDimension("minecraft:overworld");
+        
+        // 青スロットにヴェックス召喚
+        if (dimension.getEntities({ excludeTypes: ["minecraft:player"], tags: [team, "slotB"] }).length === 0) {
+          const pos = entity.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue;
+          const mob = dimension.spawnEntity("minecraft:vex", pos);
+          mob.addTag(team);
+          mob.addTag("slotB");
+          mob.addTag("fly");
+          mob.teleport({ ...mob.location, y: mob.location.y + 1 });
           sendPlayerMessage(oldPlayer, "ヴェックスを召喚しました");
-          mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
+          mob.dimension.playSound("apply_effect.raid_omen", mob.location, { volume: 10 });
         }
-        if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"red":"blue"), "slotR"]}).length == 0){
-          let mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", (entity.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red));
-          mobr.addTag((entity.hasTag("red") ? "red" : "blue"));
-          mobr.addTag("slotR");
-          mobr.addTag("fly");
-          mobr.teleport({...mobr.location, y: mobr.location.y + 1});
+        
+        // 赤スロットにヴェックス召喚
+        if (dimension.getEntities({ excludeTypes: ["minecraft:player"], tags: [team, "slotR"] }).length === 0) {
+          const pos = entity.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red;
+          const mob = dimension.spawnEntity("minecraft:vex", pos);
+          mob.addTag(team);
+          mob.addTag("slotR");
+          mob.addTag("fly");
+          mob.teleport({ ...mob.location, y: mob.location.y + 1 });
           sendPlayerMessage(oldPlayer, "ヴェックスを召喚しました");
-          mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
+          mob.dimension.playSound("apply_effect.raid_omen", mob.location, { volume: 10 });
         }
       }
-      else if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+      // ターン開始プレイヤーと同じチーム → 攻撃
+      else if (isSameTeam(entity, newPlayer)) {
         sendPlayerMessage(newPlayer, "[エヴォーカー] スリップダメージ");
         applyDamage(newPlayer, 5);
-        mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotB"], excludeTags:["guard", "fly"]}).forEach(target=>{
-          lineParticle(entity.dimension, entity.location, target.location, "mcg:custom_explosion_emitter", 1, createColor(entity.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          target.dimension.spawnParticle("mcg:knockback_roar_particle", target.location, createColor(entity.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          target.dimension.playSound("mob.evocation_fangs.attack", target.location, {volume: 10});
-          applyDamage(target, 20);
-        })
-        mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(entity.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["guard", "fly"]}).forEach(target=>{
-          lineParticle(entity.dimension, entity.location, target.location, "mcg:custom_explosion_emitter", 1, createColor(entity.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          target.dimension.spawnParticle("mcg:knockback_roar_particle", target.location, createColor(entity.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          target.dimension.playSound("mob.evocation_fangs.attack", target.location, {volume: 10});
-          applyDamage(target, 20);
-        })
+        
+        // 相手の青・赤スロットに攻撃
+        ["slotB", "slotR"].forEach(slot => {
+          mc.world.getDimension("minecraft:overworld")
+            .getEntities({ excludeTypes: ["minecraft:player"], tags: [opponentTeam, slot], excludeTags: ["guard", "fly"] })
+            .forEach(target => {
+              playCardEffect(entity, target.location);
+              target.dimension.playSound("mob.evocation_fangs.attack", target.location, { volume: 10 });
+              applyDamage(target, 20);
+            });
+        });
       }
     }
   },
+  
   armor_stand: {
-    /**
-     * 防具立て
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(oldPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+      if (isOpponentTeam(entity, newPlayer)) {
         sendPlayerMessage(oldPlayer, "[防具立て] 破壊");
         entity.kill();
       }
     }
   },
+  
   ravager: {
-    /**
-     * ラヴェジャー
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {mc.Entity} entity
-     */
     run: (newPlayer, oldPlayer, entity) => {
-      if(newPlayer.hasTag("red") ? entity.hasTag("red") : entity.hasTag("blue")){
+      if (isSameTeam(entity, newPlayer)) {
         sendPlayerMessage(newPlayer, "[ラヴェジャー] スリップダメージ");
-        newPlayer.applyDamage(4)
+        newPlayer.applyDamage(4);
       }
     }
   }
-}
+};
 
+/**
+ * ターン経過時のオブジェクト効果
+ */
 export const turnObject = {
   chest: {
-    /**
-     * チェスト
-     * @param {mc.Player} newPlayer 
-     * @param {mc.Player} oldPlayer 
-     * @param {String} blockTag 
-     */
     run: (newPlayer, oldPlayer, blockTag) => {
-      if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"));
+      if (getPlayerTeam(newPlayer) === blockTag) {
+        giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
         sendPlayerMessage(newPlayer, "[チェスト] 草ブロックを獲得");
       }
     }
   },
-  carved_pumpkin: {
-    /**
-     * くり抜かれたカボチャ
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {String} blockTag
-     */
-    run: (newPlayer, oldPlayer, blockTag) => {}
-  },
+  
+  carved_pumpkin: { run: () => {} },
+  
   bell: {
-    /**
-     * 鐘
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {String} blockTag
-     */
     run: (newPlayer, oldPlayer, blockTag) => {
-      if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:villager_spawn_egg"));
+      if (getPlayerTeam(newPlayer) === blockTag) {
+        giveItemWithMessage(newPlayer, "minecraft:villager_spawn_egg", 1, "村人");
         sendPlayerMessage(newPlayer, "[鐘] 村人を獲得");
       }
     }
   },
+  
   mob_spawner: {
-    /**
-     * モンスタースポナー
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {String} blockTag
-     */
     run: (newPlayer, oldPlayer, blockTag) => {
-      if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
+      if (getPlayerTeam(newPlayer) === blockTag) {
         addAct(newPlayer, 15);
         sendPlayerMessage(newPlayer, "[モンスタースポナー] act+15");
       }
     }
   },
+  
   ender_chest: {
-    /**
-     * エンダーチェスト
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {String} blockTag
-     */
     run: (newPlayer, oldPlayer, blockTag) => {
-      if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"), 3);
+      if (getPlayerTeam(newPlayer) === blockTag) {
+        giveItemWithMessage(newPlayer, "minecraft:grass_block", 3, "草ブロック");
         sendPlayerMessage(newPlayer, "[エンダーチェスト] 草ブロックx3を獲得");
       }
     }
   },
-  crying_obsidian:{
-    /**
-     * 泣く黒曜石
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {String} blockTag
-     */
-    run: (newPlayer, oldPlayer, blockTag) => {}
-  },
+  
+  crying_obsidian: { run: () => {} },
+  
   bee_nest: {
-    /**
-     * ミツバチの巣
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {String} blockTag
-     */
     run: (newPlayer, oldPlayer, blockTag) => {
-      if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
-        giveItem(newPlayer, new mc.ItemStack("minecraft:bee_spawn_egg"));
+      if (getPlayerTeam(newPlayer) === blockTag) {
+        giveItemWithMessage(newPlayer, "minecraft:bee_spawn_egg", 1, "ハチ");
         sendPlayerMessage(newPlayer, "[ミツバチの巣] ハチを獲得");
       }
     }
   },
+  
   composter: {
-    /**
-     * コンポスター
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {String} blockTag
-     */
     run: (newPlayer, oldPlayer, blockTag) => {
-      if(newPlayer.hasTag("red") ? blockTag == "red" : blockTag == "blue"){
-        switch(Math.floor(Math.random() * 4)){
-          case 0:
-            giveItem(newPlayer, new mc.ItemStack("minecraft:poppy"));
-            sendPlayerMessage(newPlayer, "[コンポスター] ポピーを獲得");
-            break;
-          case 1:
-            giveItem(newPlayer, new mc.ItemStack("minecraft:dandelion"));
-            sendPlayerMessage(newPlayer, "[コンポスター] タンポポを獲得");
-            break;
-          case 2:
-            giveItem(newPlayer, new mc.ItemStack("minecraft:pink_tulip"));
-            sendPlayerMessage(newPlayer, "[コンポスター] 桃色のチューリップを獲得");
-            break;
-          case 3:
-            giveItem(newPlayer, new mc.ItemStack("minecraft:cactus"));
-            sendPlayerMessage(newPlayer, "[コンポスター] サボテンを獲得");
-            break;
-        }
-      }
+      if (getPlayerTeam(newPlayer) !== blockTag) return;
+      
+      const flowers = [
+        { id: "minecraft:poppy", name: "ポピー" },
+        { id: "minecraft:dandelion", name: "タンポポ" },
+        { id: "minecraft:pink_tulip", name: "桃色のチューリップ" },
+        { id: "minecraft:cactus", name: "サボテン" }
+      ];
+      
+      const selected = flowers[Math.floor(Math.random() * flowers.length)];
+      giveItemWithMessage(newPlayer, selected.id, 1, selected.name);
+      sendPlayerMessage(newPlayer, `[コンポスター] ${selected.name}を獲得`);
     }
   },
-  lit_pumpkin: {
-    /**
-     * ジャック・オ・ランタン
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {String} blockTag
-     */
-    run: (newPlayer, oldPlayer, blockTag) => {}
-  },
-  trapped_chest: {
-    /**
-     * トラップチェスト
-     * @param {mc.Player} newPlayer
-     * @param {mc.Player} oldPlayer
-     * @param {String} blockTag
-     */
-    run: (newPlayer, oldPlayer, blockTag) => {}
-  }
-}
+  
+  lit_pumpkin: { run: () => {} },
+  trapped_chest: { run: () => {} }
+};
 
 /**
  * ターン開始時のハンドアイテム、キープアイテムの処理
  * @param {mc.Player} newPlayer ターンを開始するプレイヤー
  * @param {mc.Player} oldPlayer ターンを終了したプレイヤー
  */
-export function turnItem(newPlayer, oldPlayer){
-  if(hasItem(newPlayer, "minecraft:red_wool")){
+export function turnItem(newPlayer, oldPlayer) {
+  // 羊毛効果
+  if (hasItem(newPlayer, "minecraft:red_wool")) {
     giveSword(newPlayer, "15", "赤色の羊毛");
   }
-  if(hasItem(newPlayer, "minecraft:yellow_wool")){
+  if (hasItem(newPlayer, "minecraft:yellow_wool")) {
     addAct(newPlayer, 10);
     sendPlayerMessage(newPlayer, "[黄色の羊毛] act+10");
   }
-  if(hasItem(newPlayer, "minecraft:pink_wool")){
-    giveItem(newPlayer, new mc.ItemStack("minecraft:grass_block"));
+  if (hasItem(newPlayer, "minecraft:pink_wool")) {
+    giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
     sendPlayerMessage(newPlayer, "[桃色の羊毛] 草ブロックを獲得");
   }
-  if(hasItem(newPlayer, "minecraft:green_wool")){
-    /**
-     * @type {mc.EntityHealthComponent}
-     */
-    let hp = newPlayer.getComponent(mc.EntityHealthComponent.componentId);
+  if (hasItem(newPlayer, "minecraft:green_wool")) {
+    const hp = newPlayer.getComponent(mc.EntityHealthComponent.componentId);
     hp.setCurrentValue(hp.currentValue + 3);
     sendPlayerMessage(newPlayer, "[緑色の羊毛] HP+3");
   }
-  if(hasItem(newPlayer, "minecraft:black_wool")){
+  if (hasItem(newPlayer, "minecraft:black_wool")) {
     sendPlayerMessage(newPlayer, "[黒色の羊毛] スリップダメージ");
-    applyDamage(oldPlayer, 3, {cause:mc.EntityDamageCause.wither});
+    applyDamage(oldPlayer, 3, { cause: mc.EntityDamageCause.wither });
   }
-  /**
-   * @type {mc.Container}
-   */
-  let inv_old = oldPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
-  for(let i=0; i<inv_old.size; i++){
-    let item = inv_old.getItem(i);
-    if(item?.typeId == "minecraft:packed_ice"){
+  
+  // 氷塊の凍結ダメージ
+  const inv_old = oldPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
+  for (let i = 0; i < inv_old.size; i++) {
+    const item = inv_old.getItem(i);
+    if (item?.typeId === "minecraft:packed_ice") {
       sendPlayerMessage(oldPlayer, "[凍結ダメージ]");
       applyDamage(oldPlayer, item.amount);
       inv_old.setItem(i);
