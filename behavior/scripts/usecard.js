@@ -1956,6 +1956,9 @@ export const useCard = {
           return;
         }
         
+        payCost(player, parseInt(info.Cact));
+        player.dimension.playSound("random.chestopen", player.location, {volume: 10});
+        
         sendPlayerMessage(player, "トラップチェストを使用しました");
         giveItem(player, new mc.ItemStack("minecraft:ominous_bottle"));
         player.sendMessage("[入手] 不吉な瓶");
@@ -1964,6 +1967,9 @@ export const useCard = {
         giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
         player.sendMessage("[入手] ニンジン付きの棒");
       } else {
+        payCost(player, parseInt(info.Cact));
+        player.dimension.playSound("random.chestopen", player.location, {volume: 10});
+
         sendPlayerMessage(player, "トラップチェストを設置しました");
         setObject(player, "minecraft:trapped_chest");
       }
