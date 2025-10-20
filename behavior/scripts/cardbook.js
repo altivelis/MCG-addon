@@ -138,8 +138,9 @@ const cardLibrary = {
     ],
     other: [
       { name: "鉄の斧", id: "minecraft:iron_axe", icon: "textures/items/iron_axe" },
-      { name: "不死のトーテム", id: "mcg:totem", icon: "textures/items/totem" },
-      { name: "不吉な瓶", id: "mcg:awkward_potion", icon: "textures/items/ominous_bottle" },
+      { name: "不死のトーテム", id: "minecraft:totem", icon: "textures/items/totem" },
+      { name: "不吉な瓶", id: "minecraft:ominous_bottle", icon: "textures/items/ominous_bottle" },
+      { name: "奇妙なポーション", id: "mcg:awkward_potion", icon: "textures/items/potion_bottle_drinkable" },
       { name: "治癒のポーション", id: "mcg:heal_potion", icon: "textures/items/potion_bottle_heal" },
       { name: "治癒のスプラッシュポーション", id: "mcg:heal_splash_potion", icon: "textures/items/potion_bottle_splash_heal" },
       { name: "負傷のポーション", id: "mcg:damage_potion", icon: "textures/items/potion_bottle_harm" },
