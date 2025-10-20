@@ -606,7 +606,7 @@ export const useCard = {
       player.dimension.playSound("random.eat", player.location, {volume: 10});
       player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
       const hp = player.getComponent(mc.EntityHealthComponent.componentId);
-      hp.setCurrentValue(hp.currentValue + 6);
+      hp.setCurrentValue(Math.min(hp.currentValue + 6, hp.effectiveMax));
       sendPlayerMessage(player, "HP+6");
     }
   },
@@ -1463,7 +1463,7 @@ export const useCard = {
       player.dimension.playSound("random.eat", player.location, {volume: 10});
       player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
       const hp = player.getComponent(mc.EntityHealthComponent.componentId);
-      hp.setCurrentValue(hp.currentValue + 1);
+      hp.setCurrentValue(Math.min(hp.currentValue + 1, hp.effectiveMax));
       sendPlayerMessage(player, "HP+1");
     }
   },
@@ -1712,7 +1712,7 @@ export const useCard = {
       player.dimension.playSound("random.eat", player.location, {volume: 10});
       player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
       const hp = player.getComponent(mc.EntityHealthComponent.componentId);
-      hp.setCurrentValue(hp.currentValue + 3);
+      hp.setCurrentValue(Math.min(hp.currentValue + 3, hp.effectiveMax));
       sendPlayerMessage(player, "HP+3");
     }
   },
@@ -1732,7 +1732,7 @@ export const useCard = {
       player.dimension.playSound("random.eat", player.location, {volume: 10});
       player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
       const hp = player.getComponent(mc.EntityHealthComponent.componentId);
-      hp.setCurrentValue(hp.currentValue + 9);
+      hp.setCurrentValue(Math.min(hp.currentValue + 9, hp.effectiveMax));
       sendPlayerMessage(player, "HP+9");
       mc.world.sendMessage("おめでとう！プレゼントもあるよ！");
       giveItem(player, new mc.ItemStack("minecraft:chest"));
@@ -1941,9 +1941,6 @@ export const useCard = {
         player.sendMessage(error_slot);
         return;
       }
-      
-      payCost(player, parseInt(info.Cact));
-      player.dimension.playSound("random.chestopen", player.location, {volume: 10});
       
       if (cardBlock.typeId === P) {
         // 残虐属性チェック
@@ -2224,85 +2221,53 @@ export const useCard = {
         player.sendMessage("§c既に大将が存在するため使用できません。");
         return;
       }
-      let mobs;
-      switch(cardBlock.typeId){
-        case B:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotB"]}).filter(e=>{
-            return ["pillager", "vindicator", "evocation_illager"].includes(e.typeId.slice(10));
-          });
-          if(mobs.length == 0){
-            player.sendMessage(error_slot);
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "不吉な旗を使用しました");
-          mobs.forEach(mob=>{
-            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-            mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-            mob.addTag("ace");
-            let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
-            healthComponent.resetToMaxValue();
-          })
-          player.addTag("raid");
-          player.dimension.playSound("raid.horn", player.location, {volume: 10});
-          mc.world.getPlayers().forEach(p=>{
-            p.onScreenDisplay.setTitle("§c§l襲撃モード");
-          })
-          changeHealthBoost(player, 2);
-          break;
-        case W:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotW"]}).filter(e=>{
-            return ["pillager", "vindicator", "evocation_illager"].includes(e.typeId.slice(10));
-          });
-          if(mobs.length == 0){
-            player.sendMessage(error_slot);
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "不吉な旗を使用しました");
-          mobs.forEach(mob=>{
-            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-            mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-            mob.addTag("ace");
-            let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
-            healthComponent.resetToMaxValue();
-          })
-          player.addTag("raid");
-          player.dimension.playSound("raid.horn", player.location, {volume: 10});
-          mc.world.getPlayers().forEach(p=>{
-            p.onScreenDisplay.setTitle("§c§l襲撃モード");
-          })
-          changeHealthBoost(player, 2);
-          break;
-        case R:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue"), "slotR"]}).filter(e=>{
-            return ["pillager", "vindicator", "evocation_illager"].includes(e.typeId.slice(10));
-          });
-          if(mobs.length == 0){
-            player.sendMessage(error_slot);
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "不吉な旗を使用しました");
-          mobs.forEach(mob=>{
-            lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-            mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-            mob.addTag("ace");
-            let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
-            healthComponent.resetToMaxValue();
-          })
-          player.addTag("raid");
-          player.dimension.playSound("raid.horn", player.location, {volume: 10});
-          mc.world.getPlayers().forEach(p=>{
-            p.onScreenDisplay.setTitle("§c§l襲撃モード");
-          })
-          changeHealthBoost(player, 2);
-          break;
-        case P:
-        case O:
-          player.sendMessage(error_slot);
-          return;
+      
+      // スロットタイプのマッピング
+      const slotMap = {
+        [B]: "slotB",
+        [W]: "slotW",
+        [R]: "slotR"
+      };
+      
+      const slotTag = slotMap[cardBlock.typeId];
+      
+      // P, Oスロットは使用不可
+      if(!slotTag){
+        player.sendMessage(error_slot);
+        return;
       }
+      
+      // 対象のmobを取得
+      const playerTeam = player.hasTag("red") ? "red" : "blue";
+      const mobs = mc.world.getDimension("minecraft:overworld")
+        .getEntities({excludeTypes:["minecraft:player"], tags:[playerTeam, slotTag]})
+        .filter(e => ["pillager", "vindicator", "evocation_illager"].includes(e.typeId.slice(10)));
+      
+      if(mobs.length == 0){
+        player.sendMessage(error_slot);
+        return;
+      }
+      
+      // コストの支払いと効果の適用
+      payCost(player, parseInt(info.Cact));
+      sendPlayerMessage(player, "不吉な旗を使用しました");
+      
+      const teamColor = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
+      
+      mobs.forEach(mob => {
+        lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(teamColor));
+        mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(teamColor));
+        mob.addTag("ace");
+        let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
+        healthComponent.resetToMaxValue();
+      });
+      
+      player.addTag("raid");
+      player.dimension.playSound("raid.horn", player.location, {volume: 10});
+      mc.world.getPlayers().forEach(p => {
+        p.onScreenDisplay.setTitle("§c§l襲撃モード");
+      });
+      changeHealthBoost(player, 2);
     }
   },
   iron_axe: {
@@ -2412,94 +2377,55 @@ export const useCard = {
         player.sendMessage(error_act);
         return;
       }
-      let mobs;
-      /**@type {mc.EntityHealthComponent} */
-      let health;
-      let hp;
-      switch(cardBlock.typeId){
-        case B:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:witch", tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
-          if(mobs.length == 0){
-            player.sendMessage("§c青スロットにウィッチが存在しないため使用できません。");
-            return;
-          }
-          if(mobs[0].hasTag("enhance")){
-            player.sendMessage("§cすでに強化されているため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "不吉な瓶を使用しました");
-          health = mobs[0].getComponent(mc.EntityHealthComponent.componentId);
-          hp = health.currentValue;
-          mobs[0].triggerEvent("enhance");
-          mobs[0].addTag("enhance");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          myTimeout(1,()=>{
-            health.setCurrentValue(hp);
-          })
-          mobs[0].dimension.playSound("block.enchanting_table.use", mobs[0].location, {volume: 10});
-          sendPlayerMessage(player, "ウィッチを強化しました");
-          giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 2);
-          player.sendMessage("[入手] 奇妙なポーション x2");
-          break;
-        case W:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:witch", tags:[(player.hasTag("red")?"red":"blue"), "slotW"]});
-          if(mobs.length == 0){
-            player.sendMessage("§c白スロットにウィッチが存在しないため使用できません。");
-            return;
-          }
-          if(mobs[0].hasTag("enhance")){
-            player.sendMessage("§cすでに強化されているため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "不吉な瓶を使用しました");
-          health = mobs[0].getComponent(mc.EntityHealthComponent.componentId);
-          hp = health.currentValue;
-          mobs[0].triggerEvent("enhance");
-          mobs[0].addTag("enhance");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          myTimeout(1,()=>{
-            health.setCurrentValue(hp);
-          })
-          mobs[0].dimension.playSound("block.enchanting_table.use", mobs[0].location, {volume: 10});
-          sendPlayerMessage(player, "ウィッチを強化しました");
-          giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 2);
-          player.sendMessage("[入手] 奇妙なポーション x2");
-          break;
-        case R:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:witch", tags:[(player.hasTag("red")?"red":"blue"), "slotR"]});
-          if(mobs.length == 0){
-            player.sendMessage("§c赤スロットにウィッチが存在しないため使用できません。");
-            return;
-          }
-          if(mobs[0].hasTag("enhance")){
-            player.sendMessage("§cすでに強化されているため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "不吉な瓶を使用しました");
-          health = mobs[0].getComponent(mc.EntityHealthComponent.componentId);
-          hp = health.currentValue;
-          mobs[0].triggerEvent("enhance");
-          mobs[0].addTag("enhance");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          myTimeout(1,()=>{
-            health.setCurrentValue(hp);
-          })
-          mobs[0].dimension.playSound("block.enchanting_table.use", mobs[0].location, {volume: 10});
-          sendPlayerMessage(player, "ウィッチを強化しました");
-          giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 2);
-          player.sendMessage("[入手] 奇妙なポーション x2");
-          break;
-        case P:
-        case O:
-          player.sendMessage(error_slot);
-          return;
+      // スロットタイプのマッピング
+      const slotMap = {
+        [B]: { tag: "slotB", name: "青" },
+        [W]: { tag: "slotW", name: "白" },
+        [R]: { tag: "slotR", name: "赤" }
+      };
+      
+      const slotInfo = slotMap[cardBlock.typeId];
+      
+      // P, Oスロットは使用不可
+      if(!slotInfo){
+        player.sendMessage(error_slot);
+        return;
       }
+      
+      // ウィッチの取得
+      const playerTeam = player.hasTag("red") ? "red" : "blue";
+      const mobs = mc.world.getDimension("minecraft:overworld")
+        .getEntities({type:"minecraft:witch", tags:[playerTeam, slotInfo.tag]});
+      
+      if(mobs.length == 0){
+        player.sendMessage(`§c${slotInfo.name}スロットにウィッチが存在しないため使用できません。`);
+        return;
+      }
+      
+      if(mobs[0].hasTag("enhance")){
+        player.sendMessage("§cすでに強化されているため使用できません。");
+        return;
+      }
+      
+      // コストの支払いと効果の適用
+      payCost(player, parseInt(info.Cact));
+      sendPlayerMessage(player, "不吉な瓶を使用しました");
+      
+      const teamColor = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
+      
+      mobs[0].triggerEvent("enhance");
+      mobs[0].addTag("enhance");
+      lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(teamColor));
+      mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(teamColor));
+      myTimeout(1, () => {
+        /**@type {mc.EntityHealthComponent} */
+        const health = mobs[0].getComponent(mc.EntityHealthComponent.componentId);
+        health.resetToMaxValue();
+      });
+      mobs[0].dimension.playSound("block.enchanting_table.use", mobs[0].location, {volume: 10});
+      sendPlayerMessage(player, "ウィッチを強化しました");
+      giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 2);
+      player.sendMessage("[入手] 奇妙なポーション x2");
     }
   },
   awkward_potion: {
@@ -2515,55 +2441,41 @@ export const useCard = {
         return;
       }
       const allow_mobs = ["zombie", "skeleton", "creeper", "witch"];
-      let mobs;
-      switch(cardBlock.typeId){
-        case B:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotB"]}).filter(e=>{
-            return allow_mobs.includes(e.typeId.slice(10));
-          })
-          if(mobs.length == 0){
-            player.sendMessage("§c青スロットに対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "奇妙なポーションを使用しました");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
-          break;
-        case W:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotW"]}).filter(e=>{
-            return allow_mobs.includes(e.typeId.slice(10));
-          })
-          if(mobs.length == 0){
-            player.sendMessage("§c白スロットに対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "奇妙なポーションを使用しました");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
-          break;
-        case R:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotR"]}).filter(e=>{
-            return allow_mobs.includes(e.typeId.slice(10));
-          })
-          if(mobs.length == 0){
-            player.sendMessage("§c赤スロットに対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "奇妙なポーションを使用しました");
-          lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
-          break;
-        case P:
-        case O:
-          player.sendMessage(error_slot);
-          return;
+      
+      // スロットタイプのマッピング
+      const slotMap = {
+        [B]: { tag: "slotB", name: "青" },
+        [W]: { tag: "slotW", name: "白" },
+        [R]: { tag: "slotR", name: "赤" }
+      };
+      
+      const slotInfo = slotMap[cardBlock.typeId];
+      
+      // P, Oスロットは使用不可
+      if(!slotInfo){
+        player.sendMessage(error_slot);
+        return;
       }
+      
+      // 対象のmobを取得
+      const playerTeam = player.hasTag("red") ? "red" : "blue";
+      const mobs = mc.world.getDimension("minecraft:overworld")
+        .getEntities({tags:[playerTeam, slotInfo.tag]})
+        .filter(e => allow_mobs.includes(e.typeId.slice(10)));
+      
+      if(mobs.length == 0){
+        player.sendMessage(`§c${slotInfo.name}スロットに対象のモブが存在しないため使用できません。`);
+        return;
+      }
+      
+      // コストの支払いと効果の適用
+      payCost(player, parseInt(info.Cact));
+      sendPlayerMessage(player, "奇妙なポーションを使用しました");
+      
+      const teamColor = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
+      lineParticle(player.dimension, player.location, mobs[0].location, "mcg:custom_explosion_emitter", 1.0, createColor(teamColor));
+      mobs[0].dimension.spawnParticle("mcg:knockback_roar_particle", mobs[0].location, createColor(teamColor));
+      enhance[mobs[0].typeId.slice(10)].run(mobs[0], player);
     }
   },
   heal_potion: {
@@ -2578,61 +2490,60 @@ export const useCard = {
         player.sendMessage(error_act);
         return;
       }
-      let mobs = [];
-      switch(cardBlock.typeId){
-        case B:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
-          if(mobs.length == 0){
-            player.sendMessage("§c青スロットに対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "治癒のポーションを使用しました");
-          break;
-        case W:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotW"]});
-          if(mobs.length == 0){
-            player.sendMessage("§c白スロットに対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "治癒のポーションを使用しました");
-          break;
-        case R:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotR"]});
-          if(mobs.length == 0){
-            player.sendMessage("§c赤スロットに対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "治癒のポーションを使用しました");
-          break;
-        case P:
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "治癒のポーションを使用しました");
-          player.dimension.playSound("random.drink", player.location, {volume: 10});
-          player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
-          /**@type {mc.EntityHealthComponent} */
-          let health = player.getComponent(mc.EntityHealthComponent.componentId);
-          health.setCurrentValue(health.currentValue + 5);
-          break;
-        case O:
-          player.sendMessage(error_slot);
-          return;
+      // スロットタイプのマッピング
+      const slotMap = {
+        [B]: { tag: "slotB", name: "青" },
+        [W]: { tag: "slotW", name: "白" },
+        [R]: { tag: "slotR", name: "赤" }
+      };
+      
+      // Pスロットの処理（プレイヤー自身）
+      if(cardBlock.typeId === P){
+        payCost(player, parseInt(info.Cact));
+        sendPlayerMessage(player, "治癒のポーションを使用しました");
+        player.dimension.playSound("random.drink", player.location, {volume: 10});
+        player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
+        /**@type {mc.EntityHealthComponent} */
+        let health = player.getComponent(mc.EntityHealthComponent.componentId);
+        health.setCurrentValue(Math.min(health.currentValue + 5, health.effectiveMax));
+        return;
       }
-      if(mobs?.length == 0) return;
-      mobs.forEach(mob=>{
+      
+      const slotInfo = slotMap[cardBlock.typeId];
+      
+      // Oスロットは使用不可
+      if(!slotInfo){
+        player.sendMessage(error_slot);
+        return;
+      }
+      
+      // 対象のmobを取得
+      const playerTeam = player.hasTag("red") ? "red" : "blue";
+      const mobs = mc.world.getDimension("minecraft:overworld")
+        .getEntities({tags:[playerTeam, slotInfo.tag]});
+      
+      if(mobs.length == 0){
+        player.sendMessage(`§c${slotInfo.name}スロットに対象のモブが存在しないため使用できません。`);
+        return;
+      }
+      
+      // コストの支払いと効果の適用
+      payCost(player, parseInt(info.Cact));
+      sendPlayerMessage(player, "治癒のポーションを使用しました");
+      
+      const teamColor = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
+      mobs.forEach(mob => {
         mob.dimension.playSound("random.drink", mob.location, {volume: 10});
-        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(teamColor));
         mob.dimension.spawnParticle("minecraft:crop_growth_area_emitter", mob.location);
         if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
           applyDamage(mob, 15, {cause:mc.EntityDamageCause.magic});
         }else{
           /**@type {mc.EntityHealthComponent} */
           let health = mob.getComponent(mc.EntityHealthComponent.componentId);
-          health.setCurrentValue(health.currentValue + 15);
+          health.setCurrentValue(Math.min(health.currentValue + 15, health.effectiveMax));
         }
-      })
+      });
     }
   },
   heal_splash_potion: {
@@ -2647,60 +2558,57 @@ export const useCard = {
         player.sendMessage(error_act);
         return;
       }
+      // スロットタイプのマッピング
+      const slotMap = {
+        [B]: "slotB",
+        [W]: "slotW",
+        [R]: "slotR"
+      };
+      
       let mobs;
-      switch(cardBlock.typeId){
-        case B:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"blue":"red"), "slotB"], excludeTags:["fly"]});
-          if(mobs.length == 0){
-            player.sendMessage("§c相手の場に対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "治癒のスプラッシュポーションを使用しました");
-          break;
-        case W:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"blue":"red"), "slotW"], excludeTags:["fly"]});
-          if(mobs.length == 0){
-            player.sendMessage("§c相手の場に対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "治癒のスプラッシュポーションを使用しました");
-          break;
-        case R:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["fly"]});
-          if(mobs.length == 0){
-            player.sendMessage("§c相手の場に対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "治癒のスプラッシュポーションを使用しました");
-          break;
-        case P:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"red":"blue")]});
-          if(mobs.length == 0){
-            player.sendMessage("§c自分の場に対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "治癒のスプラッシュポーションを使用しました");
-          break;
-        case O:
-          player.sendMessage(error_slot);
+      const slotTag = slotMap[cardBlock.typeId];
+      
+      // Pスロットの処理（自分の場の全モブ）
+      if(cardBlock.typeId === P){
+        const playerTeam = player.hasTag("red") ? "red" : "blue";
+        mobs = mc.world.getDimension("minecraft:overworld")
+          .getEntities({excludeTypes:["minecraft:player"], tags:[playerTeam]});
+        if(mobs.length == 0){
+          player.sendMessage("§c自分の場に対象のモブが存在しないため使用できません。");
           return;
+        }
+      } else if(cardBlock.typeId === O){
+        // Oスロットは使用不可
+        player.sendMessage(error_slot);
+        return;
+      } else {
+        // B, W, Rスロットの処理（相手の場の特定スロット）
+        const opponentTeam = player.hasTag("red") ? "blue" : "red";
+        mobs = mc.world.getDimension("minecraft:overworld")
+          .getEntities({tags:[opponentTeam, slotTag], excludeTags:["fly"]});
+        if(mobs.length == 0){
+          player.sendMessage("§c相手の場に対象のモブが存在しないため使用できません。");
+          return;
+        }
       }
-      mobs.forEach(mob=>{
+      
+      // コストの支払いと効果の適用
+      payCost(player, parseInt(info.Cact));
+      sendPlayerMessage(player, "治癒のスプラッシュポーションを使用しました");
+      
+      const teamColor = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
+      mobs.forEach(mob => {
         mob.dimension.playSound("random.glass", mob.location, {volume: 10});
-        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-        mob.dimension.spawnParticle("minecraft:crop_growth_area_emitter", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(teamColor));
+        mob.dimension.spawnParticle("minecraft:crop_growth_area_emitter", mob.location, createColor(teamColor));
         if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
           applyDamage(mob, 15, {cause:mc.EntityDamageCause.magic});
         }else{
           /**@type {mc.EntityHealthComponent} */
           let health = mob.getComponent(mc.EntityHealthComponent.componentId);
-          health.setCurrentValue(health.currentValue + 15);
+          health.setCurrentValue(Math.min(health.currentValue + 15, health.effectiveMax));
         }
-      })
+      });
     }
   },
   damage_potion: {
@@ -2722,82 +2630,69 @@ export const useCard = {
         .body("対象のスロットを選択してください")
         .button1("§l§b自分§r§lのスロット")
         .button2("§l§c相手§r§lのスロット");
-      switch(cardBlock.typeId){
-        case B:
-          res = await select_form.show(player);
-          if(res.canceled) return;
-          if(res.selection == 0){
-            mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotB"]});
-          }else{
-            mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"blue":"red"), "slotB"], excludeTags:["fly"]});
-          }
-          if(mobs.length == 0){
-            player.sendMessage("§c対象のスロットに対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "負傷のポーションを使用しました");
-          break;
-        case W:
-          res = await select_form.show(player);
-          if(res.canceled) return;
-          if(res.selection == 0){
-            mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotW"]});
-          }else{
-            mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"blue":"red"), "slotW"], excludeTags:["fly"]});
-          }
-          if(mobs.length == 0){
-            player.sendMessage("§c対象のスロットに対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "負傷のポーションを使用しました");
-          break;
-        case R:
-          res = await select_form.show(player);
-          if(res.canceled) return;
-          if(res.selection == 0){
-            mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotR"]});
-          }else{
-            mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["fly"]});
-          }
-          if(mobs.length == 0){
-            player.sendMessage("§c対象のスロットに対象のモブが存在しないため使用できません。");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "負傷のポーションを使用しました");
-          break;
-        case P:
-          if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")], excludeTags:["fly"]}).length > 0){
-            player.sendMessage("§c相手の場に攻撃可能なモブが存在するため使用できません");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "負傷のポーションを使用しました");
-          mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]}).forEach(p=>{
-            p.dimension.playSound("random.drink", p.location, {volume: 10});
-            p.dimension.spawnParticle("mcg:knockback_roar_particle", p.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-            applyDamage(p, 3, {cause:mc.EntityDamageCause.magic});
-          })
-          break;
-        case O:
-          player.sendMessage(error_slot);
+      
+      // スロットタイプのマッピング
+      const slotMap = {
+        [B]: "slotB",
+        [W]: "slotW",
+        [R]: "slotR"
+      };
+      
+      const slotTag = slotMap[cardBlock.typeId];
+      
+      // P, Oスロットの処理
+      if(cardBlock.typeId === P){
+        if(mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red")], excludeTags:["fly"]}).length > 0){
+          player.sendMessage("§c相手の場に攻撃可能なモブが存在するため使用できません");
           return;
+        }
+        payCost(player, parseInt(info.Cact));
+        sendPlayerMessage(player, "負傷のポーションを使用しました");
+        const teamColor = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
+        mc.world.getPlayers({tags:[(player.hasTag("red")?"blue":"red")]}).forEach(p=>{
+          p.dimension.playSound("random.drink", p.location, {volume: 10});
+          p.dimension.spawnParticle("mcg:knockback_roar_particle", p.location, createColor(teamColor));
+          applyDamage(p, 3, {cause:mc.EntityDamageCause.magic});
+        });
+        return;
+      } else if(cardBlock.typeId === O){
+        player.sendMessage(error_slot);
+        return;
       }
-      if(mobs.length == 0) return;
+      
+      // B, W, Rスロットの処理
+      res = await select_form.show(player);
+      if(res.canceled) return;
+      
+      const playerTeam = player.hasTag("red") ? "red" : "blue";
+      const targetTeam = res.selection == 0 ? playerTeam : (player.hasTag("red") ? "blue" : "red");
+      
+      mobs = mc.world.getDimension("minecraft:overworld").getEntities({
+        tags: [targetTeam, slotTag],
+        excludeTags: res.selection == 0 ? [] : ["fly"]
+      });
+      
+      if(mobs.length == 0){
+        player.sendMessage("§c対象のスロットに対象のモブが存在しないため使用できません。");
+        return;
+      }
+      
+      payCost(player, parseInt(info.Cact));
+      sendPlayerMessage(player, "負傷のポーションを使用しました");
+      
+      const teamColor = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
       mobs.forEach(mob=>{
         mob.dimension.playSound("random.drink", mob.location, {volume: 10});
-        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-        mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+        lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(teamColor));
+        mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(teamColor));
         if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
           /**@type {mc.EntityHealthComponent} */
           let health = mob.getComponent(mc.EntityHealthComponent.componentId);
-          health.setCurrentValue(health.currentValue + 20);
+          health.setCurrentValue(Math.min(health.currentValue + 20, health.effectiveMax));
         }else{
           applyDamage(mob, 20, {cause:mc.EntityDamageCause.magic});
         }
-      })
+      });
     }
   },
   damage_splash_potion: {
@@ -2846,7 +2741,7 @@ export const useCard = {
             if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
               /**@type {mc.EntityHealthComponent} */
               let health = mob.getComponent(mc.EntityHealthComponent.componentId);
-              health.setCurrentValue(health.currentValue + 20);
+              health.setCurrentValue(Math.min(health.currentValue + 20, health.effectiveMax));
             }else{
               applyDamage(mob, 20, {cause:mc.EntityDamageCause.magic});
             }
@@ -2986,9 +2881,11 @@ const enhance = {
     run: (mob, player) => {
       mob.triggerEvent("enhance");
       mob.addTag("enhance");
-      /**@type {mc.EntityHealthComponent} */
-      let health = mob.getComponent(mc.EntityHealthComponent.componentId);
-      health.resetToMaxValue();
+      myTimeout(1, () => {
+        /**@type {mc.EntityHealthComponent} */
+        let health = mob.getComponent(mc.EntityHealthComponent.componentId);
+        health.resetToMaxValue();
+      })
       mob.dimension.playSound("block.enchanting_table.use", mob.location, {volume: 10});
       sendPlayerMessage(player, "ゾンビを強化しました");
       giveItem(player, new mc.ItemStack("minecraft:grass_block"), 3);
@@ -3002,13 +2899,12 @@ const enhance = {
      * @param {mc.Player} player
      */
     run: (mob, player) => {
-      /**@type {mc.EntityHealthComponent} */
-      let health = mob.getComponent(mc.EntityHealthComponent.componentId);
-      let hp = health.currentValue;
       mob.triggerEvent("enhance");
       mob.addTag("enhance");
       myTimeout(1,()=>{
-        health.setCurrentValue(hp);
+        /**@type {mc.EntityHealthComponent} */
+        let health = mob.getComponent(mc.EntityHealthComponent.componentId);
+        health.resetToMaxValue();
       })
       mob.dimension.playSound("block.enchanting_table.use", mob.location, {volume: 10});
       sendPlayerMessage(player, "スケルトンを強化しました");
