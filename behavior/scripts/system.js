@@ -236,6 +236,60 @@ mc.system.afterEvents.scriptEventReceive.subscribe(data => {
   if (data.id === "mcg:reset") reset();
 });
 
+mc.system.beforeEvents.startup.subscribe(data => {
+  /**
+   * @type {mc.CustomCommand}
+   */
+  const initialize_command = {
+    name: "mcg:init",
+    description: "ゲームの初期設定を行います",
+    permissionLevel: mc.CommandPermissionLevel.GameDirectors,
+    mandatoryParameters: [],
+    optionalParameters: [],
+  };
+  data.customCommandRegistry.registerCommand(initialize_command, (origin) => {
+    if (origin.sourceEntity === undefined) {
+      return {
+        status: mc.CustomCommandStatus.Failure,
+        message: "このコマンドはプレイヤーのみが使用できます。"
+      }
+    }
+    mc.system.run(() => {
+      initialize_config();
+    })
+    return {
+      status: mc.CustomCommandStatus.Success,
+      message: "初期設定を行いました。"
+    }
+  });
+
+  /**
+   * @type {mc.CustomCommand}
+   */
+  const reset_command = {
+    name: "mcg:reset",
+    description: "ゲームをリセットします。",
+    permissionLevel: mc.CommandPermissionLevel.GameDirectors,
+    mandatoryParameters: [],
+    optionalParameters: [],
+  };
+  data.customCommandRegistry.registerCommand(reset_command, (origin) => {
+    if (origin.sourceEntity === undefined) {
+      return {
+        status: mc.CustomCommandStatus.Failure,
+        message: "このコマンドはプレイヤーのみが使用できます。"
+      }
+    }
+    mc.system.run(() => {
+      reset();
+    })
+    return {
+      status: mc.CustomCommandStatus.Success,
+      message: "設定をリセットしました。"
+    }
+  });
+})
+
 function initialize_config() {
   mc.world.setDynamicProperty("time", GAME_CONFIG.TIME_LIMIT);
   mc.world.setDynamicProperty("first_draw", GAME_CONFIG.FIRST_DRAW_COUNT);
