@@ -11,6 +11,15 @@ import { mcg } from "./system";
 import { VIEW_DISTANCE, EXCLUDE_TYPES, HP_DISPLAY, ALLOWED_ITEMS } from "./constants";
 
 /**
+ * 
+ * @param {mc.Player} player 
+ */
+function hasSpyglass(player) {
+  const mainhand = player.getComponent(mc.EntityEquippableComponent.componentId).getEquipment(mc.EquipmentSlot.Mainhand);
+  return mainhand?.typeId == "minecraft:spyglass";
+}
+
+/**
  * プレイヤーが見ているターゲットの情報を表示
  * @param {mc.Player} player 
  */
@@ -47,6 +56,7 @@ function getViewTarget(player) {
  * @param {mc.Entity} target 
  */
 function displayTargetInfo(player, target) {
+  if (hasSpyglass(player) == false) return;
   const hp = target.getComponent(mc.EntityHealthComponent.componentId);
   if (!hp) return;
 
@@ -122,6 +132,7 @@ function isWoolCard(block) {
  * @param {mc.Block} block 
  */
 function displayObjectCard(player, block) {
+  if (hasSpyglass(player) == false) return;
   player.onScreenDisplay.setActionBar([
     { translate: `tile.${block.typeId.slice(10)}.name` },
     "\n",
@@ -135,6 +146,7 @@ function displayObjectCard(player, block) {
  * @param {mc.Block} block 
  */
 function displayWoolCard(player, block) {
+  if (hasSpyglass(player) == false) return;
   player.onScreenDisplay.setActionBar([
     { translate: `tile.wool.${block.typeId.slice(10, -5)}.name` },
     "\n",
@@ -149,9 +161,7 @@ mc.world.afterEvents.playerHotbarSelectedSlotChange.subscribe(data => {
   let text = cardInfo(itemStack.typeId);
 
   if (text.length > 0) {
-    player.onScreenDisplay.setHudVisibility(mc.HudVisibility.Hide, [mc.HudElement.ItemText]);
-  } else {
-    player.onScreenDisplay.setHudVisibility(mc.HudVisibility.Reset, [mc.HudElement.ItemText]);
+    player.onScreenDisplay.setActionBar(text.join("\n"));
   }
 })
 
@@ -227,9 +237,7 @@ function updateVexPosition() {
 mc.system.runInterval(() => {
   const players = mc.world.getPlayers();
   players.forEach(player => {
-    if (player.getComponent(mc.EntityEquippableComponent.componentId).getEquipment(mc.EquipmentSlot.Mainhand)?.typeId == "minecraft:spyglass") {
-      updatePlayerDisplay(player);
-    }
+    updatePlayerDisplay(player);
   });
   
   updateEntityNameTags();
