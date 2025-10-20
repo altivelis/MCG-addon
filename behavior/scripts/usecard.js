@@ -2104,7 +2104,7 @@ export const useCard = {
         mobb.addTag(teamTag);
         mobb.addTag("slotB");
         mobb.addTag("fly");
-        mobb.teleport(mobb.location, {facingLocation: {x:0, y:0, z:0}});
+        mobb.teleport({...mobb.location, y: mobb.location.y + 1}, {facingLocation: {x:0, y:0, z:0}});
         sendPlayerMessage(player, "ヴェックスを召喚しました");
         mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
       }
@@ -2117,7 +2117,7 @@ export const useCard = {
         mobr.addTag(teamTag);
         mobr.addTag("slotR");
         mobr.addTag("fly");
-        mobr.teleport(mobr.location, {facingLocation: {x:0, y:0, z:0}});
+        mobr.teleport({...mobr.location, y: mobr.location.y + 1}, {facingLocation: {x:0, y:0, z:0}});
         sendPlayerMessage(player, "ヴェックスを召喚しました");
         mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
       }
