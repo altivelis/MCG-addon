@@ -134,7 +134,7 @@ function isWoolCard(block) {
 function displayObjectCard(player, block) {
   if (hasSpyglass(player) == false) return;
   player.onScreenDisplay.setActionBar([
-    { translate: `tile.${block.typeId.slice(10)}.name` },
+    { translate: block.localizationKey },
     "\n",
     cardInfo(block.typeId).join("\n")
   ]);
@@ -148,7 +148,7 @@ function displayObjectCard(player, block) {
 function displayWoolCard(player, block) {
   if (hasSpyglass(player) == false) return;
   player.onScreenDisplay.setActionBar([
-    { translate: `tile.wool.${block.typeId.slice(10, -5)}.name` },
+    { translate: block.localizationKey },
     "\n",
     cardInfo(block.typeId).join("\n")
   ]);
@@ -161,7 +161,9 @@ mc.world.afterEvents.playerHotbarSelectedSlotChange.subscribe(data => {
   let text = cardInfo(itemStack.typeId);
 
   if (text.length > 0) {
-    player.onScreenDisplay.setActionBar(text.join("\n"));
+    player.onScreenDisplay.setActionBar([itemStack?.nameTag ?? {translate: itemStack.localizationKey},"\n",text.join("\n")]);
+  } else {
+    player.onScreenDisplay.setActionBar(itemStack?.nameTag ?? {translate: itemStack.localizationKey});
   }
 })
 
@@ -237,6 +239,7 @@ function updateVexPosition() {
 mc.system.runInterval(() => {
   const players = mc.world.getPlayers();
   players.forEach(player => {
+    player.onScreenDisplay.setHudVisibility(mc.HudVisibility.Hide, [mc.HudElement.ItemText])
     updatePlayerDisplay(player);
   });
   

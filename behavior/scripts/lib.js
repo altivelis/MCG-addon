@@ -377,7 +377,7 @@ export function createColor(color){
 export function getEntityDisplayName(entity){
   return entity.typeId === "minecraft:player"
     ? entity.nameTag
-    : { translate: `entity.${entity.typeId.slice(10)}.name` };
+    : { translate: entity.localizationKey };
 }
 
 /**

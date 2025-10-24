@@ -1,7 +1,7 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 import { mcg, turnChange } from "./system";
-import { hasItem, decrementContainer, giveItem, handItem, addAct, sendPlayerMessage, isOnline, applyDamage } from "./lib";
+import { hasItem, decrementContainer, giveItem, handItem, addAct, sendPlayerMessage, isOnline, applyDamage, cardInfo, getCard } from "./lib";
 import { useCard } from "./usecard";
 import { ERROR_MESSAGES, SPECTATOR_COORDS, LOBBY_COORDS } from "./constants";
 
@@ -218,8 +218,6 @@ function validateCardUse(source) {
     return false;
   }
 
-  if (!handItem(source)) return false;
-
   if (!(source.hasTag("red") || source.hasTag("blue"))) return false;
 
   if (!source.hasTag("turn")) {
@@ -230,17 +228,48 @@ function validateCardUse(source) {
   return true;
 }
 
-mc.world.afterEvents.buttonPush.subscribe(data => {
+mc.world.afterEvents.buttonPush.subscribe(async data => {
   const { source, block } = data;
   if (block.typeId !== "minecraft:wooden_button") return;
-  if (source.typeId !== "minecraft:player") return;
+  if (!(source instanceof mc.Player)) return;
 
   block.setPermutation(mc.BlockPermutation.resolve("minecraft:wooden_button", { "facing_direction": 1 }));
 
   if (!validateCardUse(source)) return;
 
+  let item = handItem(source);
+  if (item === undefined) {
+    let container = source.getComponent(mc.EntityInventoryComponent.componentId).container;
+    let selectItemForm = new ui.ActionFormData()
+      .title("カード選択")
+      .body("手に持っているカードがありません。インベントリから使用するカードを選択してください。");
+    for(let i=0; i<container.size; i++) {
+      let slotItem = container.getItem(i);
+      if (slotItem) {
+        let info = cardInfo(slotItem.typeId);
+        if (info.length > 0) {
+          selectItemForm.button({rawtext: [slotItem?.nameTag ? {text: slotItem.nameTag} : {translate: slotItem.localizationKey}, {text: "\n"}, {text: info.join("\n")}]}, getCard(slotItem.typeId)?.texture);
+        } else {
+          selectItemForm.button({rawtext: [slotItem?.nameTag ?? {translate: slotItem.localizationKey}]});
+        }
+      } else {
+        selectItemForm.button(" ")
+      }
+    }
+    await selectItemForm.show(source).then(res => {
+      if (res.canceled) return;
+      let index = res.selection;
+      let titem = container.getItem(index);
+      if (titem && cardInfo(titem.typeId).length > 0) {
+        container.swapItems(index, source.selectedSlotIndex, container);
+        item = handItem(source);
+      }
+    })
+  }
+  if (item === undefined) return;
+
   // コンパスの場合
-  if (handItem(source)?.typeId === "minecraft:compass") {
+  if (item.typeId === "minecraft:compass") {
     showCompassDialog(source);
     return;
   }
@@ -254,7 +283,7 @@ mc.world.afterEvents.buttonPush.subscribe(data => {
   }
 
   // カード使用
-  const itemType = handItem(source).typeId;
+  const itemType = handItem(source)?.typeId;
   const cardKey = itemType.includes("minecraft:") ? itemType.slice(10) : itemType.slice(4);
   useCard[cardKey]?.run(cardBlock, source);
 });
