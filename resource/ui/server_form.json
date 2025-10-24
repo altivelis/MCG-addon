@@ -1,0 +1,244 @@
+{
+  "namespace": "server_form",
+
+  // long_formの定義を修正:
+
+  "long_form@common_dialogs.main_panel_no_buttons": {
+    "$title_panel": "common_dialogs.standard_title_label",
+    "$title_size": [ "100% - 15px", 10 ],
+    "$title_max_size": [ "100% - 15px", 10 ],
+    "size": [225, 200],
+    "$text_name": "#title_text",
+    "$title_text_binding_type": "none",
+    "$child_control": "server_form.long_form_panel_switcher",
+    "layer": 2
+  },
+
+  // タイトルに応じて表示を切り替えるパネル
+  "long_form_panel_switcher": {
+    "type": "panel",
+    "size": ["100%", "100%"],
+    "controls": [
+      {
+        "normal_layout@server_form.long_form_panel": {
+          "bindings": [
+            {
+              "binding_name": "#title_text",
+              "binding_type": "global"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "(not (#title_text = 'カード選択'))",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      },
+      {
+        "grid_layout@server_form.long_form_grid_panel": {
+          "bindings": [
+            {
+              "binding_name": "#title_text",
+              "binding_type": "global"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "(#title_text = 'カード選択')",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  // グリッド表示用のパネル
+  "long_form_grid_panel": {
+    "type": "panel",
+    "size": ["100%", "100%"],
+    "controls": [
+      {
+        "button_grid@server_form.long_form_button_grid": {}
+      }
+    ]
+  },
+
+  // 9列のグリッド - 最大4行
+  "long_form_button_grid": {
+    "type": "grid",
+    "anchor_from": "top_middle",
+    "anchor_to": "top_middle",
+    "size": [180, "100%c"],
+    "offset": [0, 10],
+    "grid_dimensions": [9, 4],
+    "collection_name": "form_buttons",
+    "grid_item_template": "server_form.grid_button_item",
+    "bindings": [
+      {
+        "binding_name": "#form_button_contents",
+        "binding_name_override": "#collection_length"
+      }
+    ]
+  },
+
+  // グリッドアイテム
+  "grid_button_item": {
+    "type": "panel",
+    "size": [20, 20],
+    "controls": [
+      {
+        "slot_background": {
+          "type": "image",
+          "texture": "textures/ui/cell_image",
+          "size": [18, 18],
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "layer": 1
+        }
+      },
+      {
+        "item_slot_button@common.button": {
+          "size": [18, 18],
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "$pressed_button_name": "button.form_button_click",
+          "layer": 2,
+          "default_control": "default_state",
+          "hover_control": "hover_state",
+          "pressed_control": "pressed_state",
+          "bindings": [
+            {
+              "binding_type": "collection_details",
+              "binding_collection_name": "form_buttons"
+            }
+          ],
+          "controls": [
+            {
+              "default_state@server_form.grid_slot_content": {}
+            },
+            {
+              "hover_state@server_form.grid_slot_content": {
+                "controls": [
+                  { "item_icon@server_form.grid_item_icon": {} },
+                  { "hover_overlay@server_form.grid_hover_overlay": {} },
+                  { "hover_text@server_form.grid_hover_text": {} }
+                ]
+              }
+            },
+            {
+              "pressed_state@server_form.grid_slot_content": {
+                "controls": [
+                  { "item_icon@server_form.grid_item_icon": {} },
+                  { "pressed_overlay@server_form.grid_pressed_overlay": {} }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  // スロットの内容（デフォルト状態）
+  "grid_slot_content": {
+    "type": "panel",
+    "size": ["100%", "100%"],
+    "controls": [
+      {
+        "item_icon@server_form.grid_item_icon": {}
+      }
+    ]
+  },
+
+  // アイテムアイコン
+  "grid_item_icon": {
+    "type": "image",
+    "size": [16, 16],
+    "anchor_from": "center",
+    "anchor_to": "center",
+    "layer": 3,
+    "bindings": [
+      {
+        "binding_name": "#form_button_texture",
+        "binding_name_override": "#texture",
+        "binding_type": "collection",
+        "binding_collection_name": "form_buttons"
+      },
+      {
+        "binding_name": "#form_button_texture_file_system",
+        "binding_name_override": "#texture_file_system",
+        "binding_type": "collection",
+        "binding_collection_name": "form_buttons"
+      },
+      {
+        "binding_type": "view",
+        "source_property_name": "(not ((#texture = '') or (#texture = 'loading')))",
+        "target_property_name": "#visible"
+      }
+    ]
+  },
+
+  // ホバー時のオーバーレイ
+  "grid_hover_overlay": {
+    "type": "image",
+    "texture": "textures/ui/cell_image_invert",
+    "size": ["100%", "100%"],
+    "layer": 4,
+    "alpha": 0.5
+  },
+
+  // 押下時のオーバーレイ
+  "grid_pressed_overlay": {
+    "type": "image",
+    "texture": "textures/ui/cell_image_invert",
+    "size": ["100%", "100%"],
+    "layer": 4,
+    "alpha": 0.8
+  },
+
+  // ホバーテキスト - ボタンの下に表示
+  "grid_hover_text": {
+    "type": "image",
+    "size": ["100%c + 8px", "100%c + 12px"],
+    "offset": [0, 0],
+    "anchor_from": "bottom_middle",
+    "anchor_to": "top_middle",
+    "texture": "textures/ui/hud_tip_text_background",
+    "$actionbar_text_background_alpha|default": 0.6,
+    "alpha": "$actionbar_text_background_alpha",
+    "layer": 2,
+    "controls": [
+      {
+        "tooltip_bg": {
+          "type": "stack_panel",
+          "size": ["100%c", "100%c"],
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "layer": 1,
+          "controls": [
+            {
+              "tooltip_text": {
+                "type": "label",
+                "size": ["default", "default"],
+                "offset": [4, 2],
+                "anchor_from": "center",
+                "anchor_to": "center",
+                "color": "$tool_tip_text",
+                "layer": 2,
+                "text": "#form_button_text",
+                "shadow": true,
+                "bindings": [
+                  {
+                    "binding_name": "#form_button_text",
+                    "binding_type": "collection",
+                    "binding_collection_name": "form_buttons"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
