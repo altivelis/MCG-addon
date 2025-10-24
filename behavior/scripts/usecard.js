@@ -2467,6 +2467,11 @@ export const useCard = {
         player.sendMessage(`§c${slotInfo.name}スロットに対象のモブが存在しないため使用できません。`);
         return;
       }
+
+      if(mobs[0].typeId !== "minecraft:witch" && mobs[0].hasTag("enhance")){
+        player.sendMessage("§cすでに強化されているため使用できません。");
+        return;
+      }
       
       // コストの支払いと効果の適用
       payCost(player, parseInt(info.Cact));
