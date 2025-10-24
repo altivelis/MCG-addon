@@ -10,11 +10,7 @@
     },
     "components": {
       "minecraft:max_stack_size": 1,
-      "minecraft:icon": {
-        "textures": {
-          "default": "empty_armor_slot_helmet"
-        }
-      },
+      "minecraft:icon": "empty_armor_slot_helmet",
       "minecraft:display_name": {
         "value": "§4使用禁止"
       },

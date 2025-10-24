@@ -10,11 +10,7 @@
     },
     "components": {
       "minecraft:max_stack_size": 1,
-      "minecraft:icon": {
-        "textures": {
-          "default": "mcg:potion_fireresistance"
-        }
-      },
+      "minecraft:icon": "mcg:potion_fireresistance",
       "minecraft:display_name": {
         "value": "耐火のポーション"
       }

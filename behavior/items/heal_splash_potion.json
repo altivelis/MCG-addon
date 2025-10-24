@@ -10,11 +10,7 @@
     },
     "components": {
       "minecraft:max_stack_size": 1,
-      "minecraft:icon": {
-        "textures": {
-          "default": "mcg:potion_heal_splash"
-        }
-      },
+      "minecraft:icon": "mcg:potion_heal_splash",
       "minecraft:display_name": {
         "value": "治癒のスプラッシュポーション"
       }

@@ -1044,13 +1044,25 @@ mc.system.afterEvents.scriptEventReceive.subscribe(data => {
   if (data.id !== "mcg:test") return;
   
   const player = data.sourceEntity;
-  player.dimension.getEntities({ type: "minecraft:witch" }).forEach(entity => {
-    const health = entity.getComponent(mc.EntityHealthComponent.componentId);
-    const hp = health.currentValue;
-    entity.triggerEvent("enhance");
-    myTimeout(1, () => {
-      health.setCurrentValue(hp);
-      mc.world.sendMessage(hp + "");
-    });
+  let form = new ui.ActionFormData()
+    .title("test")
+    .button("アイテム1", "textures/items/diamond_sword")
+    .button("アイテム2", "textures/items/iron_sword")
+    .button("アイテム3", "textures/items/gold_sword")
+    .button("アイテム4", "textures/items/stone_sword")
+    .button("アイテム5", "textures/items/wood_sword")
+    .button("アイテム6", "textures/items/netherite_sword")
+    .button("アイテム7", "textures/items/diamond_pickaxe")
+    .button("アイテム8", "textures/items/iron_pickaxe")
+    .button("アイテム9", "textures/items/gold_pickaxe")
+    .button("アイテム10", "textures/items/stone_pickaxe")
+    .button("アイテム11", "textures/items/wood_pickaxe")
+    .button("アイテム12", "textures/items/netherite_pickaxe");
+
+  form.show(player).then(res => {
+    if (res.canceled) return;
+
+    const selectedItem = res.selection;
+    mc.world.sendMessage(`選択されたアイテム: ${selectedItem}`);
   });
 });
