@@ -250,7 +250,7 @@ mc.world.afterEvents.buttonPush.subscribe(async data => {
         if (info.length > 0) {
           selectItemForm.button({rawtext: [slotItem?.nameTag ? {text: slotItem.nameTag} : {translate: slotItem.localizationKey}, {text: "\n"}, {text: info.join("\n")}]}, getCard(slotItem.typeId)?.texture);
         } else {
-          selectItemForm.button({rawtext: [slotItem?.nameTag ?? {translate: slotItem.localizationKey}]});
+          selectItemForm.button({rawtext: [slotItem?.nameTag ? {text: slotItem.nameTag} : {translate: slotItem.localizationKey}]});
         }
       } else {
         selectItemForm.button(" ")
