@@ -122,6 +122,13 @@ export const turnMob = {
   mooshroom: { run: () => {} },
   
   polar_bear: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (!isOpponentTeam(entity, newPlayer)) return;
       
@@ -134,15 +141,14 @@ export const turnMob = {
       
       const inv = newPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
       if (inv.emptySlotsCount === 0) {
-        // インベントリ満杯時：ランダムなスポーンエッグと交換
-        let processed = false;
-        while (!processed) {
-          const index = Math.floor(Math.random() * inv.size);
-          const item = inv.getItem(index);
-          if (item?.typeId.includes("spawn_egg")) {
-            inv.setItem(index, ice);
-            newPlayer.sendMessage("§cインベントリに空きがないため、ランダムなスポーンエッグを置き換えました。");
-            processed = true;
+        // インベントリ満杯時：最後から順に探索してlockModeがないアイテムを放出して置き換え
+        for (let i = inv.size - 1; i >= 0; i--) {
+          const item = inv.getItem(i);
+          if (item && item.lockMode === mc.ItemLockMode.none) {
+            newPlayer.dimension.spawnItem(item, newPlayer.location);
+            inv.setItem(i, ice);
+            newPlayer.sendMessage("§cインベントリに空きがないため、アイテムを放出しました。");
+            break;
           }
         }
       } else {
@@ -261,7 +267,7 @@ export const turnMob = {
     run: (newPlayer, oldPlayer, entity) => {
       if (isSameTeam(entity, newPlayer)) {
         sendPlayerMessage(newPlayer, "[ラヴェジャー] スリップダメージ");
-        newPlayer.applyDamage(4);
+        applyDamage(newPlayer, 4);
       }
     }
   }
