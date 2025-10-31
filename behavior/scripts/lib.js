@@ -412,3 +412,60 @@ export function getTime(){
 export function progressTime(){
   return mc.world.scoreboard.getObjective("time").addScore("timer", -1);
 }
+
+/**
+ * * @param {string} key ハッシュ化する文字列
+ * @param {number} [seed=0] シード値 (オプション)
+ * @returns {number} 32ビット整数のハッシュ値
+ */
+export function createHash(key, seed = 0) {
+  function rotl32(val, bits) {
+    return (val << bits) | (val >>> (32 - bits));
+  }
+  const c1 = 0xcc9e2d51;
+  const c2 = 0x1b873593;
+  const r1 = 15;
+  const r2 = 13;
+  const m = 5;
+  const n = 0xe6546b64;
+
+  let hash = seed;
+  let len = key.length;
+  let i = 0;
+  const nblocks = Math.floor(len / 4);
+  
+  for (i = 0; i < nblocks; i++) {
+    const i_4 = i * 4;
+    let k = (key.charCodeAt(i_4) & 0xff) |
+            ((key.charCodeAt(i_4 + 1) & 0xff) << 8) |
+            ((key.charCodeAt(i_4 + 2) & 0xff) << 16) |
+            ((key.charCodeAt(i_4 + 3) & 0xff) << 24);
+    k = Math.imul(k, c1);
+    k = rotl32(k, r1);
+    k = Math.imul(k, c2);
+    hash ^= k;
+    hash = rotl32(hash, r2);
+    hash = Math.imul(hash, m) + n;
+  }
+  const tail = key.substring(nblocks * 4);
+  let k1 = 0;
+  switch (tail.length) {
+    case 3:
+      k1 ^= (tail.charCodeAt(2) & 0xff) << 16;
+    case 2:
+      k1 ^= (tail.charCodeAt(1) & 0xff) << 8;
+    case 1:
+      k1 ^= (tail.charCodeAt(0) & 0xff);
+      k1 = Math.imul(k1, c1);
+      k1 = rotl32(k1, r1);
+      k1 = Math.imul(k1, c2);
+      hash ^= k1;
+  }
+  hash ^= len;
+  hash ^= hash >>> 16;
+  hash = Math.imul(hash, 0x85ebca6b);
+  hash ^= hash >>> 13;
+  hash = Math.imul(hash, 0xc2b2ae35);
+  hash ^= hash >>> 16;
+  return hash >>> 0;
+}

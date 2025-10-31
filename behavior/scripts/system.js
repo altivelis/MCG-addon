@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline, cardInfo, createColor, lineParticle, getPlayerColoredName, setTime, getTime, progressTime } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline, cardInfo, createColor, lineParticle, getPlayerColoredName, setTime, getTime, progressTime, createHash } from "./lib";
 import { turnItem, turnMob, turnObject } from "./turncard";
 import { 
   GAME_CONFIG, GAME_STATUS, SUCCESS_MESSAGES, ERROR_MESSAGES, 
@@ -1040,29 +1040,9 @@ mc.world.afterEvents.buttonPush.subscribe(data => {
 
 // ========== テスト用 ==========
 
-mc.system.afterEvents.scriptEventReceive.subscribe(data => {
+mc.system.afterEvents.scriptEventReceive.subscribe(async data => {
   if (data.id !== "mcg:test") return;
   
   const player = data.sourceEntity;
-  let form = new ui.ActionFormData()
-    .title("test")
-    .button("アイテム1", "textures/items/diamond_sword")
-    .button("アイテム2", "textures/items/iron_sword")
-    .button("アイテム3", "textures/items/gold_sword")
-    .button("アイテム4", "textures/items/stone_sword")
-    .button("アイテム5", "textures/items/wood_sword")
-    .button("アイテム6", "textures/items/netherite_sword")
-    .button("アイテム7", "textures/items/diamond_pickaxe")
-    .button("アイテム8", "textures/items/iron_pickaxe")
-    .button("アイテム9", "textures/items/gold_pickaxe")
-    .button("アイテム10", "textures/items/stone_pickaxe")
-    .button("アイテム11", "textures/items/wood_pickaxe")
-    .button("アイテム12", "textures/items/netherite_pickaxe");
-
-  form.show(player).then(res => {
-    if (res.canceled) return;
-
-    const selectedItem = res.selection;
-    mc.world.sendMessage(`選択されたアイテム: ${selectedItem}`);
-  });
+  mc.world.sendMessage(createHash(data.message).toString());
 });
