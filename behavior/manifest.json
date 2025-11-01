@@ -1,7 +1,7 @@
 {
 	"format_version": 2,
 	"header": {
-		"name": "MCGアドオンver1.6.3",
+		"name": "MCGアドオンver1.6.4",
 		"description": "MinecraftCardGameのスクリプト化用アドオン",
 		"uuid": "9acf4ee1-1ab6-4417-a3de-62c5b43fb03d",
 		"version": [1, 6, 4],
