@@ -2468,7 +2468,11 @@ export const useCard = {
         return;
       }
 
-      if(mobs[0].typeId !== "minecraft:witch" && mobs[0].hasTag("enhance")){
+      if(mobs[0].hasTag("enhance")){
+        if(mobs[0].typeId == "minecraft:witch") {
+          player.sendMessage("§cこのカードはエンハンスウィッチには使用できません。")
+          return;
+        }
         player.sendMessage("§cすでに強化されているため使用できません。");
         return;
       }

@@ -38,7 +38,7 @@ export const turnMob = {
         const amount = getAllTeamMobs(newPlayer).length;
         if (amount > 0) {
           giveItemWithMessage(newPlayer, "minecraft:arrow", amount, "矢");
-          sendPlayerMessage(newPlayer, `[スケルトン] 矢x${amount}を獲得`);
+          sendPlayerMessage(newPlayer, `[エンハンススケルトン] 矢x${amount}を獲得`);
         }
       } else {
         giveItemWithMessage(newPlayer, "minecraft:arrow", 1, "矢");
@@ -81,7 +81,7 @@ export const turnMob = {
       
       if (entity.hasTag("enhance")) {
         giveItemWithMessage(newPlayer, "mcg:awkward_potion", 1, "奇妙なポーション");
-        sendPlayerMessage(newPlayer, "[ウィッチ] 奇妙なポーションを獲得");
+        sendPlayerMessage(newPlayer, "[ウィッチロード] 奇妙なポーションを獲得");
       }
       entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
       sendPlayerMessage(newPlayer, "[ウィッチ] 体力回復");

@@ -64,7 +64,7 @@ function displayTargetInfo(player, target) {
   const statusTags = getStatusTags(target);
   
   player.onScreenDisplay.setActionBar([
-    displayName,
+    ...displayName,
     ` ${Math.floor(hp.currentValue * HP_DISPLAY.DECIMAL_PLACES) / HP_DISPLAY.DECIMAL_PLACES}/${Math.floor(hp.defaultValue * HP_DISPLAY.DECIMAL_PLACES) / HP_DISPLAY.DECIMAL_PLACES} `,
     ...statusTags,
     "\n",
@@ -253,10 +253,10 @@ mc.world.afterEvents.entityHurt.subscribe(data => {
   
   if (data.damageSource.cause == mc.EntityDamageCause.selfDestruct) {
     if (mc.world.getDynamicProperty("status") == 2) {
-      mc.world.sendMessage(["[除外] ", entityName]);
+      mc.world.sendMessage(["[除外] ", ...entityName]);
     }
   } else {
-    mc.world.sendMessage([entityName, `に${Math.floor(data.damage * 10) / 10}ダメージ!`]);
+    mc.world.sendMessage([...entityName, `に${Math.floor(data.damage * 10) / 10}ダメージ!`]);
   }
 });
 

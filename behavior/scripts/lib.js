@@ -372,12 +372,23 @@ export function createColor(color){
 /**
  * エンティティの表示名を取得（プレイヤーはnameTag、それ以外は翻訳キー）
  * @param {mc.Entity | mc.Player} entity
- * @returns {string | mc.RawMessage}
+ * @returns {(mc.RawMessage | string)[]}
  */
 export function getEntityDisplayName(entity){
-  return entity.typeId === "minecraft:player"
-    ? entity.nameTag
-    : { translate: entity.localizationKey };
+  /**@type {(mc.RawMessage | string)} */
+  let name = entity.typeId === "minecraft:player" ? entity.nameTag : { translate: entity.localizationKey };
+  if(!entity.hasTag("enhance")) {
+    return [name];
+  }
+  let enhanceList = ["zombie", "skeleton", "creeper", "witch"];
+  if(enhanceList.includes(entity.typeId.slice(10))) {
+    if(entity.typeId === "minecraft:witch") {
+      return [{translate: entity.localizationKey}, "ロード"]
+    } else {
+      return ["エンハンス", {translate: entity.localizationKey}];
+    }
+  }
+  return [name];
 }
 
 /**
