@@ -9,6 +9,12 @@
     },
 
     "component_groups": {
+      "ace": {
+        "minecraft:health": {
+          "value": 65,
+          "max": 65
+        }
+      }
     },
 
     "components": {
@@ -105,6 +111,13 @@
       },
       "minecraft:knockback_resistance": {
         "value": 1.0
+      }
+    },
+    "events": {
+      "ace": {
+        "add": {
+          "component_groups": [ "ace" ]
+        }
       }
     }
   }

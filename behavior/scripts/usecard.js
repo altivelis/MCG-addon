@@ -1878,7 +1878,7 @@ export const useCard = {
   },
   pillager_spawn_egg: {
     /**
-     * 略奪者
+     * ピリジャー
      * @param {mc.Block} cardBlock
      * @param {mc.Player} player
      */
@@ -1915,7 +1915,7 @@ export const useCard = {
       
       villager.forEach(v => v.kill());
       
-      sendPlayerMessage(player, "略奪者を召喚しました");
+      sendPlayerMessage(player, "ピリジャーを召喚しました");
       mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
       applyDamage(player, 3);
       giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
@@ -2258,16 +2258,33 @@ export const useCard = {
         lineParticle(mob.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(teamColor));
         mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(teamColor));
         mob.addTag("ace");
-        let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
-        healthComponent.resetToMaxValue();
+        mob.addTag("protect");
+        mob.triggerEvent("ace");
+        // let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
+        // healthComponent.resetToMaxValue();
+        switch(mob.typeId.slice(10)) {
+          case "pillager":
+            mob.dimension.playSound("mob.pillager.celebrate", mob.location, {volume: 10});
+            break;
+          case "vindicator":
+            mob.dimension.playSound("mob.vindicator.celebrate", mob.location, {volume: 10});
+            break;
+          case "evocation_illager":
+            mob.dimension.playSound("mob.evocation_illager.celebrate", mob.location, {volume: 10});
+            break;
+        }
+        myTimeout(1, () => {
+          let healthComponent = mob.getComponent(mc.EntityHealthComponent.componentId);
+          healthComponent.resetToMaxValue();
+        })
       });
       
       player.addTag("raid");
-      player.dimension.playSound("raid.horn", player.location, {volume: 10});
-      mc.world.getPlayers().forEach(p => {
-        p.onScreenDisplay.setTitle("§c§l襲撃モード");
-      });
-      changeHealthBoost(player, 2);
+      // player.dimension.playSound("raid.horn", player.location, {volume: 10});
+      // mc.world.getPlayers().forEach(p => {
+      //   p.onScreenDisplay.setTitle("§c§l襲撃モード");
+      // });
+      // changeHealthBoost(player, 2);
     }
   },
   iron_axe: {

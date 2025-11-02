@@ -174,10 +174,10 @@ export const turnMob = {
       if (!isSameTeam(entity, newPlayer)) return;
       
       giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
-      sendPlayerMessage(newPlayer, "[略奪者] 草ブロックを獲得");
+      sendPlayerMessage(newPlayer, "[ピリジャー] 草ブロックを獲得");
       giveItemWithMessage(newPlayer, "minecraft:arrow", 2, "矢");
-      sendPlayerMessage(newPlayer, "[略奪者] 矢x2を獲得");
-      sendPlayerMessage(newPlayer, "[略奪者] スリップダメージ");
+      sendPlayerMessage(newPlayer, "[ピリジャー] 矢x2を獲得");
+      sendPlayerMessage(newPlayer, "[ピリジャー] スリップダメージ");
       applyDamage(newPlayer, 2);
     }
   },

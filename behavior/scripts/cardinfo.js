@@ -1251,17 +1251,14 @@ export const cardList = [
     texture: "textures/items/spawn_eggs/spawn_egg_vindicator"
   },
   {
-    name:["minecraft:vex", "minecraft:vex_spawn_egg"],
-    type: "entity",
-    attribute: "残虐・浮遊",
-    hp: "20",
-    atk: "15",
-    Sact: "-",
-    Bact: "2",
+    name:["minecraft:goat_horn"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
     text: [
-      "§bターン開始時効果 / 使用者に1ダメージ与える。"
+      "§b使用時 / 自分のHPを10減らし、10act獲得する。"
     ],
-    texture: "textures/items/spawn_eggs/spawn_egg_vex"
+    texture: "textures/items/goat_horn"
   },
   {
     name:["minecraft:evocation_illager", "minecraft:evoker_spawn_egg"],
@@ -1317,7 +1314,7 @@ export const cardList = [
     attribute: "アイテム",
     Cact: "9",
     text: [
-      "§aこのカードは自分の場の「略奪者」「ヴィンディケーター」",
+      "§aこのカードは自分の場の「ピリジャー」「ヴィンディケーター」",
       "§a「エヴォーカー」に対してのみ使用できる。",
       "§b使用時 / 選択したモブを「大将」にする。",
       "§b「大将」になったモブはHPが全回復し、襲撃モードに突入する。",
@@ -1328,6 +1325,19 @@ export const cardList = [
       "§bすでに「大将」が自分の場に存在する場合、このカードは使用できない。"
     ],
     texture: "textures/gui/newgui/mob_effects/bad_omen_effect"
+  },
+  {
+    name:["minecraft:vex", "minecraft:vex_spawn_egg"],
+    type: "entity",
+    attribute: "残虐・浮遊",
+    hp: "20",
+    atk: "15",
+    Sact: "-",
+    Bact: "2",
+    text: [
+      "§bターン開始時効果 / 使用者に1ダメージ与える。"
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_vex"
   },
   {
     name:["minecraft:iron_axe"],
@@ -1452,16 +1462,6 @@ export const cardList = [
       "§b使用時 / 自分のモブ1体(浮遊を除く)に対してガード属性を付与する。"
     ],
     texture: "textures/items/potion_bottle_fireResistance"
-  },
-  {
-    name:["minecraft:goat_horn"],
-    type: "item",
-    attribute: "アイテム",
-    Cact: "0",
-    text: [
-      "§b使用時 / 自分のHPを10減らして自分のact+10する。"
-    ],
-    texture: "textures/items/goat_horn"
   },
   {
     name:["minecraft:snowball"],

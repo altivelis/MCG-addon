@@ -200,7 +200,7 @@ export const ERROR_MESSAGES = {
   NO_VILLAGER_IN_SLOT: "§cスロットに村人が存在しないため使用できません。",
   NO_BRUTAL_MOB: "§c自分のスロットに残虐属性のモブが存在しないため使用できません。",
   ACE_EXISTS: "§c既に大将が存在するため使用できません。",
-  NO_ILLAGER: "§c対象のスロットに略奪者・ヴィンディケーター・エヴォーカーが存在しないため使用できません",
+  NO_ILLAGER: "§c対象のスロットにピリジャー・ヴィンディケーター・エヴォーカーが存在しないため使用できません",
   NOT_RAID_MODE: "§c襲撃モード中でないため使用できません",
   WITCH_ALREADY_ENHANCED: "§cすでに強化されているため使用できません。",
   NO_ATTACKABLE_ENEMY: "§c相手の場に攻撃可能なモブが存在しません",

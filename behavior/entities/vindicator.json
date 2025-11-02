@@ -9,6 +9,12 @@
     },
 
     "component_groups": {
+      "ace": {
+        "minecraft:health": {
+          "value": 95,
+          "max": 95
+        }
+      }
     },
 
     "components": {
@@ -97,6 +103,11 @@
     },
 
     "events": {
+      "ace": {
+        "add": {
+          "component_groups": [ "ace" ]
+        }
+      }
     }
   }
 }

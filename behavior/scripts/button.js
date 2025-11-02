@@ -68,7 +68,7 @@ const DRAW_CARDS = {
   },
   "minecraft:dark_oak_log": {
     low: [
-      { item: "minecraft:pillager_spawn_egg", name: "略奪者" },
+      { item: "minecraft:pillager_spawn_egg", name: "ピリジャー" },
       { item: "minecraft:trapped_chest", name: "トラップチェスト" },
       { item: "minecraft:vindicator_spawn_egg", name: "ヴィンディケーター" },
       { item: "minecraft:goat_horn", name: "ヤギの角笛" }

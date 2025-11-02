@@ -125,7 +125,7 @@ const cardLibrary = {
   },
   raid: {
     low: [
-      { name: "略奪者", id: "minecraft:pillager", icon: "textures/items/spawn_eggs/spawn_egg_pillager" },
+      { name: "ピリジャー", id: "minecraft:pillager", icon: "textures/items/spawn_eggs/spawn_egg_pillager" },
       { name: "トラップチェスト", id: "minecraft:trapped_chest", icon: "textures/blocks/trapped_chest_front" },
       { name: "ヴィンディケーター", id: "minecraft:vindicator", icon: "textures/items/spawn_eggs/spawn_egg_vindicator" },
       { name: "ヴェックス", id: "minecraft:vex", icon: "textures/items/spawn_eggs/spawn_egg_vex" }
