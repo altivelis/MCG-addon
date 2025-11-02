@@ -308,8 +308,8 @@ export const cardList = [
     attribute: "なし",
     hp: "20",
     atk: "0",
-    Sact: "3",
-    Bact: "8",
+    Sact: "4",
+    Bact: "7",
     text: [
       "§b召喚時効果 / 草ブロックを2つ入手",
       "§bターン開始時効果 / 草ブロックを1つ入手"
