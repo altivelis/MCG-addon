@@ -1255,12 +1255,10 @@ export const cardList = [
     type: "entity",
     attribute: "残虐・浮遊",
     hp: "20",
-    atk: "20",
-    Sact: "4",
+    atk: "15",
+    Sact: "-",
     Bact: "2",
     text: [
-      "§bこのモブが存在する限り「ヴェックス」を除く自分の場の「残虐」",
-      "§bモブが受けるダメージは半分になる。(小数点以下切り捨て)",
       "§bターン開始時効果 / 使用者に1ダメージ与える。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_vex"
