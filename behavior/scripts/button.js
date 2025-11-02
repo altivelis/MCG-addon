@@ -70,7 +70,7 @@ const DRAW_CARDS = {
       { item: "minecraft:pillager_spawn_egg", name: "略奪者" },
       { item: "minecraft:trapped_chest", name: "トラップチェスト" },
       { item: "minecraft:vindicator_spawn_egg", name: "ヴィンディケーター" },
-      { item: "minecraft:vex_spawn_egg", name: "ヴェックス" }
+      { item: "minecraft:goat_horn", name: "ヤギの角笛" }
     ],
     high: [
       { item: "minecraft:evoker_spawn_egg", name: "エヴォーカー" },

@@ -176,7 +176,7 @@ function displayDrawInfo(player, block) {
   const leverBlock = player.hasTag("red") ? mcg.const.red.lever : mcg.const.blue.lever;
   const high = player.dimension.getBlock(leverBlock).permutation.getState("open_bit");
   
-  const drawInfo = getDrawInfo(block.typeId, high, player.hasTag("nether"));
+  const drawInfo = getDrawInfo(block.typeId, high, player.hasTag("nether"), player.hasTag("genocide"));
   if (drawInfo) {
     player.onScreenDisplay.setActionBar(drawInfo);
   }
@@ -187,9 +187,10 @@ function displayDrawInfo(player, block) {
  * @param {string} blockType 
  * @param {boolean} high 
  * @param {boolean} hasNether 
+ * @param {boolean} hasGenocide
  * @returns {string | null}
  */
-function getDrawInfo(blockType, high, hasNether) {
+function getDrawInfo(blockType, high, hasNether, hasGenocide) {
   let text = "§bドロー可能なカード\n§3";
   
   switch (blockType) {
@@ -203,7 +204,8 @@ function getDrawInfo(blockType, high, hasNether) {
       const prefix = hasNether ? "" : "§cゾンビピッグマンかウィザースケルトンを召喚すると開放\n";
       return prefix + text + (high ? drawList.nether.high : drawList.nether.low).join("\n");
     case "minecraft:dark_oak_log":
-      return text + (high ? drawList.genocide.high : drawList.genocide.low).join("\n");
+      const prefi2 = hasGenocide ? "" : "§c一度でもHPが6以下になると解放\n";
+      return prefi2 + text + (high ? drawList.genocide.high : drawList.genocide.low).join("\n");
     default:
       return null;
   }

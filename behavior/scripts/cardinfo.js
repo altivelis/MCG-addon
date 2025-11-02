@@ -1454,6 +1454,16 @@ export const cardList = [
     texture: "textures/items/potion_bottle_fireResistance"
   },
   {
+    name:["minecraft:goat_horn"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b使用時 / 自分のHPを10減らして自分のact+10する。"
+    ],
+    texture: "textures/items/goat_horn"
+  },
+  {
     name:["minecraft:snowball"],
     type: "item",
     attribute: "イベントアイテム",
