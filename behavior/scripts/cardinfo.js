@@ -373,7 +373,7 @@ export const cardList = [
     Sact: "40",
     Bact: "20",
     text: [
-      "§bアレイがいる状態でドローするたびに4act獲得する。",
+      "§bアレイがいる状態でドローするたびに5act獲得する。",
       "§bこの効果はアレイが複数いても重ならない。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_allay"

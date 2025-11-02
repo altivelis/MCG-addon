@@ -166,8 +166,8 @@ function checkAllayBonus(source) {
     .getEntities({ type: "minecraft:allay", tags: [playerTeam] }).length > 0;
 
   if (allayExists) {
-    addAct(source, 4);
-    sendPlayerMessage(source, "[アレイ] act+4");
+    addAct(source, 5);
+    sendPlayerMessage(source, "[アレイ] act+5");
   }
 }
 
