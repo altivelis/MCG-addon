@@ -181,6 +181,7 @@ export const ERROR_MESSAGES = {
   NOT_YOUR_TURN: "あなたのターンではありません",
   NO_GRASS_BLOCK: "草ブロックがありません",
   NETHER_LOCKED: "ネザーカードが開放されていません",
+  GENOCIDE_LOCKED: "残虐カードが開放されていません",
   ICE_RESTRICTION: "§c氷塊を所持している状態ではピンクのボタンを使用できません",
   WAIT_FOR_OPPONENT: "対戦相手が復帰するまでお待ち下さい",
   // usecard.js用エラーメッセージ

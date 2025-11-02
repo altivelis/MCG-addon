@@ -288,6 +288,9 @@ export function applyDamage(target, value, options={cause:mc.EntityDamageCause.e
   //     value = Math.floor(value / 2.0);
   //   }
   // }
+  if(target.typeId == "minecraft:player" && before - value < 6){
+    target.addTag("genocide");
+  }
   if(!target.applyDamage(value, options)) return;
   if(value > 0 && before == target.getComponent(mc.EntityHealthComponent.componentId).currentValue){
     myTimeout(1, ()=>{

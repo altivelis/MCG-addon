@@ -63,7 +63,8 @@ const DRAW_CARDS = {
       { item: "minecraft:potato", name: "ジャガイモ" },
       { item: "minecraft:netherite_ingot", name: "ネザライトインゴット" }
     ],
-    requiresTag: "nether"
+    requiresTag: "nether",
+    lockMessage: ERROR_MESSAGES.NETHER_LOCKED
   },
   "minecraft:dark_oak_log": {
     low: [
@@ -77,7 +78,9 @@ const DRAW_CARDS = {
       { item: "minecraft:armor_stand", name: "防具立て" },
       { item: "minecraft:ravager_spawn_egg", name: "ラヴェジャー" },
       { item: "minecraft:banner", name: "不吉な旗" }
-    ]
+    ],
+    requiresTag: "genocide",
+    lockMessage: ERROR_MESSAGES.GENOCIDE_LOCKED
   }
 };
 
@@ -114,9 +117,9 @@ function performDraw(source, drawBlock, high) {
   const cardData = DRAW_CARDS[drawBlock.typeId];
   if (!cardData) return;
 
-  // ネザーカード特殊チェック
+  // 解放条件チェック
   if (cardData.requiresTag && !source.hasTag(cardData.requiresTag)) {
-    source.sendMessage(ERROR_MESSAGES.NETHER_LOCKED);
+    source.sendMessage(cardData.lockMessage);
     return;
   }
 

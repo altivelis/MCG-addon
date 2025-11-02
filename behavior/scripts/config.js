@@ -13,7 +13,7 @@ mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
     .slider("後攻ドロー", 1, 10, {valueStep:1, defaultValue:mc.world.getDynamicProperty("second_draw")})
     .slider("ターン開始時act", 1, 20, {valueStep:1, defaultValue:mc.world.getDynamicProperty("start_act")})
     .slider("ターン終了時act", 1, 20, {valueStep:1, defaultValue:mc.world.getDynamicProperty("end_act")})
-    .toggle("イベントモード", {defaultValue:mc.world.getDynamicProperty("event")});
+    .toggle("イベントモード", {defaultValue:mc.world.getDynamicProperty("event1")});
   const {sourceEntity:player} = data;
   config_form.show(player).then(res=>{
     if(res.canceled) return;
@@ -22,7 +22,7 @@ mc.system.afterEvents.scriptEventReceive.subscribe(data=>{
     mc.world.setDynamicProperty("second_draw", res.formValues[2]);
     mc.world.setDynamicProperty("start_act", res.formValues[3]);
     mc.world.setDynamicProperty("end_act", res.formValues[4]);
-    mc.world.setDynamicProperty("event", res.formValues[5]);
+    mc.world.setDynamicProperty("event1", res.formValues[5]);
     mc.world.sendMessage([
       "§e設定が変更されました\n",
       `§b制限時間§r: ${res.formValues[0]}秒\n`,
@@ -65,7 +65,7 @@ mc.system.beforeEvents.startup.subscribe(data => {
         .slider("後攻ドロー", 1, 10, {valueStep:1, defaultValue:mc.world.getDynamicProperty("second_draw")})
         .slider("ターン開始時act", 1, 20, {valueStep:1, defaultValue:mc.world.getDynamicProperty("start_act")})
         .slider("ターン終了時act", 1, 20, {valueStep:1, defaultValue:mc.world.getDynamicProperty("end_act")})
-        .toggle("イベントモード", {defaultValue:mc.world.getDynamicProperty("event")});
+        .toggle("イベントモード", {defaultValue:mc.world.getDynamicProperty("event1")});
       config_form.show(player).then(res=>{
         if(res.canceled) return;
         mc.world.setDynamicProperty("time", res.formValues[0]);
@@ -73,7 +73,7 @@ mc.system.beforeEvents.startup.subscribe(data => {
         mc.world.setDynamicProperty("second_draw", res.formValues[2]);
         mc.world.setDynamicProperty("start_act", res.formValues[3]);
         mc.world.setDynamicProperty("end_act", res.formValues[4]);
-        mc.world.setDynamicProperty("event", res.formValues[5]);
+        mc.world.setDynamicProperty("event1", res.formValues[5]);
         mc.world.sendMessage([
           "§e設定が変更されました\n",
           `§b制限時間§r: ${res.formValues[0]}秒\n`,

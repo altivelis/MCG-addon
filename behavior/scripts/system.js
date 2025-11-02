@@ -296,7 +296,7 @@ function initialize_config() {
   mc.world.setDynamicProperty("second_draw", GAME_CONFIG.SECOND_DRAW_COUNT);
   mc.world.setDynamicProperty("start_act", GAME_CONFIG.START_ACT);
   mc.world.setDynamicProperty("end_act", GAME_CONFIG.END_ACT);
-  mc.world.setDynamicProperty("event", GAME_CONFIG.EVENT_MODE);
+  mc.world.setDynamicProperty("event1", GAME_CONFIG.EVENT_MODE);
   mc.world.sendMessage(SUCCESS_MESSAGES.CONFIG_INITIALIZED);
 }
 
@@ -331,7 +331,7 @@ function reset() {
  */
 function resetPlayer(player) {
   player.teleport({ x: -63, y: -53, z: -13 }, { dimension: mc.world.getDimension("minecraft:overworld") });
-  ["red", "blue", "turn", "nether", "raid"].forEach(tag => player.removeTag(tag));
+  ["red", "blue", "turn", "nether", "raid", "genocide"].forEach(tag => player.removeTag(tag));
   player.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
   mc.EffectTypes.getAll().forEach(effect => player.removeEffect(effect));
   player.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
@@ -397,6 +397,7 @@ function initializePlayers(red, blue) {
     player.addTag(player === red ? "red" : "blue");
     player.removeTag("nether");
     player.removeTag("raid");
+    player.removeTag("genocide");
 
     // ゲームモード変更
     player.setGameMode(mc.GameMode.Adventure);
@@ -585,7 +586,7 @@ function distributeInitialItems(red, blue) {
   giveItem(second, new mc.ItemStack("minecraft:grass_block"), mc.world.getDynamicProperty("second_draw"));
 
   // イベントアイテム配布
-  if (mc.world.getDynamicProperty("event")) {
+  if (mc.world.getDynamicProperty("event1")) {
     giveItem(first, new mc.ItemStack("minecraft:snowball"));
     giveItem(second, new mc.ItemStack("minecraft:snowball"));
   }
@@ -986,7 +987,7 @@ function handleGameEnd(winner, loser) {
 
   // プレイヤークリーンアップ
   [winner, loser].forEach(player => {
-    ["red", "blue", "turn", "nether", "raid"].forEach(tag => player.removeTag(tag));
+    ["red", "blue", "turn", "nether", "raid", "genocide"].forEach(tag => player.removeTag(tag));
     player.getComponent(mc.EntityInventoryComponent.componentId).container.clearAll();
     player.getComponent(mc.EntityEquippableComponent.componentId).setEquipment(mc.EquipmentSlot.Head);
   });
