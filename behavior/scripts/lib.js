@@ -288,8 +288,34 @@ export function applyDamage(target, value, options={cause:mc.EntityDamageCause.e
   //     value = Math.floor(value / 2.0);
   //   }
   // }
-  if(target.typeId == "minecraft:player" && before - value < 6){
-    target.addTag("genocide");
+  if(target instanceof mc.Player) {
+    if(before - value < 6){
+      target.addTag("genocide");
+      target.sendMessage("残虐カードがドロー可能になりました");
+      target.onScreenDisplay.setTitle("§cネザーゲートが開放された...");
+      target.playSound("raid.horn", target.location, {volume:0.3});
+      // トーテム発動処理
+      if(before - value <= 0) {
+        let inv = target.getComponent(mc.EntityInventoryComponent.componentId).container;
+        let totemCount = 0;
+        for(let i=0; i<inv.size; i++) {
+          let item = inv.getItem(i);
+          if(item?.typeId == "mcg:totem") {
+            totemCount += item.amount;
+            inv.setItem(i);
+          }
+        }
+        if(totemCount > 0) {
+          target.getComponent(mc.EntityHealthComponent.componentId).setCurrentValue(totemCount);
+          mc.world.sendMessage([target.nameTag, `に${value}ダメージ!`]);
+          sendPlayerMessage(target, `[トーテム] 蘇生 +${totemCount}HP`)
+          target.dimension.spawnParticle("minecraft:totem_particle", target.location)
+          target.dimension.spawnParticle("minecraft:totem_manual", target.location)
+          target.dimension.playSound("random.totem", target.location, {volume: 10})
+          return;
+        }
+      }
+    }
   }
   if(!target.applyDamage(value, options)) return;
   if(value > 0 && before == target.getComponent(mc.EntityHealthComponent.componentId).currentValue){

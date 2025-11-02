@@ -2351,35 +2351,35 @@ export const useCard = {
      * @param {mc.Player} player
      */
     run: (cardBlock, player) => {
-      let info = getCard(handItem(player).typeId);
-      if(parseInt(info.Cact) > getAct(player)){
-        player.sendMessage(error_act);
-        return;
-      }
-      switch(cardBlock.typeId){
-        case B:
-        case W:
-        case R:
-          player.sendMessage(error_slot);
-          return;
-        case P:
-          if(!player.hasTag("raid")){
-            player.sendMessage("§c襲撃モード中でないため使用できません");
-            return;
-          }
-          payCost(player, parseInt(info.Cact));
-          sendPlayerMessage(player, "不死のトーテムを使用しました");
-          player.dimension.playSound("random.totem", player.location, {volume: 10});
-          player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
-          /**@type {mc.EntityHealthComponent} */
-          let health = player.getComponent(mc.EntityHealthComponent.componentId);
-          sendPlayerMessage(player, `HP+${health.effectiveMax - health.currentValue}`);
-          health.setCurrentValue(health.effectiveMax);
-          break;
-        case O:
-          player.sendMessage(error_slot);
-          return;
-      }
+      // let info = getCard(handItem(player).typeId);
+      // if(parseInt(info.Cact) > getAct(player)){
+      //   player.sendMessage(error_act);
+      //   return;
+      // }
+      // switch(cardBlock.typeId){
+      //   case B:
+      //   case W:
+      //   case R:
+      //     player.sendMessage(error_slot);
+      //     return;
+      //   case P:
+      //     if(!player.hasTag("raid")){
+      //       player.sendMessage("§c襲撃モード中でないため使用できません");
+      //       return;
+      //     }
+      //     payCost(player, parseInt(info.Cact));
+      //     sendPlayerMessage(player, "不死のトーテムを使用しました");
+      //     player.dimension.playSound("random.totem", player.location, {volume: 10});
+      //     player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
+      //     /**@type {mc.EntityHealthComponent} */
+      //     let health = player.getComponent(mc.EntityHealthComponent.componentId);
+      //     sendPlayerMessage(player, `HP+${health.effectiveMax - health.currentValue}`);
+      //     health.setCurrentValue(health.effectiveMax);
+      //     break;
+      //   case O:
+      //     player.sendMessage(error_slot);
+      //     return;
+      // }
     }
   },
   ominous_bottle: {
