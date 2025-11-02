@@ -2021,6 +2021,30 @@ export const useCard = {
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
     }
   },
+  goat_horn: {
+    /**
+     * ヤギの角笛
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      if (cardBlock.typeId !== P) {
+        player.sendMessage(error_slot);
+        return;
+      }
+      const info = getCard(handItem(player).typeId);
+      if (!canPayCost(player, parseInt(info.Cact))) {
+        player.sendMessage(error_act);
+        return;
+      }
+      payCost(player, parseInt(info.Cact));
+      player.dimension.playSound(`horn.call.${Math.floor(Math.random() * 8)}`, player.location, {volume: 10});
+      applyDamage(player, 10);
+      addAct(player, 10);
+      sendPlayerMessage(player, "ヤギの角笛を使用しました");
+      sendPlayerMessage(player, "act+10");
+    }
+  },
   vex_spawn_egg: {
     /**
      * ヴェックス
