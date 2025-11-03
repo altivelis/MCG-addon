@@ -14,6 +14,12 @@ export const turnMob = {
   pig: { run: () => {} },
   
   villager_v2: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (isSameTeam(entity, newPlayer)) {
         giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
@@ -30,6 +36,13 @@ export const turnMob = {
   zombie: { run: () => {} },
   
   skeleton: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (!isSameTeam(entity, newPlayer)) return;
       
@@ -48,6 +61,13 @@ export const turnMob = {
   },
   
   creeper: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (!isSameTeam(entity, newPlayer)) return;
       
@@ -57,8 +77,7 @@ export const turnMob = {
       myTimeout(delay, () => {
         sendPlayerMessage(newPlayer, "[クリーパー] ドカーン！");
         entity.dimension.spawnParticle("minecraft:huge_explosion_emitter", entity.location);
-        entity.dimension.playSound("cauldron.explode", entity.location);
-        
+        entity.dimension.playSound("cauldron.explode", entity.location, { volume: 10 });
         // 相手チームの全モブにダメージ
         mc.world.getDimension("minecraft:overworld")
           .getEntities({ excludeTypes: ["minecraft:player"], tags: [opponentTeam], excludeTags: ["fly", "guard"] })
@@ -76,6 +95,13 @@ export const turnMob = {
   },
   
   witch: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (!isSameTeam(entity, newPlayer)) return;
       
@@ -97,6 +123,13 @@ export const turnMob = {
   husk: { run: () => {} },
   
   stray: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (isSameTeam(entity, newPlayer)) {
         giveItemWithMessage(newPlayer, "minecraft:arrow", 2, "矢");
@@ -112,6 +145,12 @@ export const turnMob = {
   blaze: { run: () => {} },
   
   chicken: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (isSameTeam(entity, newPlayer)) {
         giveItemWithMessage(newPlayer, "minecraft:egg", 1, "卵");
@@ -165,6 +204,13 @@ export const turnMob = {
   sheep: { run: () => {} },
   
   bogged: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (isSameTeam(entity, newPlayer)) {
         giveItemWithMessage(newPlayer, "minecraft:arrow", 1, "矢");
@@ -174,6 +220,13 @@ export const turnMob = {
   },
   
   pillager: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (!isSameTeam(entity, newPlayer)) return;
       
@@ -187,6 +240,13 @@ export const turnMob = {
   },
   
   vindicator: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (!isSameTeam(entity, newPlayer)) return;
       
@@ -198,6 +258,13 @@ export const turnMob = {
   },
   
   vex: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (isSameTeam(entity, newPlayer)) {
         sendPlayerMessage(newPlayer, "[ヴェックス] スリップダメージ");
@@ -207,6 +274,13 @@ export const turnMob = {
   },
   
   evocation_illager: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       const team = getPlayerTeam(entity);
       const opponentTeam = getOpponentTeam(newPlayer);
@@ -259,6 +333,13 @@ export const turnMob = {
   },
   
   armor_stand: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (isOpponentTeam(entity, newPlayer)) {
         sendPlayerMessage(oldPlayer, "[防具立て] 破壊");
@@ -268,6 +349,13 @@ export const turnMob = {
   },
   
   ravager: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, entity) => {
       if (isSameTeam(entity, newPlayer)) {
         sendPlayerMessage(newPlayer, "[ラヴェジャー] スリップダメージ");
@@ -282,6 +370,13 @@ export const turnMob = {
  */
 export const turnObject = {
   chest: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {string} blockTag
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, blockTag) => {
       if (getPlayerTeam(newPlayer) === blockTag) {
         giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
@@ -293,6 +388,13 @@ export const turnObject = {
   carved_pumpkin: { run: () => {} },
   
   bell: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {string} blockTag
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, blockTag) => {
       if (getPlayerTeam(newPlayer) === blockTag) {
         giveItemWithMessage(newPlayer, "minecraft:villager_spawn_egg", 1, "村人");
@@ -302,6 +404,13 @@ export const turnObject = {
   },
   
   mob_spawner: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {string} blockTag
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, blockTag) => {
       if (getPlayerTeam(newPlayer) === blockTag) {
         addAct(newPlayer, 15);
@@ -311,6 +420,13 @@ export const turnObject = {
   },
   
   ender_chest: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {string} blockTag
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, blockTag) => {
       if (getPlayerTeam(newPlayer) === blockTag) {
         giveItemWithMessage(newPlayer, "minecraft:grass_block", 3, "草ブロック");
@@ -322,6 +438,13 @@ export const turnObject = {
   crying_obsidian: { run: () => {} },
   
   bee_nest: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {string} blockTag
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, blockTag) => {
       if (getPlayerTeam(newPlayer) === blockTag) {
         giveItemWithMessage(newPlayer, "minecraft:bee_spawn_egg", 1, "ハチ");
@@ -331,6 +454,13 @@ export const turnObject = {
   },
   
   composter: {
+    /**
+     * 
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {string} blockTag
+     * @returns 
+     */
     run: (newPlayer, oldPlayer, blockTag) => {
       if (getPlayerTeam(newPlayer) !== blockTag) return;
       

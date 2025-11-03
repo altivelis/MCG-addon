@@ -293,7 +293,7 @@ export function applyDamage(target, value, options={cause:mc.EntityDamageCause.e
       target.addTag("genocide");
       target.sendMessage("残虐カードがドロー可能になりました");
       target.onScreenDisplay.setTitle("§cネザーゲートが開放された...");
-      target.playSound("raid.horn", target.location, {volume:0.3});
+      target.playSound("raid.horn", {location:target.location, volume:0.1});
       // トーテム発動処理
       if(before - value <= 0) {
         let inv = target.getComponent(mc.EntityInventoryComponent.componentId).container;
