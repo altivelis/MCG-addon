@@ -128,7 +128,7 @@ const cardLibrary = {
       { name: "ピリジャー", id: "minecraft:pillager", icon: "textures/items/spawn_eggs/spawn_egg_pillager" },
       { name: "トラップチェスト", id: "minecraft:trapped_chest", icon: "textures/blocks/trapped_chest_front" },
       { name: "ヴィンディケーター", id: "minecraft:vindicator", icon: "textures/items/spawn_eggs/spawn_egg_vindicator" },
-      { name: "ヴェックス", id: "minecraft:vex", icon: "textures/items/spawn_eggs/spawn_egg_vex" }
+      { name: "ヤギの角笛", id: "minecraft:goat_horn", icon: "textures/items/goat_horn" }
     ],
     high: [
       { name: "エヴォーカー", id: "minecraft:evocation_illager", icon: "textures/items/spawn_eggs/spawn_egg_evoker" },
@@ -137,6 +137,7 @@ const cardLibrary = {
       { name: "不吉な旗", id: "minecraft:banner", icon: "textures/gui/newgui/mob_effects/bad_omen_effect" }
     ],
     other: [
+      { name: "ヴェックス", id: "minecraft:vex", icon: "textures/items/spawn_eggs/spawn_egg_vex" },
       { name: "鉄の斧", id: "minecraft:iron_axe", icon: "textures/items/iron_axe" },
       { name: "不死のトーテム", id: "minecraft:totem", icon: "textures/items/totem" },
       { name: "不吉な瓶", id: "minecraft:ominous_bottle", icon: "textures/items/ominous_bottle" },

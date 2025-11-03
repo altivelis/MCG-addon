@@ -325,6 +325,70 @@ function form_system(player){
 
 let patch_list = [
   {
+    ver: "1.6.5",
+    description: [
+      "襲撃者アップデートから大変長い時間が経ってしまいました。",
+      "今更かもしれませんが、残虐デッキのカードパワーにより残虐一強の環境となってしまっている問題を改善するため、一部カードに調整を加えます。",
+      "残虐デッキの攻撃的な特性を維持しつつ、他のデッキも活躍できるように調整しました。",
+      "",
+      "-仕様の変更",
+      "--残虐デッキに解放条件を設定しました。",
+      "---[解放条件]デュエル中に一度でもHPが6以下になる。",
+      "--襲撃モードを廃止しました。",
+      "--襲撃デッキのドロープールを変更しました。",
+      "--[ローカード]",
+      "---ピリジャー",
+      "---トラップチェスト",
+      "---ヴィンディケーター",
+      "---ヴェックス -> ヤギの角笛",
+      "",
+      "-カードの追加",
+      "--ヤギの角笛",
+      "-カード効果の調整",
+      "残虐デッキの登場により村人の価値が上昇しました。それによる影響を考慮し、以下のカードの効果を調整しました。",
+      "--村人",
+      "---Sact: 3 -> 4",
+      "---Bact: 8 -> 7",
+      "--鐘",
+      "---使用時効果: アンデッド系モブに即死ダメージ -> アンデッド系モブと残虐モブに即死ダメージ",
+      "---大将となった残虐モブはダメージを受けない。",
+      "--アレイ",
+      "---ドロー時の獲得act: 4 -> 5",
+      "--ヴェックス",
+      "---ATK: 20 -> 15",
+      "---永続効果を削除、ドロープールから削除",
+      "--不吉な旗",
+      "---襲撃モードを削除し、代わりに大将となったモブに効果を付与するように変更",
+      "--不死のトーテム",
+      "---使用効果を削除、キープアイテムに変更",
+      "---死亡時に特定の効果が発動するように変更",
+      "--ピリジャー",
+      "---HP: 45 -> 20",
+      "---召喚時効果: 草ブロックを2つ入手 -> 草ブロックと矢を入手",
+      "--ヴィンディケーター",
+      "---ガード属性と速攻属性を削除",
+      "---HP: 65 -> 45",
+      "---召喚時効果: 鉄の斧を入手 -> 削除",
+      "--ラヴェジャー",
+      "---HP: 100 -> 80",
+      "---ATK: 70 -> 50",
+      "---Sact: 8 -> 13",
+      "--鉄の斧",
+      "---白スロット: 35ダメージ -> 25ダメージ",
+      "---赤青スロット: 15ダメージ -> 10ダメージ",
+      "--防具立て",
+      "---Cact: 6 -> 2",
+      "---自傷ダメージ: 5 -> 3",
+      "--ウィッチロード",
+      "---強化時効果: 奇妙なポーションの取得量 2 -> 1",
+      "--トラップチェスト",
+      "---Cact: 2 -> 3",
+      "--エンハンスゾンビ",
+      "---HP: 55 -> 35",
+      "---草ブロックの入手量: 3 -> 2"
+    ]
+  },
+  {
     ver: "1.6.4",
     description: [
       "-不具合の修正",
@@ -484,14 +548,27 @@ let patch_list = [
  */
 function form_patch(player){
   let form = new ui.ActionFormData().title("パッチノート");
-  let text = "";
+  // let text = "";
+  // patch_list.forEach(e=>{
+  //   text += "§lver:" + e.ver + "\n" + e.description.join("\n") + "\n\n";
+  // })
+  // form.body(text);
   patch_list.forEach(e=>{
-    text += "§lver:" + e.ver + "\n" + e.description.join("\n") + "\n\n";
+    form.button("§lver:" + e.ver);
   })
-  form.body(text);
   form.button("§l§8戻る", "textures/ui/back_button_hover");
   form.show(player).then(res=>{
     if(res.canceled) return;
-    ruleBookForm_home(player);
+    if(res.selection == patch_list.length){
+      ruleBookForm_home(player);
+      return;
+    }
+    let form2 = new ui.ActionFormData().title("パッチノート ver:" + patch_list[res.selection].ver);
+    form2.body(patch_list[res.selection].description.join("\n"));
+    form2.button("§l§8戻る", "textures/ui/back_button_hover");
+    form2.show(player).then(res2=>{
+      if(res2.canceled) return;
+      form_patch(player);
+    })
   })
 }
