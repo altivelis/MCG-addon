@@ -204,7 +204,7 @@ function getDrawInfo(blockType, high, hasNether, hasGenocide) {
       const prefix = hasNether ? "" : "§cゾンビピッグマンかウィザースケルトンを召喚すると開放\n";
       return prefix + text + (high ? drawList.nether.high : drawList.nether.low).join("\n");
     case "minecraft:dark_oak_log":
-      const prefi2 = hasGenocide ? "" : "§c一度でもHPが6以下になると解放\n";
+      const prefi2 = hasGenocide ? "" : "§c一度でもHPが9以下になると解放\n";
       return prefi2 + text + (high ? drawList.genocide.high : drawList.genocide.low).join("\n");
     default:
       return null;

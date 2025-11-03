@@ -501,7 +501,7 @@ export function turnItem(newPlayer, oldPlayer) {
   }
   if (hasItem(newPlayer, "minecraft:green_wool")) {
     const hp = newPlayer.getComponent(mc.EntityHealthComponent.componentId);
-    hp.setCurrentValue(hp.currentValue + 3);
+    hp.setCurrentValue(Math.min(hp.currentValue + 3, hp.effectiveMax));
     sendPlayerMessage(newPlayer, "[緑色の羊毛] HP+3");
   }
   if (hasItem(newPlayer, "minecraft:black_wool")) {

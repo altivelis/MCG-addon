@@ -2303,7 +2303,7 @@ export const useCard = {
         })
       });
       
-      player.addTag("raid");
+      // player.addTag("raid");
       // player.dimension.playSound("raid.horn", player.location, {volume: 10});
       // mc.world.getPlayers().forEach(p => {
       //   p.onScreenDisplay.setTitle("§c§l襲撃モード");
