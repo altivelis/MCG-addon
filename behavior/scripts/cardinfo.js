@@ -1225,7 +1225,7 @@ export const cardList = [
     name:["minecraft:trapped_chest"],
     type: "item",
     attribute: "アイテム・オブジェクト",
-    Cact: "2",
+    Cact: "3",
     text: [
       "§aこのカードは自分の場に「残虐」モブがいるときのみ使用できる。",
       "§b使用時 / 「不吉な瓶」「不死のトーテム」「ニンジン付きの棒」を入手する。",
