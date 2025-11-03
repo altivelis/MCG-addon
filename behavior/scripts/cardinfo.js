@@ -471,12 +471,12 @@ export const cardList = [
     enhance:{
       type: "entity",
       attribute: "エンハンス",
-      hp: "55",
+      hp: "35",
       atk: "15x2",
       Sact: "-",
       Bact: "8",
       text: [
-        "§b強化時効果 / HPを全回復し、草ブロックを3枚入手する。",
+        "§b強化時効果 / HPを全回復し、草ブロックを2つ入手する。",
         "§b装備がなくても防御力が2ある。"
       ]
     }

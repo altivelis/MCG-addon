@@ -2938,8 +2938,8 @@ const enhance = {
       })
       mob.dimension.playSound("block.enchanting_table.use", mob.location, {volume: 10});
       sendPlayerMessage(player, "ゾンビを強化しました");
-      giveItem(player, new mc.ItemStack("minecraft:grass_block"), 3);
-      player.sendMessage("[入手] 草ブロック x3");
+      giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
+      player.sendMessage("[入手] 草ブロック x2");
     }
   },
   skeleton: {
