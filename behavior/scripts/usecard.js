@@ -511,11 +511,12 @@ export const useCard = {
       if (cardBlock.typeId === P) {
         sendPlayerMessage(player, "鐘を使用しました");
         mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:item"]}).forEach(entity => {
+          let info = getCard(entity.typeId);
           entity.dimension.spawnParticle("mcg:knockback_roar_particle", entity.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          if (entity.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")) {
+          if (entity.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead") || (info.attribute.includes("残虐") && !entity.hasTag("ace"))) {
             applyDamage(entity, 999, {cause: mc.EntityDamageCause.magic});
           } else {
-            entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
+            if (!entity.hasTag("ace")) entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
             entity.removeTag("protect");
           }
         });
