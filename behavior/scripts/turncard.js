@@ -82,9 +82,13 @@ export const turnMob = {
       if (entity.hasTag("enhance")) {
         giveItemWithMessage(newPlayer, "mcg:awkward_potion", 1, "奇妙なポーション");
         sendPlayerMessage(newPlayer, "[ウィッチロード] 奇妙なポーションを獲得");
+        entity.getComponent(mc.EntityHealthComponent.componentId).resetToMaxValue();
+        sendPlayerMessage(newPlayer, "[ウィッチロード] 体力回復");
       }
-      entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
-      sendPlayerMessage(newPlayer, "[ウィッチ] 体力回復");
+      else {
+        entity.getComponent(mc.EntityHealthComponent.componentId).resetToMaxValue();
+        sendPlayerMessage(newPlayer, "[ウィッチ] 体力回復");
+      }
     }
   },
   

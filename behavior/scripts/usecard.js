@@ -2465,8 +2465,8 @@ export const useCard = {
       });
       mobs[0].dimension.playSound("block.enchanting_table.use", mobs[0].location, {volume: 10});
       sendPlayerMessage(player, "ウィッチを強化しました");
-      giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 2);
-      player.sendMessage("[入手] 奇妙なポーション x2");
+      giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 1);
+      player.sendMessage("[入手] 奇妙なポーション");
     }
   },
   awkward_potion: {
