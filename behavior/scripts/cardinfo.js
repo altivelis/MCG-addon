@@ -1296,9 +1296,9 @@ export const cardList = [
     name:["minecraft:ravager", "minecraft:ravager_spawn_egg"],
     type: "entity",
     attribute: "残虐",
-    hp: "100",
-    atk: "70",
-    Sact: "8",
+    hp: "80",
+    atk: "50",
+    Sact: "13",
     Bact: "4",
     text: [
       "§aこのモブは自分の場に「残虐」カードがあるときのみ",
