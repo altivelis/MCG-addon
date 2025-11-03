@@ -2189,7 +2189,7 @@ export const useCard = {
       mob.addTag("guard");
       mob.teleport(mob.location, {facingLocation: {x:0, y:0, z:0}});
       
-      applyDamage(player, 5);
+      applyDamage(player, 3);
       sendPlayerMessage(player, "防具立てを設置しました");
       lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
