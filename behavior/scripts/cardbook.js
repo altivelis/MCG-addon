@@ -128,7 +128,7 @@ const cardLibrary = {
       { name: "ピリジャー", id: "minecraft:pillager", icon: "textures/items/spawn_eggs/spawn_egg_pillager" },
       { name: "トラップチェスト", id: "minecraft:trapped_chest", icon: "textures/blocks/trapped_chest_front" },
       { name: "ヴィンディケーター", id: "minecraft:vindicator", icon: "textures/items/spawn_eggs/spawn_egg_vindicator" },
-      { name: "ヤギの角笛", id: "minecraft:goat_horn", icon: "textures/items/goat_horn" }
+      { name: "ヤギの角笛", id: "mcg:goat_horn", icon: "textures/items/goat_horn" }
     ],
     high: [
       { name: "エヴォーカー", id: "minecraft:evocation_illager", icon: "textures/items/spawn_eggs/spawn_egg_evoker" },

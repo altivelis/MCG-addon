@@ -1251,7 +1251,7 @@ export const cardList = [
     texture: "textures/items/spawn_eggs/spawn_egg_vindicator"
   },
   {
-    name:["minecraft:goat_horn"],
+    name:["mcg:goat_horn"],
     type: "item",
     attribute: "アイテム",
     Cact: "0",
