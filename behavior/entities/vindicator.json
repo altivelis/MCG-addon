@@ -11,8 +11,8 @@
     "component_groups": {
       "ace": {
         "minecraft:health": {
-          "value": 95,
-          "max": 95
+          "value": 75,
+          "max": 75
         }
       }
     },
@@ -45,8 +45,8 @@
         "height": 1.9
       },
       "minecraft:health": {
-        "value": 65,
-        "max": 65
+        "value": 45,
+        "max": 45
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

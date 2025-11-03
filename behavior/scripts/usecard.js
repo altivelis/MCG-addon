@@ -2009,7 +2009,6 @@ export const useCard = {
       );
       mob.addTag(getPlayerTeam(player));
       mob.addTag("slotB");
-      mob.addTag("guard");
       mob.teleport(mob.location, {facingLocation: {x:0, y:0, z:0}});
       
       villager.forEach(v => v.kill());
@@ -2017,8 +2016,6 @@ export const useCard = {
       sendPlayerMessage(player, "ヴィンディケーターを召喚しました");
       mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
       applyDamage(player, 4);
-      giveItem(player, new mc.ItemStack("minecraft:iron_axe"));
-      player.sendMessage("[入手] 鉄の斧");
       lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
     }

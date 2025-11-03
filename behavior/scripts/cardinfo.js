@@ -1238,14 +1238,14 @@ export const cardList = [
   {
     name:["minecraft:vindicator", "minecraft:vindicator_spawn_egg"],
     type: "entity",
-    attribute: "残虐・ガード・速攻",
-    hp: "65",
+    attribute: "残虐",
+    hp: "45",
     atk: "-",
     Sact: "5",
     Bact: "2",
     text: [
       "§aこのモブは§9青スロット§aにいる§e村人§aを置き換えることで召喚できる。",
-      "§b召喚時効果 / 鉄の斧を入手する。使用者に4ダメージ与える。",
+      "§b召喚時効果 / 使用者に4ダメージ与える。",
       "§bターン開始時効果 / 鉄の斧を入手する。使用者に2ダメージ与える。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_vindicator"
