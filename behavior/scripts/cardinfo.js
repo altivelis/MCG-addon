@@ -1209,13 +1209,13 @@ export const cardList = [
     name:["minecraft:pillager", "minecraft:pillager_spawn_egg"],
     type: "entity",
     attribute: "残虐",
-    hp: "45",
+    hp: "20",
     atk: "-",
     Sact: "5",
     Bact: "2",
     text: [
       "§aこのモブは§c赤スロット§aにいる§e村人§aを置き換えることで召喚できる。",
-      "§b召喚時効果 / 使用者に3ダメージ与え、草ブロックを2つ入手する。",
+      "§b召喚時効果 / 使用者に3ダメージ与え、草ブロックと矢を入手する。",
       "§bターン開始時効果 / 草ブロックを1つ、矢を2つ入手する。",
       "§b使用者に2ダメージ与える。"
     ],

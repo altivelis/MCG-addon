@@ -1918,8 +1918,10 @@ export const useCard = {
       sendPlayerMessage(player, "ピリジャーを召喚しました");
       mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
       applyDamage(player, 3);
-      giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
-      player.sendMessage("[入手] 草ブロック x2");
+      giveItem(player, new mc.ItemStack("minecraft:grass_block"), 1);
+      player.sendMessage("[入手] 草ブロック");
+      giveItem(player, new mc.ItemStack("minecraft:arrow"), 1);
+      player.sendMessage("[入手] 矢");
       lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
     }
