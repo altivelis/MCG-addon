@@ -2342,7 +2342,7 @@ export const useCard = {
               {translate: `entity.${mob.typeId.slice(10)}.name`},
               `§r[鉄の斧]`
             ])
-            applyDamage(mob, 15);
+            applyDamage(mob, 10);
             mob.dimension.playSound("random.glass", mob.location, {volume: 10});
           });
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotW"], excludeTags:["fly", "guard"]}).forEach(mob=>{
@@ -2350,7 +2350,7 @@ export const useCard = {
               {translate: `entity.${mob.typeId.slice(10)}.name`},
               `§r[鉄の斧]`
             ])
-            applyDamage(mob, 35);
+            applyDamage(mob, 25);
             mob.dimension.playSound("random.glass", mob.location, {volume: 10});
           });
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["fly", "guard"]}).forEach(mob=>{
@@ -2358,7 +2358,7 @@ export const useCard = {
               {translate: `entity.${mob.typeId.slice(10)}.name`},
               `§r[鉄の斧]`
             ])
-            applyDamage(mob, 15);
+            applyDamage(mob, 10);
             mob.dimension.playSound("random.glass", mob.location, {volume: 10});
           });
           break;
