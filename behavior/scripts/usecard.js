@@ -2038,7 +2038,7 @@ export const useCard = {
         return;
       }
       payCost(player, parseInt(info.Cact));
-      player.dimension.playSound(`horn.call.${Math.floor(Math.random() * 8)}`, player.location, {volume: 10});
+      player.dimension.playSound(`horn.call.${Math.floor(Math.random() * 8)}`, player.location, {volume: 0.5});
       applyDamage(player, 10);
       addAct(player, 10);
       sendPlayerMessage(player, "ヤギの角笛を使用しました");
@@ -2142,6 +2142,18 @@ export const useCard = {
         sendPlayerMessage(player, "ヴェックスを召喚しました");
         mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
       }
+
+      // 相手の青・赤スロットに攻撃
+      const opponentTeam = getOpponentTeam(player);
+      ["slotB", "slotR"].forEach(slot => {
+        mc.world.getDimension("minecraft:overworld")
+          .getEntities({ excludeTypes: ["minecraft:player"], tags: [opponentTeam, slot], excludeTags: ["guard", "fly"] })
+          .forEach(target => {
+            playCardEffect(mob, target.location);
+            target.dimension.playSound("mob.evocation_fangs.attack", target.location, { volume: 10 });
+            applyDamage(target, 15);
+          });
+      });
     }
   },
   armor_stand: {
