@@ -139,7 +139,7 @@ const cardLibrary = {
     other: [
       { name: "ヴェックス", id: "minecraft:vex", icon: "textures/items/spawn_eggs/spawn_egg_vex" },
       { name: "鉄の斧", id: "minecraft:iron_axe", icon: "textures/items/iron_axe" },
-      { name: "不死のトーテム", id: "minecraft:totem", icon: "textures/items/totem" },
+      { name: "不死のトーテム", id: "mcg:totem", icon: "textures/items/totem" },
       { name: "不吉な瓶", id: "minecraft:ominous_bottle", icon: "textures/items/ominous_bottle" },
       { name: "奇妙なポーション", id: "mcg:awkward_potion", icon: "textures/items/potion_bottle_drinkable" },
       { name: "治癒のポーション", id: "mcg:heal_potion", icon: "textures/items/potion_bottle_heal" },

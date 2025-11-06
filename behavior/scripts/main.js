@@ -7,6 +7,7 @@ import "./craft";
 import "./config";
 import "./rulebook";
 import "./die";
+import "./commands/index";
 import { mcg } from "./system";
 import { VIEW_DISTANCE, EXCLUDE_TYPES, HP_DISPLAY, ALLOWED_ITEMS } from "./constants";
 
@@ -204,7 +205,7 @@ function getDrawInfo(blockType, high, hasNether, hasGenocide) {
       const prefix = hasNether ? "" : "§cゾンビピッグマンかウィザースケルトンを召喚すると開放\n";
       return prefix + text + (high ? drawList.nether.high : drawList.nether.low).join("\n");
     case "minecraft:dark_oak_log":
-      const prefi2 = hasGenocide ? "" : "§c一度でもHPが9以下になると解放\n";
+      const prefi2 = hasGenocide ? "" : "§c一度でもHPが14以下になると解放\n";
       return prefi2 + text + (high ? drawList.genocide.high : drawList.genocide.low).join("\n");
     default:
       return null;

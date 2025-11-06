@@ -1208,7 +1208,7 @@ export const cardList = [
   {
     name:["minecraft:pillager", "minecraft:pillager_spawn_egg"],
     type: "entity",
-    attribute: "残虐",
+    attribute: "残虐・速攻",
     hp: "20",
     atk: "-",
     Sact: "5",
@@ -1216,8 +1216,7 @@ export const cardList = [
     text: [
       "§aこのモブは§c赤スロット§aにいる§e村人§aを置き換えることで召喚できる。",
       "§b召喚時効果 / 使用者に3ダメージ与え、草ブロックと矢を入手する。",
-      "§bターン開始時効果 / 草ブロックを1つ、矢を2つ入手する。",
-      "§b使用者に2ダメージ与える。"
+      "§bターン開始時効果 / 使用者に2ダメージ与え、草ブロックと矢を入手する。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_pillager"
   },
@@ -1263,7 +1262,7 @@ export const cardList = [
   {
     name:["minecraft:evocation_illager", "minecraft:evoker_spawn_egg"],
     type: "entity",
-    attribute: "残虐",
+    attribute: "残虐・速攻",
     hp: "35",
     atk: "-",
     Sact: "5",
@@ -1272,9 +1271,10 @@ export const cardList = [
       "§aこのモブは§f白スロット§aにいる§e村人§aを置き換えることで召喚できる。",
       "§b召喚時効果 / 不死のトーテムを入手する。使用者に3ダメージ与える。",
       "§b自分の空いているスロットに「ヴェックス」を召喚する。",
+      "§b相手の赤スロットと青スロットに存在するモブに15ダメージ与える。",
       "§bターン終了時効果 / 自分の空いているスロットに「ヴェックス」を召喚する。",
       "§bターン開始時効果 / 使用者に5ダメージ与え、",
-      "§b相手の赤スロットと青スロットに存在するモブに20ダメージ与える。"
+      "§b相手の赤スロットと青スロットに存在するモブに15ダメージ与える。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_evoker"
   },

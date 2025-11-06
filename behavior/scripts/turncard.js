@@ -232,8 +232,8 @@ export const turnMob = {
       
       giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
       sendPlayerMessage(newPlayer, "[ピリジャー] 草ブロックを獲得");
-      giveItemWithMessage(newPlayer, "minecraft:arrow", 2, "矢");
-      sendPlayerMessage(newPlayer, "[ピリジャー] 矢x2を獲得");
+      giveItemWithMessage(newPlayer, "minecraft:arrow", 1, "矢");
+      sendPlayerMessage(newPlayer, "[ピリジャー] 矢を獲得");
       sendPlayerMessage(newPlayer, "[ピリジャー] スリップダメージ");
       applyDamage(newPlayer, 2);
     }
@@ -325,7 +325,7 @@ export const turnMob = {
             .forEach(target => {
               playCardEffect(entity, target.location);
               target.dimension.playSound("mob.evocation_fangs.attack", target.location, { volume: 10 });
-              applyDamage(target, 20);
+              applyDamage(target, 15);
             });
         });
       }

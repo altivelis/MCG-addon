@@ -398,7 +398,7 @@ function initializePlayers(red, blue) {
     player.removeTag("nether");
     player.removeTag("raid");
     player.removeTag("genocide");
-
+    // player.addTag("genocide"); // テスト用
     // ゲームモード変更
     player.setGameMode(mc.GameMode.Adventure);
 
