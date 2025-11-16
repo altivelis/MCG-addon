@@ -296,7 +296,7 @@ function initialize_config() {
   mc.world.setDynamicProperty("second_draw", GAME_CONFIG.SECOND_DRAW_COUNT);
   mc.world.setDynamicProperty("start_act", GAME_CONFIG.START_ACT);
   mc.world.setDynamicProperty("end_act", GAME_CONFIG.END_ACT);
-  mc.world.setDynamicProperty("event1", GAME_CONFIG.EVENT_MODE);
+  mc.world.setDynamicProperty("event", GAME_CONFIG.EVENT_MODE);
   mc.world.sendMessage(SUCCESS_MESSAGES.CONFIG_INITIALIZED);
 }
 
@@ -586,7 +586,7 @@ function distributeInitialItems(red, blue) {
   giveItem(second, new mc.ItemStack("minecraft:grass_block"), mc.world.getDynamicProperty("second_draw"));
 
   // イベントアイテム配布
-  if (mc.world.getDynamicProperty("event1")) {
+  if (mc.world.getDynamicProperty("event") == 1) {
     giveItem(first, new mc.ItemStack("minecraft:snowball"));
     giveItem(second, new mc.ItemStack("minecraft:snowball"));
   }
@@ -697,7 +697,7 @@ mc.system.runInterval(() => {
   if (mc.world.getDynamicProperty("stop") === true) return;
 
   if (!isOnline()) {
-    mc.world.sendMessage("§c対戦プレイヤーが見つかりません。タイマーをストップします。\n強制終了する場合は§a/scriptevent mcg:reset§cを実行してください。");
+    mc.world.sendMessage("§c対戦プレイヤーが見つかりません。タイマーをストップします。\n強制終了する場合は§a/mcg:reset§cを実行してください。");
     mc.world.setDynamicProperty("stop", true);
     return;
   }
@@ -721,7 +721,7 @@ export function turnChange() {
   const notTurnPlayer = mc.world.getPlayers({ tags: [turnPlayer.hasTag("red") ? "blue" : "red"] })[0];
 
   if (!turnPlayer || !notTurnPlayer) {
-    mc.world.sendMessage("§c対戦プレイヤーが見つかりません。強制終了する場合は§a/scriptevent mcg:reset§cを実行してください。");
+    mc.world.sendMessage("§c対戦プレイヤーが見つかりません。強制終了する場合は§a/mcg:reset§cを実行してください。");
     return;
   }
 

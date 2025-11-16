@@ -117,6 +117,16 @@ function performDraw(source, drawBlock, high) {
   const cardData = DRAW_CARDS[drawBlock.typeId];
   if (!cardData) return;
 
+  // クラシックモード制限チェック（現世・洞窟・ネザー以外は使用不可）
+  const eventMode = mc.world.getDynamicProperty("event");
+  if (eventMode === 2) {
+    const allowedDecks = ["minecraft:grass_block", "minecraft:stone", "minecraft:netherrack"];
+    if (!allowedDecks.includes(drawBlock.typeId)) {
+      source.sendMessage("§cクラシックモードでは現世・洞窟・ネザーデッキのみ使用できます");
+      return;
+    }
+  }
+
   // 解放条件チェック
   if (cardData.requiresTag && !source.hasTag(cardData.requiresTag)) {
     source.sendMessage(cardData.lockMessage);

@@ -7,7 +7,7 @@ import {
   getMobsInSlot, getOpponentMobsInSlot, attackSlot, attackAllSlots,
   playCardEffect, sendDamageMessage, payCost, canPayCost, getOpponentPlayers,
   summonMobInSlot, isSlotOccupied, giveItemWithMessage, getPlayerObject,
-  setPlayerObject, getAllOpponentMobs, killMobsInSlot, handleKillMobInSlots
+  getAllOpponentMobs, killMobsInSlot, handleKillMobInSlots
 } from "./card-helpers";
 import { ERROR_MESSAGES } from "./constants";
 
@@ -416,6 +416,15 @@ export const useCard = {
         return;
       }
       
+      // オブジェクト設置の場合、クラシックモードチェックを先に実行
+      if (cardBlock.typeId === O) {
+        const eventMode = mc.world.getDynamicProperty("event");
+        if (eventMode === 2) {
+          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
+          return;
+        }
+      }
+      
       payCost(player, parseInt(info.Cact));
       player.dimension.playSound("random.chestopen", player.location, {volume: 10});
       
@@ -438,8 +447,8 @@ export const useCard = {
         giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
         player.sendMessage("[入手] ニンジン付きの棒");
       } else {
-        sendPlayerMessage(player, "チェストを設置しました");
         setObject(player, "minecraft:chest");
+        sendPlayerMessage(player, "チェストを設置しました");
       }
     }
   },
@@ -505,6 +514,15 @@ export const useCard = {
         return;
       }
       
+      // オブジェクト設置の場合、クラシックモードチェックを先に実行
+      if (cardBlock.typeId === O) {
+        const eventMode = mc.world.getDynamicProperty("event");
+        if (eventMode === 2) {
+          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
+          return;
+        }
+      }
+      
       payCost(player, parseInt(info.Cact));
       player.dimension.playSound("block.bell.hit", player.location, {volume: 10});
       
@@ -521,8 +539,8 @@ export const useCard = {
           }
         });
       } else {
-        sendPlayerMessage(player, "鐘を設置しました");
         setObject(player, "minecraft:bell");
+        sendPlayerMessage(player, "鐘を設置しました");
       }
     }
   },
@@ -751,6 +769,15 @@ export const useCard = {
         return;
       }
       
+      // オブジェクト設置の場合、クラシックモードチェック
+      if (cardBlock.typeId === O) {
+        const eventMode = mc.world.getDynamicProperty("event");
+        if (eventMode === 2) {
+          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
+          return;
+        }
+      }
+      
       payCost(player, parseInt(info.Cact));
       player.dimension.playSound("trial_spawner.open_shutter", player.location, {volume: 10});
       
@@ -763,8 +790,8 @@ export const useCard = {
         giveItem(player, new mc.ItemStack("minecraft:cave_spider_spawn_egg"));
         player.sendMessage("[入手] 洞窟グモ");
       } else {
-        sendPlayerMessage(player, "モンスタースポナーを設置しました");
         setObject(player, "minecraft:mob_spawner");
+        sendPlayerMessage(player, "モンスタースポナーを設置しました");
       }
     }
   },
@@ -866,8 +893,14 @@ export const useCard = {
             break;
         }
       } else {
-        sendPlayerMessage(player, "エンダーチェストを設置しました");
+      // オブジェクト設置の場合、クラシックモードチェック
+        const eventMode = mc.world.getDynamicProperty("event");
+        if (eventMode === 2) {
+          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
+          return;
+        }
         setObject(player, "minecraft:ender_chest");
+        sendPlayerMessage(player, "エンダーチェストを設置しました");
       }
     }
   },
@@ -1040,9 +1073,15 @@ export const useCard = {
       }
       
       if (cardBlock.typeId === O) {
+        // クラシックモードチェック
+        const eventMode = mc.world.getDynamicProperty("event");
+        if (eventMode === 2) {
+          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
+          return;
+        }
         payCost(player, parseInt(info.Cact));
-        sendPlayerMessage(player, "泣く黒曜石を設置しました");
         setObject(player, "minecraft:crying_obsidian");
+        sendPlayerMessage(player, "泣く黒曜石を設置しました");
         return;
       }
       
@@ -1309,6 +1348,15 @@ export const useCard = {
         return;
       }
       
+      // オブジェクト設置の場合、クラシックモードチェック
+      if (cardBlock.typeId === O) {
+        const eventMode = mc.world.getDynamicProperty("event");
+        if (eventMode === 2) {
+          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
+          return;
+        }
+      }
+      
       payCost(player, parseInt(info.Cact));
       player.dimension.playSound("block.beehive.enter", player.location, {volume: 10});
       
@@ -1317,8 +1365,8 @@ export const useCard = {
         giveItem(player, new mc.ItemStack("minecraft:bee_spawn_egg"), 2);
         player.sendMessage("[入手] ミツバチ x2");
       } else {
-        sendPlayerMessage(player, "ミツバチの巣を設置しました");
         setObject(player, "minecraft:bee_nest");
+        sendPlayerMessage(player, "ミツバチの巣を設置しました");
       }
     }
   },
@@ -1340,6 +1388,15 @@ export const useCard = {
         return;
       }
       
+      // オブジェクト設置の場合、クラシックモードチェック
+      if (cardBlock.typeId === O) {
+        const eventMode = mc.world.getDynamicProperty("event");
+        if (eventMode === 2) {
+          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
+          return;
+        }
+      }
+      
       payCost(player, parseInt(info.Cact));
       player.dimension.playSound("block.composter.ready", player.location, {volume: 10});
       
@@ -1352,8 +1409,8 @@ export const useCard = {
         giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
         player.sendMessage("[入手] ニンジン付きの棒");
       } else {
-        sendPlayerMessage(player, "コンポスターを設置しました");
         setObject(player, "minecraft:composter");
+        sendPlayerMessage(player, "コンポスターを設置しました");
       }
     }
   },
@@ -1864,8 +1921,16 @@ export const useCard = {
         return;
       }
       
+      // オブジェクト設置の場合、クラシックモードチェック
+      if (cardBlock.typeId === O) {
+        const eventMode = mc.world.getDynamicProperty("event");
+        if (eventMode === 2) {
+          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
+          return;
+        }
+      }
+      
       payCost(player, parseInt(info.Cact));
-      sendPlayerMessage(player, "ジャック・オ・ランタンを設置しました");
       
       // オブジェクトの入れ替え
       const enemyTeam = getOpponentTeam(player);
@@ -1876,6 +1941,7 @@ export const useCard = {
       
       setObject(player, enemyObjectBlock?.typeId);
       setObject(enemyPlayer, "minecraft:lit_pumpkin");
+      sendPlayerMessage(player, "ジャック・オ・ランタンを設置しました");
       sendPlayerMessage(player, "オブジェクトが入れ替わった！");
     }
   },
@@ -1969,11 +2035,17 @@ export const useCard = {
         giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
         player.sendMessage("[入手] ニンジン付きの棒");
       } else {
+        // オブジェクト設置の場合、クラシックモードチェック
+        const eventMode = mc.world.getDynamicProperty("event");
+        if (eventMode === 2) {
+          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
+          return;
+        }
         payCost(player, parseInt(info.Cact));
         player.dimension.playSound("random.chestopen", player.location, {volume: 10});
 
-        sendPlayerMessage(player, "トラップチェストを設置しました");
         setObject(player, "minecraft:trapped_chest");
+        sendPlayerMessage(player, "トラップチェストを設置しました");
       }
     }
   },

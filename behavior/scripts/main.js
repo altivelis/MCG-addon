@@ -4,7 +4,6 @@ import { cardInfo, getEntityDisplayName } from "./lib";
 import "./system";
 import "./button";
 import "./craft";
-import "./config";
 import "./rulebook";
 import "./die";
 import "./commands/index";

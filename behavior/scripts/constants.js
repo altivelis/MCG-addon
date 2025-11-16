@@ -39,7 +39,7 @@ export const GAME_CONFIG = {
   SECOND_DRAW_COUNT: 6,
   START_ACT: 5,
   END_ACT: 3,
-  EVENT_MODE: false
+  EVENT_MODE: 0 // 0: なし, 1: WinterHoliday, 2: MCG-クラシック
 };
 
 // タイマー設定
@@ -176,7 +176,7 @@ export const COLOR_CODES = {
 // エラーメッセージ
 export const ERROR_MESSAGES = {
   NOT_ENOUGH_PLAYERS: "§c参加者が足りていないため、開始できませんでした。",
-  PLAYER_NOT_FOUND: "§c対戦プレイヤーが見つかりません。タイマーをストップします。\n強制終了する場合は§a/scriptevent mcg:reset§cを実行してください。",
+  PLAYER_NOT_FOUND: "§c対戦プレイヤーが見つかりません。タイマーをストップします。\n強制終了する場合は§a/mcg:reset§cを実行してください。",
   WINNER_NOT_FOUND: "§c勝利プレイヤーが見つからなかったため、強制終了します。",
   NOT_YOUR_TURN: "あなたのターンではありません",
   NO_GRASS_BLOCK: "草ブロックがありません",

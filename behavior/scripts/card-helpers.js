@@ -265,15 +265,6 @@ export function getOpponentObject(player) {
   return getObject(team);
 }
 
-/**
- * プレイヤーのオブジェクトを設置
- * @param {mc.Player} player
- * @param {string} blockType
- */
-export function setPlayerObject(player, blockType) {
-  setObject(player, blockType);
-}
-
 // ========== チーム全体操作ヘルパー ==========
 
 /**
