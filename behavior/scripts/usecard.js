@@ -950,8 +950,10 @@ export const useCard = {
       payCost(player, parseInt(info.Cact));
       sendPlayerMessage(player, "エンチャントされた金のリンゴを使用しました");
       player.dimension.playSound("random.eat", player.location, {volume: 10});
-      changeHealthBoost(player, 4);
-      player.getComponent(mc.EntityHealthComponent.componentId).setCurrentValue(40);
+      changeHealthBoost(player, 5, true);
+      myTimeout(1, () => {
+      player.getComponent(mc.EntityHealthComponent.componentId).resetToMaxValue();
+      })
     }
   },
   web: {

@@ -373,13 +373,17 @@ export function lineParticle(dimension, from, to, particleName, interval, molang
  * 体力増強レベル変更関数
  * @param {mc.Player} player 
  * @param {Number} value 
+ * @param {Boolean} force 強制変更フラグ
  */
-export function changeHealthBoost(player, value){
+export function changeHealthBoost(player, value, force=false){
   /**@type {mc.EntityHealthComponent} */
   let health = player.getComponent(mc.EntityHealthComponent.componentId);
   let beforeHp = health.currentValue;
-  let currentLevel = player.getEffect(mc.EffectTypes.get("minecraft:health_boost"))?.amplifier;
-  let level = (!currentLevel) ? value-1 : currentLevel + value;
+  let level = value - 1;
+  if (!force) {
+    let currentLevel = player.getEffect(mc.EffectTypes.get("minecraft:health_boost"))?.amplifier;
+    level = (!currentLevel) ? value - 1 : currentLevel + value;
+  }
   if(level < 0) {
     player.removeEffect(mc.EffectTypes.get("minecraft:health_boost"));
     return;
