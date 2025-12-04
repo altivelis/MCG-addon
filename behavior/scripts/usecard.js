@@ -1200,12 +1200,8 @@ export const useCard = {
       sendPlayerMessage(player, "溶岩入りバケツを使用しました");
       player.dimension.playSound("bucket.fill_lava", player.location, {volume: 10});
       getOpponentPlayers(player).forEach(enemy => {
-        applyDamage(enemy, 4, {cause:mc.EntityDamageCause.lava});
+        applyDamage(enemy, 6, {cause:mc.EntityDamageCause.lava});
       });
-      giveItem(player, new mc.ItemStack("minecraft:crying_obsidian"));
-      player.sendMessage("[入手] 泣く黒曜石");
-      giveItem(player, new mc.ItemStack("minecraft:potato"));
-      player.sendMessage("[入手] ジャガイモ");
     }
   },
   potato: {

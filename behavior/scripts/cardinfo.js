@@ -749,8 +749,7 @@ export const cardList = [
     attribute: "アイテム",
     Cact: "25",
     text: [
-      "§b使用時 / 相手プレイヤーに4ダメージを与えて",
-      "§bその後「泣く黒曜石」と「ジャガイモ」を入手する。"
+      "§b使用時 / 相手プレイヤーに6ダメージを与える。"
     ],
     texture: "textures/items/bucket_lava"
   },
