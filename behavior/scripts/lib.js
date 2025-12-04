@@ -289,7 +289,7 @@ export function applyDamage(target, value, options={cause:mc.EntityDamageCause.e
   //   }
   // }
   if(target instanceof mc.Player) {
-    if(before - value <= 14 && !target.hasTag("genocide")){
+    if(before - value <= 15 && !target.hasTag("genocide")){
       target.addTag("genocide");
       target.sendMessage("残虐カードがドロー可能になりました");
       target.onScreenDisplay.setTitle("§c不吉な予感がする...");

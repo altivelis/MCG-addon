@@ -736,7 +736,7 @@ export const cardList = [
     attribute: "なし",
     hp: "32",
     atk: "0",
-    Sact: "25",
+    Sact: "20",
     Bact: "25",
     text: [
       "§b召喚時効果 / 「鞍」を1つ入手する。"
@@ -767,7 +767,7 @@ export const cardList = [
   {
     name:["minecraft:blaze", "minecraft:blaze_spawn_egg"],
     type: "entity",
-    attribute: "浮遊",
+    attribute: "浮遊・速攻",
     hp: "20",
     atk: "30",
     Sact: "30",

@@ -1224,6 +1224,7 @@ export const useCard = {
           sendPlayerMessage(player, "ブレイズを召喚しました");
           mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
+          giveSword(player, getCard(mob.typeId).atk, "速攻効果");
           mob.dimension.playSound("respawn_anchor.charge", mob.location, {volume: 10});
           mc.world.getPlayers().forEach(p=>{
             p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "ブレイズ"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
