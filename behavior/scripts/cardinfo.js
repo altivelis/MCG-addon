@@ -703,7 +703,7 @@ export const cardList = [
     name:["minecraft:crying_obsidian"],
     type: "item",
     attribute: "アイテム・オブジェクト",
-    Cact: "10",
+    Cact: "8",
     text: [
       "§b使用時 / 自分のモブに使用した次の相手ターンにそのモブが死亡すると、",
       "§bそのスロットにゾンビピッグマンを召喚する。",
@@ -907,7 +907,7 @@ export const cardList = [
     Bact: "8",
     text: [
       "§bターン終了時効果 / 相手の手札に「氷塊」を4枚加える。",
-      "§b自分の場に存在するスノーゴレーム1体につき追加で4枚相手の手札に「氷塊」を加える。"
+      "§b自分の場に存在するスノーゴーレム1体につき追加で4枚相手の手札に「氷塊」を加える。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_polar_bear"
   },

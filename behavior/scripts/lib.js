@@ -252,16 +252,15 @@ export function setObject(player, blockid){
      * @type {mc.Container}
      */
     let inv = player.getComponent(mc.EntityInventoryComponent.componentId).container;
-    let test = false;
+    let honey_count = 0;
     for(let i=0; i<inv.size; i++){
       if(inv.getItem(i)?.typeId == "minecraft:honey_bottle"){
-        test = true;
+        honey_count += inv.getItem(i).amount;
         addAct(player, 10 * inv.getItem(i).amount);
         inv.setItem(i);
-        break;
       }
     }
-    if(test) sendPlayerMessage(player, "[ミツバチの巣] ハチミツ入りの瓶をすべて消費しました");
+    if(honey_count > 0) sendPlayerMessage(player, "[ミツバチの巣] ハチミツ入りの瓶をすべて消費しました");
   }
   mc.world.getDimension("minecraft:overworld").setBlockPermutation((player.hasTag("red")?mcg.const.red.slot.object:mcg.const.blue.slot.object), mc.BlockPermutation.resolve(blockid));
   mc.world.getDimension("minecraft:overworld").spawnParticle("mcg:knockback_roar_particle", player.hasTag("red")?mcg.const.red.slot.object:mcg.const.blue.slot.object, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));

@@ -66,7 +66,7 @@ const DRAW_CARDS = {
     requiresTag: "nether",
     lockMessage: ERROR_MESSAGES.NETHER_LOCKED
   },
-  "minecraft:dark_oak_log": {
+  "minecraft:stripped_dark_oak_log": {
     low: [
       { item: "minecraft:pillager_spawn_egg", name: "ピリジャー" },
       { item: "minecraft:trapped_chest", name: "トラップチェスト" },
