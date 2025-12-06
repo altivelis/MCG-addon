@@ -325,7 +325,7 @@ function form_system(player){
 
 let patch_list = [
   {
-    var: "1.6.7",
+    ver: "1.6.7",
     description: [
       "-カード効果の調整",
       "--残虐デッキ解放条件",
