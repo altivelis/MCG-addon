@@ -253,6 +253,9 @@ mc.system.runInterval(() => {
 mc.world.afterEvents.entityHurt.subscribe(data => {
   const entityName = getEntityDisplayName(data.hurtEntity);
   
+  // 最後にダメージを受けたティックを保存
+  data.hurtEntity.setDynamicProperty("lastDamageTick", mc.system.currentTick);
+
   if (data.damageSource.cause == mc.EntityDamageCause.selfDestruct) {
     if (mc.world.getDynamicProperty("status") == 2) {
       mc.world.sendMessage(["[除外] ", ...entityName]);

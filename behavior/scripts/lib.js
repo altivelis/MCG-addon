@@ -279,21 +279,30 @@ export function getObject(tag){
  * @param {mc.Entity | mc.Player} target 
  * @param {Number} value 
  * @param {mc.EntityApplyDamageByProjectileOptions | mc.EntityApplyDamageOptions} options
+ * @param {Number} maxRetries 最大再試行回数（内部使用）
  */
-export function applyDamage(target, value, options={cause:mc.EntityDamageCause.entityAttack}){
-  let before = target.getComponent(mc.EntityHealthComponent.componentId).currentValue;
+export async function applyDamage(target, value, options={cause:mc.EntityDamageCause.entityAttack}, maxRetries = 100){
+  // エンティティの有効性チェック
+  if(!target || !target.isValid) return;
+  if(target.getDynamicProperty("lastDamageTick") !== undefined && target.getDynamicProperty("lastDamageTick") > mc.system.currentTick - 10 && maxRetries > 0) {
+    await mc.system.waitTicks(1);
+    await applyDamage(target, value, options, maxRetries - 1);
+    return;
+  }
+
+  const healthComponent = target.getComponent(mc.EntityHealthComponent.componentId);
+  if(!healthComponent) return;
+  
+  const before = healthComponent.currentValue;
+  
+  // 旧ヴェックスダメージ半減処理
   // if(getCard(target.typeId)?.attribute?.includes("残虐") && target.typeId != "minecraft:vex"){
   //   if(mc.world.getDimension("minecraft:overworld").getEntities({type:"minecraft:vex", tags:[target.hasTag("red")?"red":"blue"]}).length > 0){
   //     value = Math.floor(value / 2.0);
   //   }
   // }
+  
   if(target instanceof mc.Player) {
-    if(before - value <= 15 && !target.hasTag("genocide")){
-      target.addTag("genocide");
-      target.sendMessage("残虐カードがドロー可能になりました");
-      target.onScreenDisplay.setTitle("§c不吉な予感がする...");
-      target.playSound("raid.horn", {location:target.location, volume:0.1});
-    }
     // トーテム発動処理
     if(before - value <= 0) {
       let inv = target.getComponent(mc.EntityInventoryComponent.componentId).container;
@@ -306,8 +315,7 @@ export function applyDamage(target, value, options={cause:mc.EntityDamageCause.e
         }
       }
       if(totemCount > 0) {
-        let health = target.getComponent(mc.EntityHealthComponent.componentId);
-        health.setCurrentValue(Math.min(totemCount, health.effectiveMax));
+        healthComponent.setCurrentValue(Math.min(totemCount, healthComponent.effectiveMax));
         mc.world.sendMessage([target.nameTag, `に${value}ダメージ!`]);
         sendPlayerMessage(target, `[トーテム] 蘇生 +${totemCount}HP`)
         target.dimension.spawnParticle("minecraft:totem_particle", target.location)
@@ -317,11 +325,28 @@ export function applyDamage(target, value, options={cause:mc.EntityDamageCause.e
       }
     }
   }
-  if(!target.applyDamage(value, options)) return;
-  if(value > 0 && before == target.getComponent(mc.EntityHealthComponent.componentId).currentValue){
-    myTimeout(1, ()=>{
-      applyDamage(target, value, options);
-    })
+  
+  // ダメージを適用
+  target.applyDamage(value, options);
+
+  // ダメージ適用後のHP取得
+  const after = healthComponent.currentValue;
+  mc.world.sendMessage(`${after.toString()}`);
+  if(target instanceof mc.Player) {
+    if(after <= 15 && !target.hasTag("genocide")){
+      target.addTag("genocide");
+      target.sendMessage("残虐カードがドロー可能になりました");
+      target.onScreenDisplay.setTitle("§c不吉な予感がする...");
+      target.playSound("raid.horn", {location:target.location, volume:0.1});
+    }
+  }
+  
+  // 無敵時間でダメージが入らなかった場合、再試行
+  // 条件: ダメージ値が正、HP変化量不足、対象が生存中、再試行回数が残っている
+  if(value > 0 && before-value != after && after > 0 && maxRetries > 0){
+    await mc.system.waitTicks(1);
+    await applyDamage(target, value - (before - after), options, maxRetries - 1);
+    return;
   }
 }
 
