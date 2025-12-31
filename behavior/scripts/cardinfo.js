@@ -757,7 +757,7 @@ export const cardList = [
     name:["minecraft:potato"],
     type: "item",
     attribute: "アイテム",
-    Cact: "40",
+    Cact: "30",
     text: [
       "§b使用時 / なぜか「ブレイズ」を召喚できる。"
     ],
