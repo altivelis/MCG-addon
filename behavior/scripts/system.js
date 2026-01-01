@@ -1045,5 +1045,8 @@ mc.system.afterEvents.scriptEventReceive.subscribe(async data => {
   if (data.id !== "mcg:test") return;
   
   const player = data.sourceEntity;
-  mc.world.sendMessage(createHash(data.message).toString());
+  applyDamage(player, 7);
+  myTimeout(3, () => {
+    applyDamage(player, 5);
+  })
 });

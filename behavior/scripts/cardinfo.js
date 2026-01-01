@@ -68,6 +68,20 @@ export const drawList = {
       "ラヴェジャー",
       "不吉な旗"
     ]
+  },
+  seaworld: {
+    low:[
+      "熱帯魚",
+      "カメ",
+      "イカ",
+      "樽"
+    ],
+    high:[
+      "ガーディアン",
+      "ウーパールーパー",
+      "発光するイカ",
+      "イルカ"
+    ]
   }
 }
 
@@ -289,6 +303,7 @@ export const cardList = [
     ],
     texture: "textures/items/arrow"
   },
+  // 現世
   {
     name: ["minecraft:pig", "minecraft:pig_spawn_egg"],
     type: "entity",
@@ -453,6 +468,7 @@ export const cardList = [
     ],
     texture: "textures/blocks/pumpkin_face_on"
   },
+  // 洞窟
   {
     name:["minecraft:zombie", "minecraft:zombie_spawn_egg"],
     type: "entity",
@@ -463,7 +479,7 @@ export const cardList = [
     Bact: "3",
     text: [
       "§b召喚時効果 / 草ブロックを2つ獲得",
-      "§b装備がなくても防御力が2ある。",
+      "§b特殊効果/装備がなくてもダメージを少し軽減する。",
       "§bたまに装備を付けた硬いゾンビが出る。",
       "§b+生の豚肉 = ゾンビピッグマン"
     ],
@@ -477,7 +493,7 @@ export const cardList = [
       Bact: "8",
       text: [
         "§b強化時効果 / HPを全回復し、草ブロックを2つ入手する。",
-        "§b装備がなくても防御力が2ある。"
+        "§b特殊効果/装備がなくてもダメージを少し軽減する。"
       ]
     }
   },
@@ -623,7 +639,7 @@ export const cardList = [
     Bact: "10",
     text: [
       "§bこのモブは剣以外から攻撃を受けない。",
-      "§b装備がなくても防御力が2ある。"
+      "§b特殊効果/装備がなくてもダメージを少し軽減する。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_husk"
   },
@@ -674,6 +690,7 @@ export const cardList = [
     ],
     texture: "textures/blocks/web"
   },
+  // ネザー
   {
     name:["minecraft:zombie_pigman", "minecraft:zombie_pigman_spawn_egg"],
     type: "entity",
@@ -684,7 +701,7 @@ export const cardList = [
     Bact: "15",
     text: [
       "§b召喚時効果 / 草ブロックを2つ獲得。",
-      "§b装備がなくても防御力が2ある。",
+      "§b特殊効果/装備がなくてもダメージを少し軽減する。",
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_zombified_piglin"
   },
@@ -800,6 +817,7 @@ export const cardList = [
     ],
     texture: "textures/items/saddle"
   },
+  // アニマル
   {
     name:["minecraft:chicken", "minecraft:chicken_spawn_egg"],
     type: "entity",
@@ -1204,6 +1222,7 @@ export const cardList = [
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_bogged"
   },
+  // 残虐
   {
     name:["minecraft:pillager", "minecraft:pillager_spawn_egg"],
     type: "entity",
@@ -1462,6 +1481,228 @@ export const cardList = [
     ],
     texture: "textures/items/potion_bottle_fireResistance"
   },
+  // シーワールド
+  {
+    name:["minecraft:tropical_fish", "minecraft:tropical_fish_spawn_egg"],
+    type: "entity",
+    attribute: "水中",
+    hp: "10",
+    atk: "0",
+    Sact: "3",
+    Bact: "9",
+    text: [
+      "§b召喚時効果 / 草ブロックを2つ入手する。",
+      "§bターン開始時効果 / 海洋の心を1つ入手する。",
+      "§b死亡時効果 / 生鱈を1つ入手する。",
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_tropicalfish"
+  },
+  {
+    name:["minecraft:turtle", "minecraft:turtle_spawn_egg"],
+    type: "entity",
+    attribute: "水中",
+    hp: "30",
+    atk: "0",
+    Sact: "5",
+    Bact: "3",
+    text: [
+      "§b召喚時効果 / 海洋の心の所持数が3つ以上の時、カメの甲羅を1つ入手する。",
+      "§bターン開始時効果 / 自分の場にオブジェクトがないならact+5",
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_turtle"
+  },
+  {
+    name:["minecraft:squid", "minecraft:squid_spawn_egg"],
+    type: "entity",
+    attribute: "水中",
+    hp: "21",
+    atk: "0",
+    Sact: "4",
+    Bact: "6",
+    text: [
+      "§bターン開始時効果 / 相手プレイヤーの所持している羊毛はすべて黒色の羊毛になる。",
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_squid"
+  },
+  {
+    name:["minecraft:barrel"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "4",
+    text: [
+      "§b使用時 / 「つりざお、製図台、ニンジン付きの棒」を入手する。",
+      "§bこのアイテムは自分ターン終了時に消滅する。",
+      "§6オブジェクト効果 / 海洋の心の所持数が5つ以下/ターン開始時に「生鱈」を入手する。",
+      "§6オブジェクト効果 / 海洋の心の所持数が6つ以上/ターン開始時に「釣り竿」を入手する。",
+    ],
+    texture: "textures/blocks/barrel_side"
+  },
+  {
+    name:["minecraft:guardian", "minecraft:guardian_spawn_egg"],
+    type: "entity",
+    attribute: "水中",
+    hp: "35",
+    atk: "20",
+    Sact: "18",
+    Bact: "9",
+    text: [
+      "§b召喚時効果 / 海洋の心を1つ入手する。",
+      "§bターン開始時効果 / 自分の正面のモブ(浮遊、ガードを除く)に5ダメージ。",
+      "§bターン終了時効果 / 自分の海洋の心の所持数が10個以上で§c赤スロット§bと§9青スロット",
+      "§bがガーディアンのとき、§f白スロット§bにモブがいなければ海洋の心を5つ消費して",
+      "§f白スロット§bに「エルダーガーディアン」を召喚する。",
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_guardian"
+  },
+  {
+    name:["minecraft:axolotl", "minecraft:axolotl_spawn_egg"],
+    type: "entity",
+    attribute: "水中・速攻",
+    hp: "45",
+    atk: "15",
+    Sact: "25",
+    Bact: "9",
+    text: [
+      "§b特殊効果 / 自分プレイヤーが攻撃力20以上の攻撃を行うたびに「海洋の心」を1つ入手する。",
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_axolotl"
+  },
+  {
+    name:["minecraft:glow_squid", "minecraft:glow_squid_spawn_egg"],
+    type: "entity",
+    attribute: "水中",
+    hp: "20",
+    atk: "0",
+    Sact: "50",
+    Bact: "5",
+    text: [
+      "§b召喚時効果 / 自分の場の水中モブの数だけ「ダイヤモンド」を入手する。",
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_glow_squid"
+  },
+  {
+    name:["minecraft:dolphin", "minecraft:dolphin_spawn_egg"],
+    type: "entity",
+    attribute: "水中・速攻",
+    hp: "60",
+    atk: "50",
+    Sact: "40",
+    Bact: "11",
+    text: [
+      "§b召喚時効果 / 海洋の心の所持数が10個以上の時act+30",
+      "§bターン開始時効果 / このモブが水中属性の場合、1の効果を適用する。",
+      "§bこのモブが浮遊属性の場合、2の効果を適用する。",
+      "§b1.このモブの属性を水中から浮遊に変更する。",
+      "§b2.このモブの属性を浮遊から水中に変更する。",
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_dolphin"
+  },
+  {
+    name:["minecraft:turtle_helmet"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "10",
+    text: [
+      "§b使用時 / 次の相手の番の終わりまで衝撃吸収効果(HP8相当)を獲得する。",
+    ],
+    texture: "textures/items/turtle_helmet"
+  },
+  {
+    name:["minecraft:fishing_rod"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "2",
+    text: [
+      "§b使用時 / 海洋の心の所持数が5個以下の場合、草ブロックを1つ入手する。",
+      "§b使用時 / 海洋の心の所持数が6個以上の場合、草ブロックを2つ入手する。",
+    ],
+    texture: "textures/items/fishing_rod_uncast"
+  },
+  {
+    name:["minecraft:cartography_table"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "2",
+    text: [
+      "§b使用時 / 相手の場に出ているオブジェクトと同じカードを入手する。",
+      "§6オブジェクト効果 / 自分のターン開始時、自分の所持している海洋の心の数×2だけactが増加する。",
+    ],
+    texture: "textures/blocks/cartography_table_top"
+  },
+  {
+    name:["minecraft:cod"],
+    type: "item",
+    attribute: "アイテム・強化合成",
+    Cact: "0",
+    text: [
+      "§b+石炭=焼き鱈",
+      "§b使用時 / 水中モブに使用するとそのモブのHPを10回復する。",
+    ],
+    texture: "textures/items/fish_raw"
+  },
+  {
+    name:["minecraft:cooked_cod"],
+    type: "item",
+    attribute: "アイテム",
+    Cact: "0",
+    text: [
+      "§b使用時 / 自分プレイヤーのHPを3回復する。",
+    ],
+    texture: "textures/items/fish_cooked"
+  },
+  {
+    name:["minecraft:heart_of_the_sea"],
+    type: "item",
+    attribute: "アイテム・強化合成",
+    Cact: "0",
+    text: [
+      "§b+ゾンビのスポーンエッグ=ドラウンドのスポーンエッグ",
+      "§bこのカードの所持数は相手プレイヤーに認知される。",
+    ],
+    texture: "textures/items/heartofthesea_closed"
+  },
+  {
+    name:["minecraft:drowned", "minecraft:drowned_spawn_egg"],
+    type: "entity",
+    attribute: "水中・速攻",
+    hp: "35",
+    atk: "-",
+    Sact: "20",
+    Bact: "6",
+    text: [
+      "§b召喚時効果 / 草ブロック、トライデントを入手する。",
+      "§bターン開始時効果 / 自分の手札にある「ゾンビのスポーンエッグ」を「ドラウンドのスポーンエッグ」にする。",
+      "§b特殊効果 / 自分の場に3体ドラウンドがいるとき、トライデントを使用するたびに海洋の心を1つ入手する。",
+      "§b特殊効果 / 装備がなくてもダメージを少し軽減する。",
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_drowned"
+  },
+  {
+    name:["minecraft:trident"],
+    type: "item",
+    attribute: "武器",
+    Cact: "1",
+    text: [
+      "§bこのカードは海洋の心を6つ以上所持していないと使用することができない。",
+      "§b使用時 / 海洋の心を1つ消費して、相手モブに30ダメージ与えるか相手プレイヤーに3ダメージを与える。",
+      "§b水中モブに使用するとそのモブを除外する。",
+    ],
+    texture: "textures/items/trident"
+  },
+  {
+    name:["minecraft:elder_guardian", "minecraft:elder_guardian_spawn_egg"],
+    type: "entity",
+    attribute: "水中",
+    hp: "150",
+    atk: "70",
+    Sact: "-",
+    Bact: "10",
+    text: [
+      "§b特殊効果 / 相手のオレンジボタンを封印する。",
+    ],
+    texture: "textures/items/spawn_eggs/spawn_egg_elder_guardian"
+  },
+  // イベントアイテム
   {
     name:["minecraft:snowball"],
     type: "item",

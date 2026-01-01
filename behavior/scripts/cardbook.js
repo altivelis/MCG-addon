@@ -6,77 +6,77 @@ import { cardInfo, getCard } from "./lib";
 
 const cardLibrary = {
   normal: [
-    { name: "ウィザースケルトンの頭", id: "minecraft:wither_skeleton_skull", icon: "textures/gui/newgui/mob_effects/wither_effect" },
-    { name: "木の剣", id: "minecraft:wooden_sword", icon: "textures/items/wood_sword" },
-    { name: "石の剣", id: "minecraft:stone_sword", icon: "textures/items/stone_sword" },
-    { name: "金の剣", id: "minecraft:golden_sword", icon: "textures/items/gold_sword" },
-    { name: "鉄の剣", id: "minecraft:iron_sword", icon: "textures/items/iron_sword" },
-    { name: "ダイヤモンドの剣", id: "minecraft:diamond_sword", icon: "textures/items/diamond_sword" },
-    { name: "ネザライトの剣", id: "minecraft:netherite_sword", icon: "textures/items/netherite_sword" },
-    { name: "木のツルハシ", id: "minecraft:wooden_pickaxe", icon: "textures/items/wood_pickaxe" },
-    { name: "石のツルハシ", id: "minecraft:stone_pickaxe", icon: "textures/items/stone_pickaxe" },
-    { name: "鉄のツルハシ", id: "minecraft:iron_pickaxe", icon: "textures/items/iron_pickaxe" },
-    { name: "石炭", id: "minecraft:coal", icon: "textures/items/coal" },
-    { name: "丸石", id: "minecraft:cobblestone", icon: "textures/blocks/cobblestone" },
-    { name: "鉄のインゴット", id: "minecraft:iron_ingot", icon: "textures/items/iron_ingot" },
-    { name: "ダイヤモンド", id: "minecraft:diamond", icon: "textures/items/diamond" },
-    { name: "ニンジン付きの棒", id: "minecraft:carrot_on_a_stick", icon: "textures/items/carrot_on_a_stick" },
-    { name: "矢", id: "minecraft:arrow", icon: "textures/items/arrow" }
+    { name: "ウィザースケルトンの頭", id: "minecraft:wither_skeleton_skull" },
+    { name: "木の剣", id: "minecraft:wooden_sword" },
+    { name: "石の剣", id: "minecraft:stone_sword" },
+    { name: "金の剣", id: "minecraft:golden_sword" },
+    { name: "鉄の剣", id: "minecraft:iron_sword" },
+    { name: "ダイヤモンドの剣", id: "minecraft:diamond_sword" },
+    { name: "ネザライトの剣", id: "minecraft:netherite_sword" },
+    { name: "木のツルハシ", id: "minecraft:wooden_pickaxe" },
+    { name: "石のツルハシ", id: "minecraft:stone_pickaxe" },
+    { name: "鉄のツルハシ", id: "minecraft:iron_pickaxe" },
+    { name: "石炭", id: "minecraft:coal" },
+    { name: "丸石", id: "minecraft:cobblestone" },
+    { name: "鉄のインゴット", id: "minecraft:iron_ingot" },
+    { name: "ダイヤモンド", id: "minecraft:diamond" },
+    { name: "ニンジン付きの棒", id: "minecraft:carrot_on_a_stick" },
+    { name: "矢", id: "minecraft:arrow" }
   ],
   overworld: {
     low: [
-      { name: "ブタ", id: "minecraft:pig", icon: "textures/items/spawn_eggs/spawn_egg_pig" },
-      { name: "村人", id: "minecraft:villager_v2", icon: "textures/items/spawn_eggs/spawn_egg_villager" },
-      { name: "チェスト", id: "minecraft:chest", icon: "textures/blocks/chest_front" },
-      { name: "くり抜かれたカボチャ", id: "minecraft:carved_pumpkin", icon: "textures/blocks/pumpkin_face_off" }
+      { name: "ブタ", id: "minecraft:pig" },
+      { name: "村人", id: "minecraft:villager_v2" },
+      { name: "チェスト", id: "minecraft:chest" },
+      { name: "くり抜かれたカボチャ", id: "minecraft:carved_pumpkin" }
     ],
     high: [
-      { name: "オオカミ", id: "minecraft:wolf", icon: "textures/items/spawn_eggs/spawn_egg_wolf" },
-      { name: "鐘", id: "minecraft:bell", icon: "textures/blocks/bell_side" },
-      { name: "アレイ", id: "minecraft:allay", icon: "textures/items/bundle_light_blue" },
-      { name: "パンダ", id: "minecraft:panda", icon: "textures/items/spawn_eggs/spawn_egg_panda" }
+      { name: "オオカミ", id: "minecraft:wolf" },
+      { name: "鐘", id: "minecraft:bell" },
+      { name: "アレイ", id: "minecraft:allay" },
+      { name: "パンダ", id: "minecraft:panda" }
     ],
     other: [
-      { name: "生の豚肉", id: "minecraft:porkchop", icon: "textures/items/porkchop_raw" },
-      { name: "焼き豚", id: "minecraft:cooked_porkchop", icon: "textures/items/porkchop_cooked" },
-      { name: "スノーゴーレム", id: "minecraft:snow_golem", icon: "textures/items/spawn_eggs/spawn_egg_snow_golem" },
-      { name: "アイアンゴーレム", id: "minecraft:iron_golem", icon: "textures/items/egg_null" },
-      { name: "ジャック・オ・ランタン", id: "minecraft:lit_pumpkin", icon: "textures/blocks/pumpkin_face_on" }
+      { name: "生の豚肉", id: "minecraft:porkchop" },
+      { name: "焼き豚", id: "minecraft:cooked_porkchop" },
+      { name: "スノーゴーレム", id: "minecraft:snow_golem" },
+      { name: "アイアンゴーレム", id: "minecraft:iron_golem" },
+      { name: "ジャック・オ・ランタン", id: "minecraft:lit_pumpkin" }
     ]
   },
   cave: {
     low: [
-      { name: "ゾンビ", id: "minecraft:zombie", icon: "textures/items/spawn_eggs/spawn_egg_zombie" },
-      { name: "スケルトン", id: "minecraft:skeleton", icon: "textures/items/spawn_eggs/spawn_egg_skeleton" },
-      { name: "クリーパー", id: "minecraft:creeper", icon: "textures/items/spawn_eggs/spawn_egg_creeper" },
-      { name: "ウィッチ", id: "minecraft:witch", icon: "textures/items/spawn_eggs/spawn_egg_witch" }
+      { name: "ゾンビ", id: "minecraft:zombie" },
+      { name: "スケルトン", id: "minecraft:skeleton" },
+      { name: "クリーパー", id: "minecraft:creeper" },
+      { name: "ウィッチ", id: "minecraft:witch" }
     ],
     high: [
-      { name: "モンスタースポナー", id: "minecraft:mob_spawner", icon: "textures/blocks/mob_spawner" },
-      { name: "ファントム", id: "minecraft:phantom", icon: "textures/items/spawn_eggs/spawn_egg_phantom" },
-      { name: "ブリーズ", id: "minecraft:breeze", icon: "textures/items/spawn_eggs/spawn_egg_breeze" },
-      { name: "エンダーチェスト", id: "minecraft:ender_chest", icon: "textures/blocks/ender_chest_front" }
+      { name: "モンスタースポナー", id: "minecraft:mob_spawner" },
+      { name: "ファントム", id: "minecraft:phantom" },
+      { name: "ブリーズ", id: "minecraft:breeze" },
+      { name: "エンダーチェスト", id: "minecraft:ender_chest" }
     ],
     other: [
-      { name: "ハスク", id: "minecraft:husk", icon: "textures/items/spawn_eggs/spawn_egg_husk" },
-      { name: "ストレイ", id: "minecraft:stray", icon: "textures/items/spawn_eggs/spawn_egg_stray" },
-      { name: "洞窟グモ", id: "minecraft:cave_spider", icon: "textures/items/spawn_eggs/spawn_egg_cave_spider" },
-      { name: "エンチャントされた金のリンゴ", id: "minecraft:enchanted_golden_apple", icon: "textures/items/apple_golden" },
-      { name: "クモの巣", id: "minecraft:web", icon: "textures/blocks/web" }
+      { name: "ハスク", id: "minecraft:husk" },
+      { name: "ストレイ", id: "minecraft:stray" },
+      { name: "洞窟グモ", id: "minecraft:cave_spider" },
+      { name: "エンチャントされた金のリンゴ", id: "minecraft:enchanted_golden_apple" },
+      { name: "クモの巣", id: "minecraft:web" }
     ]
   },
   nether: {
     low: [
-      { name: "ゾンビピグリン", id: "minecraft:zombie_pigman", icon: "textures/items/spawn_eggs/spawn_egg_zombified_piglin" },
-      { name: "ウィザースケルトン", id: "minecraft:wither_skeleton", icon: "textures/items/spawn_eggs/spawn_egg_wither_skeleton" },
-      { name: "泣く黒曜石", id: "minecraft:crying_obsidian", icon: "textures/blocks/crying_obsidian" },
-      { name: "ウィザーローズ", id: "minecraft:wither_rose", icon: "textures/blocks/flower_wither_rose" }
+      { name: "ゾンビピグリン", id: "minecraft:zombie_pigman" },
+      { name: "ウィザースケルトン", id: "minecraft:wither_skeleton" },
+      { name: "泣く黒曜石", id: "minecraft:crying_obsidian" },
+      { name: "ウィザーローズ", id: "minecraft:wither_rose" }
     ],
     high: [
-      { name: "ストライダー", id: "minecraft:strider", icon: "textures/items/spawn_eggs/spawn_egg_strider" },
-      { name: "溶岩入りバケツ", id: "minecraft:lava_bucket", icon: "textures/items/bucket_lava" },
-      { name: "ジャガイモ(ブレイズ)", id: "minecraft:blaze", icon: "textures/items/potato" },
-      { name: "ネザライトインゴット", id: "minecraft:netherite_ingot", icon: "textures/items/netherite_ingot" }
+      { name: "ストライダー", id: "minecraft:strider" },
+      { name: "溶岩入りバケツ", id: "minecraft:lava_bucket" },
+      { name: "ジャガイモ(ブレイズ)", id: "minecraft:blaze" },
+      { name: "ネザライトインゴット", id: "minecraft:netherite_ingot" }
     ],
     other: [
       { name: "鞍", id: "minecraft:saddle", icon: "textures/items/saddle" }
@@ -84,70 +84,95 @@ const cardLibrary = {
   },
   animal: {
     low: [
-      { name: "ニワトリ", id: "minecraft:chicken", icon: "textures/items/spawn_eggs/spawn_egg_chicken" },
-      { name: "オウム", id: "minecraft:parrot", icon: "textures/items/spawn_eggs/spawn_egg_parrot" },
-      { name: "ミツバチの巣", id: "minecraft:bee_nest", icon: "textures/blocks/bee_nest_front" },
-      { name: "コンポスター", id: "minecraft:composter", icon: "textures/blocks/composter_side" }
+      { name: "ニワトリ", id: "minecraft:chicken" },
+      { name: "オウム", id: "minecraft:parrot" },
+      { name: "ミツバチの巣", id: "minecraft:bee_nest" },
+      { name: "コンポスター", id: "minecraft:composter" }
     ],
     high: [
-      { name: "キツネ", id: "minecraft:fox", icon: "textures/items/spawn_eggs/spawn_egg_fox" },
-      { name: "カエル", id: "minecraft:frog", icon: "textures/items/spawn_eggs/spawn_egg_frog" },
-      { name: "ムーシュルーム", id: "minecraft:mooshroom", icon: "textures/items/spawn_eggs/spawn_egg_mooshroom" },
-      { name: "シロクマ", id: "minecraft:polar_bear", icon: "textures/items/spawn_eggs/spawn_egg_polar_bear" }
+      { name: "キツネ", id: "minecraft:fox" },
+      { name: "カエル", id: "minecraft:frog" },
+      { name: "ムーシュルーム", id: "minecraft:mooshroom" },
+      { name: "シロクマ", id: "minecraft:polar_bear" }
     ],
     other: [
-      { name: "卵", id: "minecraft:egg", icon: "textures/items/egg" },
-      { name: "ポピー", id: "minecraft:poppy", icon: "textures/blocks/flower_rose" },
-      { name: "タンポポ", id: "minecraft:dandelion", icon: "textures/blocks/flower_dandelion" },
-      { name: "桃色のチューリップ", id: "minecraft:pink_tulip", icon: "textures/blocks/flower_tulip_pink" },
-      { name: "サボテン", id: "minecraft:cactus", icon: "textures/blocks/cactus_side" },
-      { name: "ハチ", id: "minecraft:bee", icon: "textures/items/spawn_eggs/spawn_egg_bee" },
-      { name: "ハチミツ入りの瓶", id: "minecraft:honey_bottle", icon: "textures/items/honey_bottle" },
-      { name: "木のクワ", id: "minecraft:wooden_hoe", icon: "textures/items/wood_hoe" },
-      { name: "石のクワ", id: "minecraft:stone_hoe", icon: "textures/items/stone_hoe" },
-      { name: "鉄のクワ", id: "minecraft:iron_hoe", icon: "textures/items/iron_hoe" },
-      { name: "小麦", id: "minecraft:wheat", icon: "textures/items/wheat" },
-      { name: "赤いキノコ", id: "minecraft:red_mushroom", icon: "textures/blocks/mushroom_red" },
-      { name: "氷塊", id: "minecraft:packed_ice", icon: "textures/blocks/ice_packed" },
-      { name: "パン", id: "minecraft:bread", icon: "textures/items/bread" },
-      { name: "ケーキ", id: "minecraft:cake", icon: "textures/items/cake" },
-      { name: "羊", id: "minecraft:sheep", icon: "textures/items/spawn_eggs/spawn_egg_sheep" },
-      { name: "ウシ", id: "minecraft:cow", icon: "textures/items/spawn_eggs/spawn_egg_cow" },
-      { name: "白色の羊毛", id: "minecraft:white_wool", icon: "textures/blocks/wool_colored_white" },
-      { name: "赤色の羊毛", id: "minecraft:red_wool", icon: "textures/blocks/wool_colored_red" },
-      { name: "黄色の羊毛", id: "minecraft:yellow_wool", icon: "textures/blocks/wool_colored_yellow" },
-      { name: "桃色の羊毛", id: "minecraft:pink_wool", icon: "textures/blocks/wool_colored_pink" },
-      { name: "緑色の羊毛", id: "minecraft:green_wool", icon: "textures/blocks/wool_colored_green" },
-      { name: "黒色の羊毛", id: "minecraft:black_wool", icon: "textures/blocks/wool_colored_black" },
-      { name: "ミルクバケツ", id: "minecraft:milk_bucket", icon: "textures/items/bucket_milk" },
-      { name: "ボグド", id: "minecraft:bogged", icon: "textures/items/spawn_eggs/spawn_egg_bogged" }
+      { name: "卵", id: "minecraft:egg" },
+      { name: "ポピー", id: "minecraft:poppy" },
+      { name: "タンポポ", id: "minecraft:dandelion" },
+      { name: "桃色のチューリップ", id: "minecraft:pink_tulip" },
+      { name: "サボテン", id: "minecraft:cactus" },
+      { name: "ハチ", id: "minecraft:bee" },
+      { name: "ハチミツ入りの瓶", id: "minecraft:honey_bottle" },
+      { name: "木のクワ", id: "minecraft:wooden_hoe" },
+      { name: "石のクワ", id: "minecraft:stone_hoe" },
+      { name: "鉄のクワ", id: "minecraft:iron_hoe" },
+      { name: "小麦", id: "minecraft:wheat" },
+      { name: "赤いキノコ", id: "minecraft:red_mushroom" },
+      { name: "氷塊", id: "minecraft:packed_ice" },
+      { name: "パン", id: "minecraft:bread" },
+      { name: "ケーキ", id: "minecraft:cake" },
+      { name: "羊", id: "minecraft:sheep" },
+      { name: "ウシ", id: "minecraft:cow" },
+      { name: "白色の羊毛", id: "minecraft:white_wool" },
+      { name: "赤色の羊毛", id: "minecraft:red_wool" },
+      { name: "黄色の羊毛", id: "minecraft:yellow_wool" },
+      { name: "桃色の羊毛", id: "minecraft:pink_wool" },
+      { name: "緑色の羊毛", id: "minecraft:green_wool" },
+      { name: "黒色の羊毛", id: "minecraft:black_wool" },
+      { name: "ミルクバケツ", id: "minecraft:milk_bucket" },
+      { name: "ボグド", id: "minecraft:bogged" }
     ]
   },
   raid: {
     low: [
-      { name: "ピリジャー", id: "minecraft:pillager", icon: "textures/items/spawn_eggs/spawn_egg_pillager" },
-      { name: "トラップチェスト", id: "minecraft:trapped_chest", icon: "textures/blocks/trapped_chest_front" },
-      { name: "ヴィンディケーター", id: "minecraft:vindicator", icon: "textures/items/spawn_eggs/spawn_egg_vindicator" },
-      { name: "ヤギの角笛", id: "mcg:goat_horn", icon: "textures/items/goat_horn" }
+      { name: "ピリジャー", id: "minecraft:pillager" },
+      { name: "トラップチェスト", id: "minecraft:trapped_chest" },
+      { name: "ヴィンディケーター", id: "minecraft:vindicator" },
+      { name: "ヤギの角笛", id: "mcg:goat_horn" }
     ],
     high: [
-      { name: "エヴォーカー", id: "minecraft:evocation_illager", icon: "textures/items/spawn_eggs/spawn_egg_evoker" },
-      { name: "防具立て", id: "minecraft:armor_stand", icon: "textures/items/armor_stand" },
-      { name: "ラヴェジャー", id: "minecraft:ravager", icon: "textures/items/spawn_eggs/spawn_egg_ravager" },
-      { name: "不吉な旗", id: "minecraft:banner", icon: "textures/gui/newgui/mob_effects/bad_omen_effect" }
+      { name: "エヴォーカー", id: "minecraft:evocation_illager" },
+      { name: "防具立て", id: "minecraft:armor_stand" },
+      { name: "ラヴェジャー", id: "minecraft:ravager" },
+      { name: "不吉な旗", id: "minecraft:banner" }
     ],
     other: [
-      { name: "ヴェックス", id: "minecraft:vex", icon: "textures/items/spawn_eggs/spawn_egg_vex" },
-      { name: "鉄の斧", id: "minecraft:iron_axe", icon: "textures/items/iron_axe" },
-      { name: "不死のトーテム", id: "mcg:totem", icon: "textures/items/totem" },
-      { name: "不吉な瓶", id: "minecraft:ominous_bottle", icon: "textures/items/ominous_bottle" },
-      { name: "奇妙なポーション", id: "mcg:awkward_potion", icon: "textures/items/potion_bottle_drinkable" },
-      { name: "治癒のポーション", id: "mcg:heal_potion", icon: "textures/items/potion_bottle_heal" },
-      { name: "治癒のスプラッシュポーション", id: "mcg:heal_splash_potion", icon: "textures/items/potion_bottle_splash_heal" },
-      { name: "負傷のポーション", id: "mcg:damage_potion", icon: "textures/items/potion_bottle_harm" },
-      { name: "負傷のスプラッシュポーション", id: "mcg:damage_splash_potion", icon: "textures/items/potion_bottle_splash_harm" },
-      { name: "俊敏のポーション", id: "mcg:speed_potion", icon: "textures/items/potion_bottle_moveSpeed" },
-      { name: "耐火のポーション", id: "mcg:fireresistance_potion", icon: "textures/items/potion_bottle_fireResistance" }
+      { name: "ヴェックス", id: "minecraft:vex" },
+      { name: "鉄の斧", id: "minecraft:iron_axe" },
+      { name: "不死のトーテム", id: "mcg:totem" },
+      { name: "不吉な瓶", id: "minecraft:ominous_bottle" },
+      { name: "奇妙なポーション", id: "mcg:awkward_potion" },
+      { name: "治癒のポーション", id: "mcg:heal_potion" },
+      { name: "治癒のスプラッシュポーション", id: "mcg:heal_splash_potion" },
+      { name: "負傷のポーション", id: "mcg:damage_potion" },
+      { name: "負傷のスプラッシュポーション", id: "mcg:damage_splash_potion" },
+      { name: "俊敏のポーション", id: "mcg:speed_potion" },
+      { name: "耐火のポーション", id: "mcg:fireresistance_potion" }
+    ]
+  },
+  seaworld: {
+    low: [
+      { name: "熱帯魚", id: "minecraft:tropical_fish" },
+      { name: "カメ", id: "minecraft:turtle" },
+      { name: "イカ", id: "minecraft:squid" },
+      { name: "樽", id: "minecraft:barrel" }
+    ],
+    high: [
+      { name: "ガーディアン", id: "minecraft:guardian" },
+      { name: "ウーパールーパー", id: "minecraft:axolotl" },
+      { name: "発光するイカ", id: "minecraft:glow_squid" },
+      { name: "イルカ", id: "minecraft:dolphin" }
+    ],
+    other: [
+      { name: "亀の甲羅", id: "minecraft:turtle_helmet" },
+      { name: "釣り竿", id: "minecraft:fishing_rod" },
+      { name: "製図台", id: "minecraft:cartography_table" },
+      { name: "生鱈", id: "minecraft:cod"},
+      { name: "焼き鱈", id: "minecraft:cooked_cod"},
+      { name: "海洋の心", id: "minecraft:heart_of_the_sea" },
+      { name: "ドラウンド", id: "minecraft:drowned" },
+      { name: "トライデント", id: "minecraft:trident" },
+      { name: "エルダーガーディアン", id: "minecraft:elder_guardian" }
     ]
   }
 };
@@ -159,7 +184,8 @@ const CATEGORIES = {
   cave: { title: "洞窟カード", color: "§8", icon: "textures/blocks/stone" },
   nether: { title: "ネザーカード", color: "§4", icon: "textures/blocks/netherrack" },
   animal: { title: "アニマルカード", color: "§6", icon: "textures/blocks/hay_block_side" },
-  raid: { title: "襲撃カード", color: "§5", icon: "textures/blocks/stripped_dark_oak_log_top" }
+  raid: { title: "襲撃カード", color: "§5", icon: "textures/blocks/stripped_dark_oak_log_top" },
+  seaworld: { title: "海洋カード", color: "§b", icon: "textures/blocks/prismarine_bricks" }
 };
 
 // ========== 共通フォーム関数 ==========
@@ -173,7 +199,8 @@ const CATEGORIES = {
 function createCardListForm(title, cards) {
   const form = new ui.ActionFormData().title(title);
   cards.forEach(card => {
-    form.button(card.name, card.icon);
+    let info = getCard(card.id);
+    form.button(card.name, info.texture);
   });
   form.button("§l§8戻る", "textures/ui/back_button_hover");
   return form;
@@ -288,7 +315,8 @@ export function cardBookForm_home(player) {
     .button(`§l${CATEGORIES.cave.color}洞窟§r§lカード`, CATEGORIES.cave.icon)
     .button(`§l${CATEGORIES.nether.color}ネザー§r§lカード`, CATEGORIES.nether.icon)
     .button(`§l${CATEGORIES.animal.color}アニマル§r§lカード`, CATEGORIES.animal.icon)
-    .button(`§l${CATEGORIES.raid.color}襲撃§r§lカード`, CATEGORIES.raid.icon);
+    .button(`§l${CATEGORIES.raid.color}襲撃§r§lカード`, CATEGORIES.raid.icon)
+    .button(`§l${CATEGORIES.seaworld.color}海洋§r§lカード`, CATEGORIES.seaworld.icon);
 
   form.show(player).then(res => {
     if (res.canceled) return;
@@ -311,6 +339,9 @@ export function cardBookForm_home(player) {
         break;
       case 5:
         showCategorySelector(player, "raid", cardBookForm_home);
+        break;
+      case 6:
+        showCategorySelector(player, "seaworld", cardBookForm_home);
         break;
     }
   });
