@@ -1,5 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
+import { DRAW_CARDS } from "../button";
 
 mc.system.beforeEvents.startup.subscribe(data => {
   /**
@@ -36,6 +37,7 @@ mc.system.beforeEvents.startup.subscribe(data => {
           "WinterHoliday",
           "MCG-クラシック"
         ], {defaultValueIndex: mc.world.getDynamicProperty("event") ?? 0, })
+        .slider("デッキBAN数", 0, Object.keys(DRAW_CARDS).length, {valueStep:1, defaultValue:mc.world.getDynamicProperty("deck_ban") ?? 0})
         .submitButton("保存");
       config_form.show(player).then(res=>{
         if(res.canceled) return;
@@ -45,7 +47,8 @@ mc.system.beforeEvents.startup.subscribe(data => {
           "second_draw": res.formValues[2],
           "start_act": res.formValues[3],
           "end_act": res.formValues[4],
-          "event": res.formValues[5]
+          "event": res.formValues[5],
+          "deck_ban": res.formValues[6]
         })
         mc.world.sendMessage([
           "§e設定が変更されました\n",

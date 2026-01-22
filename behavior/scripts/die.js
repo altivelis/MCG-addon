@@ -1,5 +1,6 @@
 import * as mc from "@minecraft/server";
 import { changeHealthBoost, getObject, sendPlayerMessage } from "./lib";
+import { giveItemWithMessage } from "./card-helpers";
 
 mc.world.afterEvents.entityDie.subscribe(data=>{
   const {deadEntity, damageSource} = data;
@@ -17,6 +18,7 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
   //   }
   // }
   if(damageSource.cause == mc.EntityDamageCause.selfDestruct) return;
+  // 呼び声処理
   if((deadEntity.hasTag("call_pigman") || (deadEntity.typeId == "minecraft:pig" && getObject(deadEntity.hasTag("red")?"red":"blue").typeId == "minecraft:crying_obsidian")) && 
   (mc.world.getPlayers({tags:["turn"]})[0].hasTag("red")?deadEntity.hasTag("blue"):deadEntity.hasTag("red"))){
     deadEntity.removeTag("call_pigman");
@@ -24,5 +26,15 @@ mc.world.afterEvents.entityDie.subscribe(data=>{
     deadEntity.getTags().forEach(tag=>{
       if(["slotB", "slotW", "slotR", "red", "blue"].includes(tag)) pigman.addTag(tag);
     })
+  }
+  // 熱帯魚死亡時処理
+  if(deadEntity.typeId == "minecraft:tropicalfish") {
+    const teamTag = deadEntity.hasTag("red") ? "red" : deadEntity.hasTag("blue") ? "blue" : null;
+    if (teamTag) {
+      const teamPlayers = mc.world.getPlayers({tags: [teamTag]});
+      teamPlayers.forEach(player => {
+        giveItemWithMessage(player, "minecraft:cod", 1, "生鱈");
+      });
+    }
   }
 })

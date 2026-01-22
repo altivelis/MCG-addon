@@ -3,11 +3,12 @@ import * as ui from "@minecraft/server-ui";
 import { mcg, turnChange } from "./system";
 import { hasItem, decrementContainer, giveItem, handItem, addAct, sendPlayerMessage, isOnline, applyDamage, cardInfo, getCard } from "./lib";
 import { useCard } from "./usecard";
-import { ERROR_MESSAGES, SPECTATOR_COORDS, LOBBY_COORDS } from "./constants";
+import { ERROR_MESSAGES, SPECTATOR_COORDS, LOBBY_COORDS, UNLOCK_CONDITIONS } from "./constants";
+import { getOpponentTeam } from "./card-helpers";
 
 // ========== ドローカードデータ ==========
 
-const DRAW_CARDS = {
+export const DRAW_CARDS = {
   "minecraft:grass_block": {
     low: [
       { item: "minecraft:pig_spawn_egg", name: "ブタ" },
@@ -64,6 +65,7 @@ const DRAW_CARDS = {
       { item: "minecraft:netherite_ingot", name: "ネザライトインゴット" }
     ],
     requiresTag: "nether",
+    unlockConditions: UNLOCK_CONDITIONS.NETHER,
     lockMessage: ERROR_MESSAGES.NETHER_LOCKED
   },
   "minecraft:stripped_dark_oak_log": {
@@ -80,7 +82,22 @@ const DRAW_CARDS = {
       { item: "minecraft:banner", name: "不吉な旗" }
     ],
     requiresTag: "genocide",
+    unlockConditions: UNLOCK_CONDITIONS.GENOCIDE,
     lockMessage: ERROR_MESSAGES.GENOCIDE_LOCKED
+  },
+  "minecraft:prismarine_bricks": {
+    low: [
+      { item: "minecraft:tropical_fish_spawn_egg", name: "熱帯魚" },
+      { item: "minecraft:turtle_spawn_egg", name: "カメ" },
+      { item: "minecraft:squid_spawn_egg", name: "イカ" },
+      { item: "minecraft:barrel", name: "樽" }
+    ],
+    high: [
+      { item: "minecraft:guardian_spawn_egg", name: "ガーディアン" },
+      { item: "minecraft:axolotl_spawn_egg", name: "ウーパールーパー" },
+      { item: "minecraft:glow_squid_spawn_egg", name: "発光するイカ" },
+      { item: "minecraft:dolphin_spawn_egg", name: "イルカ" }
+    ]
   }
 };
 
@@ -292,6 +309,22 @@ mc.world.afterEvents.buttonPush.subscribe(async data => {
   // 氷塊制限チェック
   if (hasItem(source, "minecraft:packed_ice") && cardBlock.typeId === "minecraft:pink_concrete") {
     source.sendMessage(ERROR_MESSAGES.ICE_RESTRICTION);
+    return;
+  }
+
+  // エルダーガーディアン制限チェック
+  const oppositeTeam = getOpponentTeam(source);
+  const elderGuardianExists = mc.world.getDimension("minecraft:overworld")
+    .getEntities({ type: "minecraft:elder_guardian", tags: [oppositeTeam] }).length > 0;
+  if (elderGuardianExists && cardBlock.typeId === "minecraft:orange_concrete") {
+    source.sendMessage(ERROR_MESSAGES.ELDER_GUARDIAN_RESTRICTION);
+    return;
+  }
+
+  // クラシックモード制限チェック（オレンジボタン使用不可）
+  const eventMode = mc.world.getDynamicProperty("event");
+  if (eventMode === 2 && cardBlock.typeId === "minecraft:orange_concrete") {
+    source.sendMessage("§cクラシックモードではオレンジボタンは使用できません");
     return;
   }
 

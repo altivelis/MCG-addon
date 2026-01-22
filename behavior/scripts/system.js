@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline, cardInfo, createColor, lineParticle, getPlayerColoredName, setTime, getTime, progressTime, createHash } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline, cardInfo, createColor, lineParticle, getPlayerColoredName, setTime, getTime, progressTime, createHash, findItem } from "./lib";
 import { turnItem, turnMob, turnObject } from "./turncard";
 import { 
   GAME_CONFIG, GAME_STATUS, SUCCESS_MESSAGES, ERROR_MESSAGES, 
@@ -203,6 +203,16 @@ function spawnEntityAttributeParticles() {
         x: entity.location.x + PARTICLE_CONFIG.OFFSET.GUARD.x,
         z: entity.location.z + PARTICLE_CONFIG.OFFSET.GUARD.z
       });
+    }
+    if (entity.hasTag("water")) {
+      for(let i=0; i<16; i++) {
+        entity.dimension.spawnParticle("minecraft:water_wake_particle", {
+          ...entity.location,
+          x: entity.location.x + Math.random() * PARTICLE_CONFIG.OFFSET.WATER.x - PARTICLE_CONFIG.OFFSET.WATER.x / 2,
+          y: entity.location.y + Math.random() * PARTICLE_CONFIG.OFFSET.WATER.y - PARTICLE_CONFIG.OFFSET.WATER.y / 2,
+          z: entity.location.z + Math.random() * PARTICLE_CONFIG.OFFSET.WATER.z - PARTICLE_CONFIG.OFFSET.WATER.z / 2
+        });
+      }
     }
     if (entity.hasTag("call_pigman")) {
       entity.dimension.spawnParticle("minecraft:infested_emitter", {
@@ -795,6 +805,9 @@ function cleanupDroppedItems(turnPlayer) {
  * @param {mc.Player} notTurnPlayer
  */
 function applyTurnEffects(turnPlayer, notTurnPlayer) {
+  // ポーション効果削除
+  turnPlayer.removeEffect(mc.EffectTypes.get("minecraft:absorption"));
+
   // 泣く黒曜石効果
   const oppositeTeam = turnPlayer.hasTag("red") ? "blue" : "red";
   mc.world.getDimension("minecraft:overworld").getEntities({
@@ -871,7 +884,7 @@ function handleRaidMode(notTurnPlayer) {
  */
 function cleanupTurnPlayerItems(turnPlayer) {
   const container = turnPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
-  const itemsToRemove = ["minecraft:compass", "minecraft:arrow", "minecraft:snowball", "minecraft:iron_axe"];
+  const itemsToRemove = ["minecraft:compass", "minecraft:arrow", "minecraft:snowball", "minecraft:iron_axe", "minecraft:trident"];
   
   for (let i = 0; i < container.size; i++) {
     const item = container.getItem(i);
@@ -1041,12 +1054,27 @@ mc.world.afterEvents.buttonPush.subscribe(data => {
 
 // ========== テスト用 ==========
 
-mc.system.afterEvents.scriptEventReceive.subscribe(async data => {
+mc.system.afterEvents.scriptEventReceive.subscribe(data => {
   if (data.id !== "mcg:test") return;
-  
+  mc.world.sendMessage("test runed.");
   const player = data.sourceEntity;
-  applyDamage(player, 7);
-  myTimeout(3, () => {
-    applyDamage(player, 5);
-  })
+  let inv = player.getComponent(mc.EntityInventoryComponent.componentId).container;
+  let targetItems = [
+    "minecraft:white_wool",
+    "minecraft:red_wool",
+    "minecraft:yellow_wool",
+    "minecraft:pink_wool",
+    "minecraft:green_wool",
+  ];
+  while (true) {
+    let index = undefined;
+    mc.world.sendMessage("run");
+    for (let i = 0; i < targetItems.length; i++) {
+      index = findItem(targetItems[i], inv);
+      mc.world.sendMessage(`${index}`);
+      if(index !== undefined) break;
+    }
+    if (index === undefined) break;
+    inv.setItem(index, new mc.ItemStack("minecraft:black_wool", inv.getItem(index).amount));
+  }
 });

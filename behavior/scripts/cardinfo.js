@@ -1,90 +1,3 @@
-export const drawList = {
-  grass: {
-    low:[
-      "ブタ",
-      "村人",
-      "チェスト",
-      "くり抜かれたカボチャ"
-    ],
-    high:[
-      "オオカミ",
-      "鐘",
-      "アレイ",
-      "パンダ"
-    ]
-  },
-  stone: {
-    low:[
-      "ゾンビ",
-      "スケルトン",
-      "クリーパー",
-      "ウィッチ"
-    ],
-    high:[
-      "モンスタースポナー",
-      "ファントム",
-      "ブリーズ",
-      "エンダーチェスト"
-    ]
-  },
-  hay: {
-    low:[
-      "ニワトリ",
-      "オウム",
-      "ミツバチの巣",
-      "コンポスター"
-    ],
-    high:[
-      "キツネ",
-      "カエル",
-      "ムーシュルーム",
-      "ホッキョクグマ"
-    ]
-  },
-  nether: {
-    low:[
-      "ゾンビピッグマン",
-      "ウィザースケルトン",
-      "泣く黒曜石",
-      "ウィザーローズ"
-    ],
-    high:[
-      "ストライダー",
-      "溶岩入りバケツ",
-      "じゃがいも(ブレイズ)",
-      "ネザライトインゴット"
-    ]
-  },
-  genocide: {
-    low:[
-      "ピリジャー",
-      "トラップチェスト",
-      "ヴィンディケーター",
-      "ヤギの角笛"
-    ],
-    high:[
-      "エヴォーカー",
-      "防具立て",
-      "ラヴェジャー",
-      "不吉な旗"
-    ]
-  },
-  seaworld: {
-    low:[
-      "熱帯魚",
-      "カメ",
-      "イカ",
-      "樽"
-    ],
-    high:[
-      "ガーディアン",
-      "ウーパールーパー",
-      "発光するイカ",
-      "イルカ"
-    ]
-  }
-}
-
 export const cardList = [
   {
     name:["minecraft:compass"],
@@ -118,6 +31,7 @@ export const cardList = [
   },
   {
     name:["minecraft:wither_skeleton_skull"],
+    displayName: "ウィザースケルトンの頭",
     type: "item",
     attribute: "アイテム",
     Cact: "300",
@@ -129,6 +43,7 @@ export const cardList = [
   },
   {
     name:["minecraft:wooden_sword"],
+    displayName: "木の剣",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -144,6 +59,7 @@ export const cardList = [
   },
   {
     name:["minecraft:stone_sword"],
+    displayName: "石の剣",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -156,6 +72,7 @@ export const cardList = [
   },
   {
     name:["minecraft:golden_sword"],
+    displayName: "金の剣",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -168,6 +85,7 @@ export const cardList = [
   },
   {
     name:["minecraft:iron_sword"],
+    displayName: "鉄の剣",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -180,6 +98,7 @@ export const cardList = [
   },
   {
     name:["minecraft:diamond_sword"],
+    displayName: "ダイヤモンドの剣",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -192,6 +111,7 @@ export const cardList = [
   },
   {
     name:["minecraft:netherite_sword"],
+    displayName: "ネザライトの剣",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -204,6 +124,7 @@ export const cardList = [
   },
   {
     name:["minecraft:wooden_pickaxe"],
+    displayName: "木のツルハシ",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -216,6 +137,7 @@ export const cardList = [
   },
   {
     name:["minecraft:stone_pickaxe"],
+    displayName: "石のツルハシ",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -226,6 +148,7 @@ export const cardList = [
   },
   {
     name:["minecraft:iron_pickaxe"],
+    displayName: "鉄のツルハシ",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -236,6 +159,7 @@ export const cardList = [
   },
   {
     name:["minecraft:coal"],
+    displayName: "石炭",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -248,6 +172,7 @@ export const cardList = [
   },
   {
     name:["minecraft:cobblestone"],
+    displayName: "丸石",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -259,6 +184,7 @@ export const cardList = [
   },
   {
     name:["minecraft:iron_ingot"],
+    displayName: "鉄のインゴット",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -270,6 +196,7 @@ export const cardList = [
   },
   {
     name:["minecraft:diamond"],
+    displayName: "ダイヤモンド",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -280,6 +207,7 @@ export const cardList = [
   },
   {
     name:["minecraft:carrot_on_a_stick"],
+    displayName: "ニンジン付きの棒",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -291,6 +219,7 @@ export const cardList = [
   },
   {
     name:["minecraft:arrow"],
+    displayName: "矢",
     type: "item",
     attribute: "アイテム",
     Cact: "2",
@@ -306,6 +235,7 @@ export const cardList = [
   // 現世
   {
     name: ["minecraft:pig", "minecraft:pig_spawn_egg"],
+    displayName: "ブタ",
     type: "entity",
     attribute: "なし",
     hp: "10",
@@ -319,6 +249,7 @@ export const cardList = [
   },
   {
     name: ["minecraft:villager_v2", "minecraft:villager_spawn_egg"],
+    displayName: "村人",
     type: "entity",
     attribute: "なし",
     hp: "20",
@@ -333,6 +264,7 @@ export const cardList = [
   },
   {
     name: ["minecraft:chest"],
+    displayName: "チェスト",
     type: "item",
     attribute: "アイテム・オブジェクト",
     Cact: "3",
@@ -344,6 +276,7 @@ export const cardList = [
   },
   {
     name:["minecraft:carved_pumpkin"],
+    displayName: "くり抜かれたカボチャ",
     type: "item",
     attribute: "アイテム",
     Cact: "2",
@@ -355,6 +288,7 @@ export const cardList = [
   },
   {
     name:["minecraft:wolf", "minecraft:wolf_spawn_egg"],
+    displayName: "オオカミ",
     type: "entity",
     attribute: "速攻",
     hp: "32",
@@ -368,6 +302,7 @@ export const cardList = [
   },
   {
     name:["minecraft:bell"],
+    displayName: "鐘",
     type: "item",
     attribute: "アイテム・オブジェクト",
     Cact: "15",
@@ -382,6 +317,7 @@ export const cardList = [
   },
   {
     name:["minecraft:allay", "minecraft:allay_spawn_egg"],
+    displayName: "アレイ",
     type: "entity",
     attribute: "浮遊・速攻",
     hp: "20",
@@ -396,6 +332,7 @@ export const cardList = [
   },
   {
     name:["minecraft:panda", "minecraft:panda_spawn_egg"],
+    displayName: "パンダ",
     type: "entity",
     attribute: "なし",
     hp: "300",
@@ -409,6 +346,7 @@ export const cardList = [
   },
   {
     name:["minecraft:porkchop"],
+    displayName: "生の豚肉",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -421,6 +359,7 @@ export const cardList = [
   },
   {
     name:["minecraft:cooked_porkchop"],
+    displayName: "焼き豚",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -431,6 +370,7 @@ export const cardList = [
   },
   {
     name:["minecraft:snow_golem", "minecraft:snow_golem_spawn_egg"],
+    displayName: "スノーゴーレム",
     type: "entity",
     attribute: "なし",
     hp: "36",
@@ -444,6 +384,7 @@ export const cardList = [
   },
   {
     name:["minecraft:iron_golem", "minecraft:iron_golem_spawn_egg"],
+    displayName: "アイアンゴーレム",
     type: "entity",
     attribute: "なし",
     hp: "250",
@@ -457,6 +398,7 @@ export const cardList = [
   },
   {
     name:["minecraft:lit_pumpkin"],
+    displayName: "ジャック・オ・ランタン",
     type: "item",
     attribute: "オブジェクト",
     Cact: "20",
@@ -471,6 +413,7 @@ export const cardList = [
   // 洞窟
   {
     name:["minecraft:zombie", "minecraft:zombie_spawn_egg"],
+    displayName: "ゾンビ",
     type: "entity",
     attribute: "なし",
     hp: "20",
@@ -499,6 +442,7 @@ export const cardList = [
   },
   {
     name:["minecraft:skeleton", "minecraft:skeleton_spawn_egg"],
+    displayName: "スケルトン",
     type: "entity",
     attribute: "速攻・貫通",
     hp: "20",
@@ -528,6 +472,7 @@ export const cardList = [
   },
   {
     name:["minecraft:creeper", "minecraft:creeper_spawn_egg"],
+    displayName: "クリーパー",
     type: "entity",
     attribute: "ガード",
     hp: "20",
@@ -555,6 +500,7 @@ export const cardList = [
   },
   {
     name:["minecraft:witch", "minecraft:witch_spawn_egg"],
+    displayName: "ウィッチ",
     type: "entity",
     attribute: "なし",
     hp: "26",
@@ -580,6 +526,7 @@ export const cardList = [
   },
   {
     name:["minecraft:mob_spawner"],
+    displayName: "モンスタースポナー",
     type: "item",
     attribute: "アイテム・オブジェクト",
     Cact: "8",
@@ -591,6 +538,7 @@ export const cardList = [
   },
   {
     name:["minecraft:phantom", "minecraft:phantom_spawn_egg"],
+    displayName: "ファントム",
     type: "entity",
     attribute: "浮遊・速攻",
     hp: "20",
@@ -602,6 +550,7 @@ export const cardList = [
   },
   {
     name:["minecraft:breeze", "minecraft:breeze_spawn_egg"],
+    displayName: "ブリーズ",
     type: "entity",
     attribute: "浮遊",
     hp: "30",
@@ -616,6 +565,7 @@ export const cardList = [
   },
   {
     name:["minecraft:ender_chest"],
+    displayName: "エンダーチェスト",
     type: "item",
     attribute: "アイテム・オブジェクト",
     Cact: "30",
@@ -631,6 +581,7 @@ export const cardList = [
   },
   {
     name:["minecraft:husk", "minecraft:husk_spawn_egg"],
+    displayName: "ハスク",
     type: "entity",
     attribute: "ガード",
     hp: "20",
@@ -645,6 +596,7 @@ export const cardList = [
   },
   {
     name:["minecraft:stray", "minecraft:stray_spawn_egg"],
+    displayName: "ストレイ",
     type: "entity",
     attribute: "速攻・貫通",
     hp: "40",
@@ -659,6 +611,7 @@ export const cardList = [
   },
   {
     name:["minecraft:cave_spider", "minecraft:cave_spider_spawn_egg"],
+    displayName: "洞窟グモ",
     type: "entity",
     attribute: "なし",
     hp: "13",
@@ -672,6 +625,7 @@ export const cardList = [
   },
   {
     name:["minecraft:enchanted_golden_apple"],
+    displayName: "エンチャントされた金のリンゴ",
     type: "item",
     attribute: "アイテム",
     Cact: "20",
@@ -682,6 +636,7 @@ export const cardList = [
   },
   {
     name:["minecraft:web"],
+    displayName: "クモの巣",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -693,6 +648,7 @@ export const cardList = [
   // ネザー
   {
     name:["minecraft:zombie_pigman", "minecraft:zombie_pigman_spawn_egg"],
+    displayName: "ゾンビピグリン",
     type: "entity",
     attribute: "なし",
     hp: "20",
@@ -707,6 +663,7 @@ export const cardList = [
   },
   {
     name:["minecraft:wither_skeleton", "minecraft:wither_skeleton_spawn_egg"],
+    displayName: "ウィザースケルトン",
     type: "entity",
     attribute: "なし",
     hp: "60",
@@ -718,6 +675,7 @@ export const cardList = [
   },
   {
     name:["minecraft:crying_obsidian"],
+    displayName: "泣く黒曜石",
     type: "item",
     attribute: "アイテム・オブジェクト",
     Cact: "8",
@@ -731,6 +689,7 @@ export const cardList = [
   },
   {
     name:["minecraft:wither_rose"],
+    displayName: "ウィザーローズ",
     type: "item",
     attribute: "アイテム・合成素材",
     Cact: "0",
@@ -749,6 +708,7 @@ export const cardList = [
   },
   {
     name:["minecraft:strider", "minecraft:strider_spawn_egg"],
+    displayName: "ストライダー",
     type: "entity",
     attribute: "なし",
     hp: "32",
@@ -762,6 +722,7 @@ export const cardList = [
   },
   {
     name:["minecraft:lava_bucket"],
+    displayName: "溶岩入りバケツ",
     type: "item",
     attribute: "アイテム",
     Cact: "25",
@@ -772,6 +733,7 @@ export const cardList = [
   },
   {
     name:["minecraft:potato"],
+    displayName: "ジャガイモ(ブレイズ)",
     type: "item",
     attribute: "アイテム",
     Cact: "30",
@@ -782,6 +744,7 @@ export const cardList = [
   },
   {
     name:["minecraft:blaze", "minecraft:blaze_spawn_egg"],
+    displayName: "ブレイズ",
     type: "entity",
     attribute: "浮遊・速攻",
     hp: "20",
@@ -796,6 +759,7 @@ export const cardList = [
   },
   {
     name:["minecraft:netherite_ingot"],
+    displayName: "ネザライトインゴット",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -807,6 +771,7 @@ export const cardList = [
   },
   {
     name:["minecraft:saddle"],
+    displayName: "鞍",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -820,6 +785,7 @@ export const cardList = [
   // アニマル
   {
     name:["minecraft:chicken", "minecraft:chicken_spawn_egg"],
+    displayName: "ニワトリ",
     type: "entity",
     attribute: "なし",
     hp: "4",
@@ -835,6 +801,7 @@ export const cardList = [
   },
   {
     name:["minecraft:parrot", "minecraft:parrot_spawn_egg"],
+    displayName: "オウム",
     type: "entity",
     attribute: "浮遊",
     hp: "6",
@@ -850,6 +817,7 @@ export const cardList = [
   },
   {
     name:["minecraft:bee_nest"],
+    displayName: "ミツバチの巣",
     type: "item",
     attribute: "アイテム・オブジェクト",
     Cact: "3",
@@ -865,6 +833,7 @@ export const cardList = [
   },
   {
     name:["minecraft:composter"],
+    displayName: "コンポスター",
     type: "item",
     attribute: "アイテム・オブジェクト",
     Cact: "4",
@@ -877,6 +846,7 @@ export const cardList = [
   },
   {
     name:["minecraft:fox", "minecraft:fox_spawn_egg"],
+    displayName: "キツネ",
     type: "entity",
     attribute: "速攻",
     hp: "34",
@@ -890,6 +860,7 @@ export const cardList = [
   },
   {
     name:["minecraft:frog", "minecraft:frog_spawn_egg"],
+    displayName: "カエル",
     type: "entity",
     attribute: "なし",
     hp: "10",
@@ -904,6 +875,7 @@ export const cardList = [
   },
   {
     name:["minecraft:mooshroom", "minecraft:mooshroom_spawn_egg"],
+    displayName: "ムーシュルーム",
     type: "entity",
     attribute: "なし",
     hp: "62",
@@ -917,6 +889,7 @@ export const cardList = [
   },
   {
     name:["minecraft:polar_bear", "minecraft:polar_bear_spawn_egg"],
+    displayName: "シロクマ",
     type: "entity",
     attribute: "なし",
     hp: "130",
@@ -931,6 +904,7 @@ export const cardList = [
   },
   {
     name:["minecraft:egg"],
+    displayName: "卵",
     type: "item",
     attribute: "アイテム・合成素材",
     Cact: "0",
@@ -942,6 +916,7 @@ export const cardList = [
   },
   {
     name:["minecraft:poppy", "minecraft:red_flower"],
+    displayName: "ポピー",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -952,6 +927,7 @@ export const cardList = [
   },
   {
     name:["minecraft:dandelion", "minecraft:yellow_flower"],
+    displayName: "タンポポ",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -962,6 +938,7 @@ export const cardList = [
   },
   {
     name:["minecraft:pink_tulip"],
+    displayName: "桃色のチューリップ",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -972,6 +949,7 @@ export const cardList = [
   },
   {
     name:["minecraft:cactus"],
+    displayName: "サボテン",
     type: "item",
     attribute: "アイテム・合成素材",
     Cact: "0",
@@ -983,6 +961,7 @@ export const cardList = [
   },
   {
     name:["minecraft:bee", "minecraft:bee_spawn_egg"],
+    displayName: "ハチ",
     type: "entity",
     attribute: "浮遊・速攻",
     hp: "10",
@@ -997,6 +976,7 @@ export const cardList = [
   },
   {
     name:["minecraft:honey_bottle"],
+    displayName: "ハチミツ入りの瓶",
     type: "item",
     attribute: "キープアイテム",
     Cact: "-",
@@ -1009,6 +989,7 @@ export const cardList = [
   },
   {
     name:["minecraft:wooden_hoe"],
+    displayName: "木のクワ",
     type: "item",
     attribute: "アイテム・合成素材",
     Cact: "1",
@@ -1021,6 +1002,7 @@ export const cardList = [
   },
   {
     name:["minecraft:stone_hoe"],
+    displayName: "石のクワ",
     type: "item",
     attribute: "アイテム",
     Cact: "1",
@@ -1033,6 +1015,7 @@ export const cardList = [
   },
   {
     name:["minecraft:iron_hoe"],
+    displayName: "鉄のクワ",
     type: "item",
     attribute: "アイテム",
     Cact: "1",
@@ -1045,6 +1028,7 @@ export const cardList = [
   },
   {
     name:["minecraft:wheat"],
+    displayName: "小麦",
     type: "item",
     attribute: "アイテム・合成素材",
     Cact: "0",
@@ -1057,6 +1041,7 @@ export const cardList = [
   },
   {
     name:["minecraft:red_mushroom"],
+    displayName: "赤いキノコ",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -1068,6 +1053,7 @@ export const cardList = [
   },
   {
     name:["minecraft:packed_ice"],
+    displayName: "氷塊",
     type: "item",
     attribute: "ハンドアイテム",
     Cact: "10",
@@ -1081,6 +1067,7 @@ export const cardList = [
   },
   {
     name:["minecraft:bread"],
+    displayName: "パン",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -1091,6 +1078,7 @@ export const cardList = [
   },
   {
     name:["minecraft:cake"],
+    displayName: "ケーキ",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -1101,6 +1089,7 @@ export const cardList = [
   },
   {
     name:["minecraft:sheep", "minecraft:sheep_spawn_egg"],
+    displayName: "羊",
     type: "entity",
     attribute: "なし",
     hp: "10",
@@ -1114,6 +1103,7 @@ export const cardList = [
   },
   {
     name:["minecraft:cow", "minecraft:cow_spawn_egg"],
+    displayName: "ウシ",
     type: "entity",
     attribute: "なし",
     hp: "30",
@@ -1128,6 +1118,7 @@ export const cardList = [
   },
   {
     name:["minecraft:white_wool"],
+    displayName: "白色の羊毛",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
@@ -1143,6 +1134,7 @@ export const cardList = [
   },
   {
     name:["minecraft:red_wool"],
+    displayName: "赤色の羊毛",
     type: "item",
     attribute: "ハンドアイテム",
     Cact: "-",
@@ -1154,6 +1146,7 @@ export const cardList = [
   },
   {
     name:["minecraft:yellow_wool"],
+    displayName: "黄色の羊毛",
     type: "item",
     attribute: "ハンドアイテム",
     Cact: "-",
@@ -1165,6 +1158,7 @@ export const cardList = [
   },
   {
     name:["minecraft:pink_wool"],
+    displayName: "桃色の羊毛",
     type: "item",
     attribute: "ハンドアイテム",
     Cact: "-",
@@ -1176,6 +1170,7 @@ export const cardList = [
   },
   {
     name:["minecraft:green_wool"],
+    displayName: "緑色の羊毛",
     type: "item",
     attribute: "ハンドアイテム",
     Cact: "-",
@@ -1187,6 +1182,7 @@ export const cardList = [
   },
   {
     name:["minecraft:black_wool"],
+    displayName: "黒色の羊毛",
     type: "item",
     attribute: "ハンドアイテム",
     Cact: "-",
@@ -1198,6 +1194,7 @@ export const cardList = [
   },
   {
     name:["minecraft:milk_bucket"],
+    displayName: "ミルクバケツ",
     type: "item",
     attribute: "アイテム・合成素材",
     Cact: "0",
@@ -1210,6 +1207,7 @@ export const cardList = [
   },
   {
     name:["minecraft:bogged", "minecraft:bogged_spawn_egg"],
+    displayName: "ボグド",
     type: "entity",
     attribute: "速攻・貫通",
     hp: "16",
@@ -1225,6 +1223,7 @@ export const cardList = [
   // 残虐
   {
     name:["minecraft:pillager", "minecraft:pillager_spawn_egg"],
+    displayName: "ピリジャー",
     type: "entity",
     attribute: "残虐・速攻",
     hp: "20",
@@ -1240,6 +1239,7 @@ export const cardList = [
   },
   {
     name:["minecraft:trapped_chest"],
+    displayName: "トラップチェスト",
     type: "item",
     attribute: "アイテム・オブジェクト",
     Cact: "3",
@@ -1254,6 +1254,7 @@ export const cardList = [
   },
   {
     name:["minecraft:vindicator", "minecraft:vindicator_spawn_egg"],
+    displayName: "ヴィンディケーター",
     type: "entity",
     attribute: "残虐",
     hp: "45",
@@ -1269,6 +1270,7 @@ export const cardList = [
   },
   {
     name:["mcg:goat_horn"],
+    displayName: "ヤギの角笛",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -1279,6 +1281,7 @@ export const cardList = [
   },
   {
     name:["minecraft:evocation_illager", "minecraft:evoker_spawn_egg"],
+    displayName: "エヴォーカー",
     type: "entity",
     attribute: "残虐・速攻",
     hp: "35",
@@ -1298,6 +1301,7 @@ export const cardList = [
   },
   {
     name:["minecraft:armor_stand"],
+    displayName: "防具立て",
     type: "item",
     attribute: "アイテム",
     Cact: "2",
@@ -1312,6 +1316,7 @@ export const cardList = [
   },
   {
     name:["minecraft:ravager", "minecraft:ravager_spawn_egg"],
+    displayName: "ラヴェジャー",
     type: "entity",
     attribute: "残虐",
     hp: "80",
@@ -1328,6 +1333,7 @@ export const cardList = [
   },
   {
     name:["minecraft:banner"],
+    displayName: "不吉な旗",
     type: "item",
     attribute: "アイテム",
     Cact: "9",
@@ -1345,6 +1351,7 @@ export const cardList = [
   },
   {
     name:["minecraft:vex", "minecraft:vex_spawn_egg"],
+    displayName: "ヴェックス",
     type: "entity",
     attribute: "残虐・浮遊",
     hp: "20",
@@ -1358,6 +1365,7 @@ export const cardList = [
   },
   {
     name:["minecraft:iron_axe"],
+    displayName: "鉄の斧",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -1370,6 +1378,7 @@ export const cardList = [
   },
   {
     name:["mcg:totem"],
+    displayName: "不死のトーテム",
     type: "item",
     attribute: "キープアイテム",
     Cact: "-",
@@ -1383,6 +1392,7 @@ export const cardList = [
   },
   {
     name:["minecraft:ominous_bottle"],
+    displayName: "不吉な瓶",
     type: "item",
     attribute: "強化素材",
     Cact: "2",
@@ -1394,6 +1404,7 @@ export const cardList = [
   },
   {
     name:["mcg:awkward_potion"],
+    displayName: "奇妙なポーション",
     type: "item",
     attribute: "強化素材",
     Cact: "5",
@@ -1409,6 +1420,7 @@ export const cardList = [
   },
   {
     name:["mcg:heal_potion"],
+    displayName: "治癒のポーション",
     type: "item",
     attribute: "アイテム・合成素材",
     Cact: "0",
@@ -1423,6 +1435,7 @@ export const cardList = [
   },
   {
     name:["mcg:heal_splash_potion"],
+    displayName: "治癒のスプラッシュポーション",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -1435,6 +1448,7 @@ export const cardList = [
   },
   {
     name:["mcg:damage_potion"],
+    displayName: "負傷のポーション",
     type: "item",
     attribute: "アイテム・合成素材",
     Cact: "0",
@@ -1450,6 +1464,7 @@ export const cardList = [
   },
   {
     name:["mcg:damage_splash_potion"],
+    displayName: "負傷のスプラッシュポーション",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -1463,6 +1478,7 @@ export const cardList = [
   },
   {
     name:["mcg:speed_potion"],
+    displayName: "俊敏のポーション",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -1473,6 +1489,7 @@ export const cardList = [
   },
   {
     name:["mcg:fireresistance_potion"],
+    displayName: "耐火のポーション",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -1483,7 +1500,8 @@ export const cardList = [
   },
   // シーワールド
   {
-    name:["minecraft:tropical_fish", "minecraft:tropical_fish_spawn_egg"],
+    name:["minecraft:tropicalfish", "minecraft:tropical_fish_spawn_egg"],
+    displayName: "熱帯魚",
     type: "entity",
     attribute: "水中",
     hp: "10",
@@ -1499,6 +1517,7 @@ export const cardList = [
   },
   {
     name:["minecraft:turtle", "minecraft:turtle_spawn_egg"],
+    displayName: "カメ",
     type: "entity",
     attribute: "水中",
     hp: "30",
@@ -1513,6 +1532,7 @@ export const cardList = [
   },
   {
     name:["minecraft:squid", "minecraft:squid_spawn_egg"],
+    displayName: "イカ",
     type: "entity",
     attribute: "水中",
     hp: "21",
@@ -1526,19 +1546,20 @@ export const cardList = [
   },
   {
     name:["minecraft:barrel"],
+    displayName: "樽",
     type: "item",
-    attribute: "アイテム",
+    attribute: "アイテム・オブジェクト",
     Cact: "4",
     text: [
-      "§b使用時 / 「つりざお、製図台、ニンジン付きの棒」を入手する。",
-      "§bこのアイテムは自分ターン終了時に消滅する。",
-      "§6オブジェクト効果 / 海洋の心の所持数が5つ以下/ターン開始時に「生鱈」を入手する。",
-      "§6オブジェクト効果 / 海洋の心の所持数が6つ以上/ターン開始時に「釣り竿」を入手する。",
+      "§b使用時 / 「釣り竿、製図台、ニンジン付きの棒」を入手する。",
+      "§6オブジェクト効果 / ターン開始時、海洋の心の所持数が5つ以下であれば「生鱈」を入手する。",
+      "§6海洋の心の所持数が6つ以上であれば「釣り竿」を入手する。",
     ],
     texture: "textures/blocks/barrel_side"
   },
   {
     name:["minecraft:guardian", "minecraft:guardian_spawn_egg"],
+    displayName: "ガーディアン",
     type: "entity",
     attribute: "水中",
     hp: "35",
@@ -1556,6 +1577,7 @@ export const cardList = [
   },
   {
     name:["minecraft:axolotl", "minecraft:axolotl_spawn_egg"],
+    displayName: "ウーパールーパー",
     type: "entity",
     attribute: "水中・速攻",
     hp: "45",
@@ -1569,6 +1591,7 @@ export const cardList = [
   },
   {
     name:["minecraft:glow_squid", "minecraft:glow_squid_spawn_egg"],
+    displayName: "発光するイカ",
     type: "entity",
     attribute: "水中",
     hp: "20",
@@ -1582,6 +1605,7 @@ export const cardList = [
   },
   {
     name:["minecraft:dolphin", "minecraft:dolphin_spawn_egg"],
+    displayName: "イルカ",
     type: "entity",
     attribute: "水中・速攻",
     hp: "60",
@@ -1599,6 +1623,7 @@ export const cardList = [
   },
   {
     name:["minecraft:turtle_helmet"],
+    displayName: "タートルヘルメット",
     type: "item",
     attribute: "アイテム",
     Cact: "10",
@@ -1609,6 +1634,7 @@ export const cardList = [
   },
   {
     name:["minecraft:fishing_rod"],
+    displayName: "釣り竿",
     type: "item",
     attribute: "アイテム",
     Cact: "2",
@@ -1620,8 +1646,9 @@ export const cardList = [
   },
   {
     name:["minecraft:cartography_table"],
+    displayName: "製図台",
     type: "item",
-    attribute: "アイテム",
+    attribute: "アイテム・オブジェクト",
     Cact: "2",
     text: [
       "§b使用時 / 相手の場に出ているオブジェクトと同じカードを入手する。",
@@ -1631,6 +1658,7 @@ export const cardList = [
   },
   {
     name:["minecraft:cod"],
+    displayName: "生鱈",
     type: "item",
     attribute: "アイテム・強化合成",
     Cact: "0",
@@ -1642,6 +1670,7 @@ export const cardList = [
   },
   {
     name:["minecraft:cooked_cod"],
+    displayName: "焼き鱈",
     type: "item",
     attribute: "アイテム",
     Cact: "0",
@@ -1652,8 +1681,9 @@ export const cardList = [
   },
   {
     name:["minecraft:heart_of_the_sea"],
+    displayName: "海洋の心",
     type: "item",
-    attribute: "アイテム・強化合成",
+    attribute: "キープアイテム・強化合成",
     Cact: "0",
     text: [
       "§b+ゾンビのスポーンエッグ=ドラウンドのスポーンエッグ",
@@ -1663,6 +1693,7 @@ export const cardList = [
   },
   {
     name:["minecraft:drowned", "minecraft:drowned_spawn_egg"],
+    displayName: "ドラウンド",
     type: "entity",
     attribute: "水中・速攻",
     hp: "35",
@@ -1672,6 +1703,7 @@ export const cardList = [
     text: [
       "§b召喚時効果 / 草ブロック、トライデントを入手する。",
       "§bターン開始時効果 / 自分の手札にある「ゾンビのスポーンエッグ」を「ドラウンドのスポーンエッグ」にする。",
+      "§bトライデントを入手する。",
       "§b特殊効果 / 自分の場に3体ドラウンドがいるとき、トライデントを使用するたびに海洋の心を1つ入手する。",
       "§b特殊効果 / 装備がなくてもダメージを少し軽減する。",
     ],
@@ -1679,6 +1711,7 @@ export const cardList = [
   },
   {
     name:["minecraft:trident"],
+    displayName: "トライデント",
     type: "item",
     attribute: "武器",
     Cact: "1",
@@ -1691,6 +1724,7 @@ export const cardList = [
   },
   {
     name:["minecraft:elder_guardian", "minecraft:elder_guardian_spawn_egg"],
+    displayName: "エルダーガーディアン",
     type: "entity",
     attribute: "水中",
     hp: "150",
@@ -1699,12 +1733,14 @@ export const cardList = [
     Bact: "10",
     text: [
       "§b特殊効果 / 相手のオレンジボタンを封印する。",
+      "§b除外無効"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_elder_guardian"
   },
   // イベントアイテム
   {
     name:["minecraft:snowball"],
+    displayName: "雪玉",
     type: "item",
     attribute: "イベントアイテム",
     Cact: "0",

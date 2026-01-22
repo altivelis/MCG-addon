@@ -187,6 +187,22 @@ const recipe = [
       "mcg:damage_potion",
       "minecraft:creeper_spawn_egg"
     ]
+  },
+  {
+    item: "minecraft:cooked_cod",
+    name: "焼き鱈",
+    materials: [
+      "minecraft:cod",
+      "minecraft:coal"
+    ]
+  },
+  {
+    item: "minecraft:drowned_spawn_egg",
+    name: "ドラウンド",
+    materials: [
+      "minecraft:zombie_spawn_egg",
+      "minecraft:heart_of_the_sea"
+    ]
   }
 ]
 

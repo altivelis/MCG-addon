@@ -314,7 +314,7 @@ export function getOpponentPlayers(player) {
  * @param {mc.Player} player
  * @param {"B"|"W"|"R"} slot
  * @param {string} mobType
- * @param {object} options - { fly: boolean, guard: boolean, protect: boolean }
+ * @param {object} options - { fly: boolean, guard: boolean, protect: boolean, water: boolean }
  * @returns {mc.Entity}
  */
 export function summonMobInSlot(player, slot, mobType, options = {}) {
@@ -332,6 +332,7 @@ export function summonMobInSlot(player, slot, mobType, options = {}) {
   }
   if (options.guard) mob.addTag("guard");
   if (options.protect) mob.addTag("protect");
+  if (options.water) mob.addTag("water");
   
   playCardEffect(player, mob.location);
   

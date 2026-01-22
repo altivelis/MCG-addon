@@ -132,6 +132,7 @@ export const PARTICLE_CONFIG = {
     PROTECT: { x: -0.5, z: -0.5 },
     FLY: { y: -1 },
     GUARD: { x: -0.5, z: -0.5 },
+    WATER: { x: 2, y: 2, z: 2 },
     CALL_PIGMAN: { y: 1 },
     TURN_INDICATOR: { y: 2 }
   }
@@ -204,7 +205,8 @@ export const ERROR_MESSAGES = {
   NOT_RAID_MODE: "§c襲撃モード中でないため使用できません",
   WITCH_ALREADY_ENHANCED: "§cすでに強化されているため使用できません。",
   NO_ATTACKABLE_ENEMY: "§c相手の場に攻撃可能なモブが存在しません",
-  ENEMY_HAS_ATTACKABLE: "§c相手の場に攻撃可能なモブが存在するため使用できません"
+  ENEMY_HAS_ATTACKABLE: "§c相手の場に攻撃可能なモブが存在するため使用できません",
+  ELDER_GUARDIAN_RESTRICTION: "§cエルダーガーディアンの効果により使用できません"
 };
 
 // 成功メッセージ
@@ -228,4 +230,10 @@ export const EXCLUDE_TYPES = {
   BARRIER_BUTTONS: ["minecraft:barrier", "minecraft:wooden_button", "minecraft:stone_button"],
   PLAYERS_ONLY: ["minecraft:player"],
   DROPPED_ITEMS: ["minecraft:item"]
+};
+
+// 解放条件メッセージ
+export const UNLOCK_CONDITIONS = {
+  NETHER: "ゾンビピッグマンかウィザースケルトンを召喚すると開放",
+  GENOCIDE: "一度でもHPが15以下になると解放",
 };

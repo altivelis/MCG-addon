@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
-import { drawList, cardList } from "./cardinfo";
-import { cardInfo, getEntityDisplayName } from "./lib";
+import { cardList } from "./cardinfo";
+import { cardInfo, getEntityDisplayName, getItemCount } from "./lib";
 import "./system";
 import "./button";
 import "./craft";
@@ -9,6 +9,7 @@ import "./die";
 import "./commands/index";
 import { mcg } from "./system";
 import { VIEW_DISTANCE, EXCLUDE_TYPES, HP_DISPLAY, ALLOWED_ITEMS } from "./constants";
+import { DRAW_CARDS } from "./button";
 
 /**
  * 
@@ -66,6 +67,7 @@ function displayTargetInfo(player, target) {
   player.onScreenDisplay.setActionBar([
     ...displayName,
     ` ${Math.floor(hp.currentValue * HP_DISPLAY.DECIMAL_PLACES) / HP_DISPLAY.DECIMAL_PLACES}/${Math.floor(hp.defaultValue * HP_DISPLAY.DECIMAL_PLACES) / HP_DISPLAY.DECIMAL_PLACES} `,
+    (target.typeId == "minecraft:player") ? `\n海洋の心:${getItemCount(target, "minecraft:heart_of_the_sea")}` : "",
     ...statusTags,
     "\n",
     cardInfo(target.typeId, target.hasTag("enhance")).join("\n")
@@ -82,6 +84,7 @@ function getStatusTags(target) {
   if (target.hasTag("protect")) tags.push("§2除外無効 ");
   if (target.hasTag("guard")) tags.push("§2ガード ");
   if (target.hasTag("fly")) tags.push("§2浮遊 ");
+  if (target.hasTag("water")) tags.push("§2水中 ");
   if (target.hasTag("call_pigman")) tags.push("§2呼び声 ");
   if (target.hasTag("ace")) tags.push("§2大将 ");
   return tags;
@@ -176,7 +179,7 @@ function displayDrawInfo(player, block) {
   const leverBlock = player.hasTag("red") ? mcg.const.red.lever : mcg.const.blue.lever;
   const high = player.dimension.getBlock(leverBlock).permutation.getState("open_bit");
   
-  const drawInfo = getDrawInfo(block.typeId, high, player.hasTag("nether"), player.hasTag("genocide"));
+  const drawInfo = getDrawInfo(player, block.typeId, high);
   if (drawInfo) {
     player.onScreenDisplay.setActionBar(drawInfo);
   }
@@ -184,31 +187,21 @@ function displayDrawInfo(player, block) {
 
 /**
  * ブロックタイプに応じたドロー情報を取得
+ * @param {mc.Player} player
  * @param {string} blockType 
- * @param {boolean} high 
- * @param {boolean} hasNether 
- * @param {boolean} hasGenocide
+ * @param {boolean} high
  * @returns {string | null}
  */
-function getDrawInfo(blockType, high, hasNether, hasGenocide) {
+function getDrawInfo(player, blockType, high) {
   let text = "§bドロー可能なカード\n§3";
   
-  switch (blockType) {
-    case "minecraft:grass_block":
-      return text + (high ? drawList.grass.high : drawList.grass.low).join("\n");
-    case "minecraft:stone":
-      return text + (high ? drawList.stone.high : drawList.stone.low).join("\n");
-    case "minecraft:hay_block":
-      return text + (high ? drawList.hay.high : drawList.hay.low).join("\n");
-    case "minecraft:netherrack":
-      const prefix = hasNether ? "" : "§cゾンビピッグマンかウィザースケルトンを召喚すると開放\n";
-      return prefix + text + (high ? drawList.nether.high : drawList.nether.low).join("\n");
-    case "minecraft:stripped_dark_oak_log":
-      const prefi2 = hasGenocide ? "" : "§c一度でもHPが15以下になると解放\n";
-      return prefi2 + text + (high ? drawList.genocide.high : drawList.genocide.low).join("\n");
-    default:
-      return null;
+  let prefix = "";
+  let info = DRAW_CARDS[blockType]
+  if (info === undefined) return null;
+  if (info.requiresTag && !player.hasTag(info.requiresTag)) {
+    prefix = `§c${info.unlockConditions}\n`;
   }
+  return prefix + text + (high ? info.high : info.low).map(item => item.name).join("\n");
 }
 
 /**
@@ -229,10 +222,18 @@ function updateEntityNameTags() {
 }
 
 /**
- * ヴェックスの位置を固定
+ * 動いてしまうモブの位置を固定
  */
-function updateVexPosition() {
-  mc.world.getDimension("overworld").getEntities({ type: "minecraft:vex" }).forEach(entity => {
+function updateEntityPosition() {
+  mc.world.getDimension("overworld").getEntities().filter(e=>{
+    return [
+      "minecraft:vex",
+      "minecraft:tropicalfish",
+      "minecraft:guardian",
+      "minecraft:dolphin",
+      "minecraft:elder_guardian",
+    ].includes(e.typeId)
+  }).forEach(entity => {
     entity.teleport(entity.location, { keepVelocity: false });
   });
 }
@@ -246,7 +247,7 @@ mc.system.runInterval(() => {
   });
   
   updateEntityNameTags();
-  updateVexPosition();
+  updateEntityPosition();
 });
 
 // ダメージイベント

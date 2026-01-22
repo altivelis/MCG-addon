@@ -1,178 +1,178 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { cardInfo, getCard } from "./lib";
+import { cardInfo, getCard, getDisplayName } from "./lib";
 
 // ========== カードライブラリデータ ==========
 
-const cardLibrary = {
+export const cardLibrary = {
   normal: [
-    { name: "ウィザースケルトンの頭", id: "minecraft:wither_skeleton_skull" },
-    { name: "木の剣", id: "minecraft:wooden_sword" },
-    { name: "石の剣", id: "minecraft:stone_sword" },
-    { name: "金の剣", id: "minecraft:golden_sword" },
-    { name: "鉄の剣", id: "minecraft:iron_sword" },
-    { name: "ダイヤモンドの剣", id: "minecraft:diamond_sword" },
-    { name: "ネザライトの剣", id: "minecraft:netherite_sword" },
-    { name: "木のツルハシ", id: "minecraft:wooden_pickaxe" },
-    { name: "石のツルハシ", id: "minecraft:stone_pickaxe" },
-    { name: "鉄のツルハシ", id: "minecraft:iron_pickaxe" },
-    { name: "石炭", id: "minecraft:coal" },
-    { name: "丸石", id: "minecraft:cobblestone" },
-    { name: "鉄のインゴット", id: "minecraft:iron_ingot" },
-    { name: "ダイヤモンド", id: "minecraft:diamond" },
-    { name: "ニンジン付きの棒", id: "minecraft:carrot_on_a_stick" },
-    { name: "矢", id: "minecraft:arrow" }
+    "minecraft:wither_skeleton_skull",
+    "minecraft:wooden_sword",
+    "minecraft:stone_sword",
+    "minecraft:golden_sword",
+    "minecraft:iron_sword",
+    "minecraft:diamond_sword",
+    "minecraft:netherite_sword",
+    "minecraft:wooden_pickaxe",
+    "minecraft:stone_pickaxe",
+    "minecraft:iron_pickaxe",
+    "minecraft:coal",
+    "minecraft:cobblestone",
+    "minecraft:iron_ingot",
+    "minecraft:diamond",
+    "minecraft:carrot_on_a_stick",
+    "minecraft:arrow"
   ],
   overworld: {
     low: [
-      { name: "ブタ", id: "minecraft:pig" },
-      { name: "村人", id: "minecraft:villager_v2" },
-      { name: "チェスト", id: "minecraft:chest" },
-      { name: "くり抜かれたカボチャ", id: "minecraft:carved_pumpkin" }
+      "minecraft:pig",
+      "minecraft:villager_v2",
+      "minecraft:chest",
+      "minecraft:carved_pumpkin"
     ],
     high: [
-      { name: "オオカミ", id: "minecraft:wolf" },
-      { name: "鐘", id: "minecraft:bell" },
-      { name: "アレイ", id: "minecraft:allay" },
-      { name: "パンダ", id: "minecraft:panda" }
+      "minecraft:wolf",
+      "minecraft:bell",
+      "minecraft:allay",
+      "minecraft:panda"
     ],
     other: [
-      { name: "生の豚肉", id: "minecraft:porkchop" },
-      { name: "焼き豚", id: "minecraft:cooked_porkchop" },
-      { name: "スノーゴーレム", id: "minecraft:snow_golem" },
-      { name: "アイアンゴーレム", id: "minecraft:iron_golem" },
-      { name: "ジャック・オ・ランタン", id: "minecraft:lit_pumpkin" }
+      "minecraft:porkchop",
+      "minecraft:cooked_porkchop",
+      "minecraft:snow_golem",
+      "minecraft:iron_golem",
+      "minecraft:lit_pumpkin"
     ]
   },
   cave: {
     low: [
-      { name: "ゾンビ", id: "minecraft:zombie" },
-      { name: "スケルトン", id: "minecraft:skeleton" },
-      { name: "クリーパー", id: "minecraft:creeper" },
-      { name: "ウィッチ", id: "minecraft:witch" }
+      "minecraft:zombie",
+      "minecraft:skeleton",
+      "minecraft:creeper",
+      "minecraft:witch"
     ],
     high: [
-      { name: "モンスタースポナー", id: "minecraft:mob_spawner" },
-      { name: "ファントム", id: "minecraft:phantom" },
-      { name: "ブリーズ", id: "minecraft:breeze" },
-      { name: "エンダーチェスト", id: "minecraft:ender_chest" }
+      "minecraft:mob_spawner",
+      "minecraft:phantom",
+      "minecraft:breeze",
+      "minecraft:ender_chest"
     ],
     other: [
-      { name: "ハスク", id: "minecraft:husk" },
-      { name: "ストレイ", id: "minecraft:stray" },
-      { name: "洞窟グモ", id: "minecraft:cave_spider" },
-      { name: "エンチャントされた金のリンゴ", id: "minecraft:enchanted_golden_apple" },
-      { name: "クモの巣", id: "minecraft:web" }
+      "minecraft:husk",
+      "minecraft:stray",
+      "minecraft:cave_spider",
+      "minecraft:enchanted_golden_apple",
+      "minecraft:web"
     ]
   },
   nether: {
     low: [
-      { name: "ゾンビピグリン", id: "minecraft:zombie_pigman" },
-      { name: "ウィザースケルトン", id: "minecraft:wither_skeleton" },
-      { name: "泣く黒曜石", id: "minecraft:crying_obsidian" },
-      { name: "ウィザーローズ", id: "minecraft:wither_rose" }
+      "minecraft:zombie_pigman",
+      "minecraft:wither_skeleton",
+      "minecraft:crying_obsidian",
+      "minecraft:wither_rose"
     ],
     high: [
-      { name: "ストライダー", id: "minecraft:strider" },
-      { name: "溶岩入りバケツ", id: "minecraft:lava_bucket" },
-      { name: "ジャガイモ(ブレイズ)", id: "minecraft:blaze" },
-      { name: "ネザライトインゴット", id: "minecraft:netherite_ingot" }
+      "minecraft:strider",
+      "minecraft:lava_bucket",
+      "minecraft:blaze",
+      "minecraft:netherite_ingot"
     ],
     other: [
-      { name: "鞍", id: "minecraft:saddle", icon: "textures/items/saddle" }
+      "minecraft:saddle"
     ]
   },
   animal: {
     low: [
-      { name: "ニワトリ", id: "minecraft:chicken" },
-      { name: "オウム", id: "minecraft:parrot" },
-      { name: "ミツバチの巣", id: "minecraft:bee_nest" },
-      { name: "コンポスター", id: "minecraft:composter" }
+      "minecraft:chicken",
+      "minecraft:parrot",
+      "minecraft:bee_nest",
+      "minecraft:composter"
     ],
     high: [
-      { name: "キツネ", id: "minecraft:fox" },
-      { name: "カエル", id: "minecraft:frog" },
-      { name: "ムーシュルーム", id: "minecraft:mooshroom" },
-      { name: "シロクマ", id: "minecraft:polar_bear" }
+      "minecraft:fox",
+      "minecraft:frog",
+      "minecraft:mooshroom",
+      "minecraft:polar_bear"
     ],
     other: [
-      { name: "卵", id: "minecraft:egg" },
-      { name: "ポピー", id: "minecraft:poppy" },
-      { name: "タンポポ", id: "minecraft:dandelion" },
-      { name: "桃色のチューリップ", id: "minecraft:pink_tulip" },
-      { name: "サボテン", id: "minecraft:cactus" },
-      { name: "ハチ", id: "minecraft:bee" },
-      { name: "ハチミツ入りの瓶", id: "minecraft:honey_bottle" },
-      { name: "木のクワ", id: "minecraft:wooden_hoe" },
-      { name: "石のクワ", id: "minecraft:stone_hoe" },
-      { name: "鉄のクワ", id: "minecraft:iron_hoe" },
-      { name: "小麦", id: "minecraft:wheat" },
-      { name: "赤いキノコ", id: "minecraft:red_mushroom" },
-      { name: "氷塊", id: "minecraft:packed_ice" },
-      { name: "パン", id: "minecraft:bread" },
-      { name: "ケーキ", id: "minecraft:cake" },
-      { name: "羊", id: "minecraft:sheep" },
-      { name: "ウシ", id: "minecraft:cow" },
-      { name: "白色の羊毛", id: "minecraft:white_wool" },
-      { name: "赤色の羊毛", id: "minecraft:red_wool" },
-      { name: "黄色の羊毛", id: "minecraft:yellow_wool" },
-      { name: "桃色の羊毛", id: "minecraft:pink_wool" },
-      { name: "緑色の羊毛", id: "minecraft:green_wool" },
-      { name: "黒色の羊毛", id: "minecraft:black_wool" },
-      { name: "ミルクバケツ", id: "minecraft:milk_bucket" },
-      { name: "ボグド", id: "minecraft:bogged" }
+      "minecraft:egg",
+      "minecraft:poppy",
+      "minecraft:dandelion",
+      "minecraft:pink_tulip",
+      "minecraft:cactus",
+      "minecraft:bee",
+      "minecraft:honey_bottle",
+      "minecraft:wooden_hoe",
+      "minecraft:stone_hoe",
+      "minecraft:iron_hoe",
+      "minecraft:wheat",
+      "minecraft:red_mushroom",
+      "minecraft:packed_ice",
+      "minecraft:bread",
+      "minecraft:cake",
+      "minecraft:sheep",
+      "minecraft:cow",
+      "minecraft:white_wool",
+      "minecraft:red_wool",
+      "minecraft:yellow_wool",
+      "minecraft:pink_wool",
+      "minecraft:green_wool",
+      "minecraft:black_wool",
+      "minecraft:milk_bucket",
+      "minecraft:bogged"
     ]
   },
   raid: {
     low: [
-      { name: "ピリジャー", id: "minecraft:pillager" },
-      { name: "トラップチェスト", id: "minecraft:trapped_chest" },
-      { name: "ヴィンディケーター", id: "minecraft:vindicator" },
-      { name: "ヤギの角笛", id: "mcg:goat_horn" }
+      "minecraft:pillager",
+      "minecraft:trapped_chest",
+      "minecraft:vindicator",
+      "mcg:goat_horn"
     ],
     high: [
-      { name: "エヴォーカー", id: "minecraft:evocation_illager" },
-      { name: "防具立て", id: "minecraft:armor_stand" },
-      { name: "ラヴェジャー", id: "minecraft:ravager" },
-      { name: "不吉な旗", id: "minecraft:banner" }
+      "minecraft:evocation_illager",
+      "minecraft:armor_stand",
+      "minecraft:ravager",
+      "minecraft:banner"
     ],
     other: [
-      { name: "ヴェックス", id: "minecraft:vex" },
-      { name: "鉄の斧", id: "minecraft:iron_axe" },
-      { name: "不死のトーテム", id: "mcg:totem" },
-      { name: "不吉な瓶", id: "minecraft:ominous_bottle" },
-      { name: "奇妙なポーション", id: "mcg:awkward_potion" },
-      { name: "治癒のポーション", id: "mcg:heal_potion" },
-      { name: "治癒のスプラッシュポーション", id: "mcg:heal_splash_potion" },
-      { name: "負傷のポーション", id: "mcg:damage_potion" },
-      { name: "負傷のスプラッシュポーション", id: "mcg:damage_splash_potion" },
-      { name: "俊敏のポーション", id: "mcg:speed_potion" },
-      { name: "耐火のポーション", id: "mcg:fireresistance_potion" }
+      "minecraft:vex",
+      "minecraft:iron_axe",
+      "mcg:totem",
+      "minecraft:ominous_bottle",
+      "mcg:awkward_potion",
+      "mcg:heal_potion",
+      "mcg:heal_splash_potion",
+      "mcg:damage_potion",
+      "mcg:damage_splash_potion",
+      "mcg:speed_potion",
+      "mcg:fireresistance_potion"
     ]
   },
   seaworld: {
     low: [
-      { name: "熱帯魚", id: "minecraft:tropical_fish" },
-      { name: "カメ", id: "minecraft:turtle" },
-      { name: "イカ", id: "minecraft:squid" },
-      { name: "樽", id: "minecraft:barrel" }
+      "minecraft:tropicalfish",
+      "minecraft:turtle",
+      "minecraft:squid",
+      "minecraft:barrel"
     ],
     high: [
-      { name: "ガーディアン", id: "minecraft:guardian" },
-      { name: "ウーパールーパー", id: "minecraft:axolotl" },
-      { name: "発光するイカ", id: "minecraft:glow_squid" },
-      { name: "イルカ", id: "minecraft:dolphin" }
+      "minecraft:guardian",
+      "minecraft:axolotl",
+      "minecraft:glow_squid",
+      "minecraft:dolphin"
     ],
     other: [
-      { name: "亀の甲羅", id: "minecraft:turtle_helmet" },
-      { name: "釣り竿", id: "minecraft:fishing_rod" },
-      { name: "製図台", id: "minecraft:cartography_table" },
-      { name: "生鱈", id: "minecraft:cod"},
-      { name: "焼き鱈", id: "minecraft:cooked_cod"},
-      { name: "海洋の心", id: "minecraft:heart_of_the_sea" },
-      { name: "ドラウンド", id: "minecraft:drowned" },
-      { name: "トライデント", id: "minecraft:trident" },
-      { name: "エルダーガーディアン", id: "minecraft:elder_guardian" }
+      "minecraft:turtle_helmet",
+      "minecraft:fishing_rod",
+      "minecraft:cartography_table",
+      "minecraft:cod",
+      "minecraft:cooked_cod",
+      "minecraft:heart_of_the_sea",
+      "minecraft:drowned",
+      "minecraft:trident",
+      "minecraft:elder_guardian"
     ]
   }
 };
@@ -198,9 +198,10 @@ const CATEGORIES = {
  */
 function createCardListForm(title, cards) {
   const form = new ui.ActionFormData().title(title);
-  cards.forEach(card => {
-    let info = getCard(card.id);
-    form.button(card.name, info.texture);
+  cards.forEach(cardId => {
+    let info = getCard(cardId);
+    let displayName = getDisplayName(cardId);
+    form.button(displayName, info.texture);
   });
   form.button("§l§8戻る", "textures/ui/back_button_hover");
   return form;
@@ -211,12 +212,13 @@ function createCardListForm(title, cards) {
  * @param {Object} card - カード情報
  * @returns {ui.MessageFormData}
  */
-function createCardDetailForm(card) {
-  let body = card.name + "\n" + cardInfo(card.id).join("\n");
+function createCardDetailForm(cardId) {
+  let displayName = getDisplayName(cardId);
+  let body = displayName + "\n" + cardInfo(cardId).join("\n");
   
   // 強化情報があれば追加
-  if (getCard(card.id)?.enhance) {
-    body += "\n§d§l強化後§r\n" + cardInfo(card.id, true).join("\n");
+  if (getCard(cardId)?.enhance) {
+    body += "\n§d§l強化後§r\n" + cardInfo(cardId, true).join("\n");
   }
 
   return new ui.MessageFormData()
@@ -246,8 +248,8 @@ function showCardList(player, title, cards, backCallback) {
     }
 
     // カード詳細を表示
-    const selectedCard = cards[res.selection];
-    const detailForm = createCardDetailForm(selectedCard);
+    const selectedCardId = cards[res.selection];
+    const detailForm = createCardDetailForm(selectedCardId);
     
     detailForm.show(player).then(res2 => {
       if (res2.canceled || res2.selection === 0) return;

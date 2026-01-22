@@ -2,6 +2,8 @@ import * as mc from "@minecraft/server";
 import { cardList } from "./cardinfo";
 import { mcg } from "./system";
 import { SWORD_DAMAGE_MAP, SWORD_NAMES } from "./constants";
+import { getAllOpponentMobs, getAllTeamMobs, getOpponentPlayers, giveItemWithMessage } from "./card-helpers";
+import { cardLibrary } from "./cardbook";
 
 /**
  * Timeoutを見やすくする関数
@@ -97,41 +99,78 @@ export function hasItem(player, item){
 }
 
 /**
- * スロットからアイテムを1つ減らす関数
+ * アイテム個数を取得する関数
+ * @param {mc.Player} player 
+ * @param {String} item 
+ * @returns {number}
+ */
+export function getItemCount(player, item) {
+  /**
+   * @type {mc.Container}
+   */
+  const container = player.getComponent(mc.EntityInventoryComponent.componentId).container;
+  let count = 0;
+  for(let i=0; i<container.size; i++){
+    const itemStack = container.getItem(i);
+    if(itemStack?.typeId == item) {
+      count += itemStack.amount;
+    }
+  }
+  return count;
+}
+
+/**
+ * スロットからアイテムを指定した数減らす関数
  * @param {mc.Player} player 
  * @param {Number} index 
+ * @param {Number} amount 減らす数（デフォルト: 1）
+ * @returns {Number} 実際に減らした数
  */
-export function decrementSlot(player, index){
+export function decrementSlot(player, index, amount = 1){
   /**
    * @type {mc.Container}
    */
   const container = player.getComponent(mc.EntityInventoryComponent.componentId).container;
   const item = container.getItem(index);
-  if(item?.amount > 1){
-    item.amount--;
+  if(!item || amount <= 0) return 0;
+  
+  const decrementAmount = Math.min(amount, item.amount);
+  
+  if(item.amount > decrementAmount){
+    item.amount -= decrementAmount;
     container.setItem(index, item);
   }
   else{
     container.setItem(index);
   }
+  
+  return decrementAmount;
 }
 
 /**
- * インベントリからアイテムを1つ減らす関数
+ * インベントリから指定した数のアイテムを減らす関数
  * @param {mc.Player} player 
  * @param {String} item 
+ * @param {Number} amount 減らす数（デフォルト: 1）
+ * @returns {Number} 実際に減らした数
  */
-export function decrementContainer(player, item){
+export function decrementContainer(player, item, amount = 1){
   /**
    * @type {mc.Container}
    */
   const container = player.getComponent(mc.EntityInventoryComponent.componentId).container;
-  for(let i=0; i<container.size; i++){
+  let remainingAmount = amount;
+  let totalDecremented = 0;
+  
+  for(let i = 0; i < container.size && remainingAmount > 0; i++){
     if(container.getItem(i)?.typeId == item){
-      decrementSlot(player, i);
-      return;
+      const decremented = decrementSlot(player, i, remainingAmount);
+      totalDecremented += decremented;
+      remainingAmount -= decremented;
     }
   }
+  
+  return totalDecremented;
 }
 
 /**
@@ -331,7 +370,7 @@ export async function applyDamage(target, value, options={cause:mc.EntityDamageC
 
   // ダメージ適用後のHP取得
   const after = healthComponent.currentValue;
-  mc.world.sendMessage(`${after.toString()}`);
+  // mc.world.sendMessage(`${after.toString()}`);
   if(target instanceof mc.Player) {
     if(after <= 15 && !target.hasTag("genocide")){
       target.addTag("genocide");
@@ -537,4 +576,85 @@ export function createHash(key, seed = 0) {
   hash = Math.imul(hash, 0xc2b2ae35);
   hash ^= hash >>> 16;
   return hash >>> 0;
+}
+
+/**
+ * ウーパールーパー処理
+ * @param {mc.Player} attacker 
+ * @param {number} damage 
+ * @returns 
+ */
+export function axolotlEffect(attacker, damage) {
+  // ウーパールーパー処理
+  if (damage < 20) return;
+  const axolotls = getAllTeamMobs(attacker, {type: "minecraft:axolotl"});
+  axolotls.forEach(entity => {
+    giveItemWithMessage(attacker, "minecraft:heart_of_the_sea", 1, "海洋の心");
+    sendPlayerMessage(attacker, `[ウーパールーパー] 海洋の心を1つ獲得しました`);
+    lineParticle(entity.dimension, entity.location, attacker.location, "mcg:custom_explosion_emitter", 1.0, createColor(attacker.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue))
+  })
+}
+
+/**
+ * IDからカード情報を取得する（cardLibraryから、旧関数のレガシー互換性のため）
+ * @param {string} cardId - カードID
+ * @returns {Object|null} カード情報（見つからない場合はnull）
+ */
+export function getCardById(cardId) {
+  // 新しい構造では、cardLibraryには文字列のIDのみが格納されている
+  // カードが存在するかチェックして、存在すればID情報を含むオブジェクトを返す
+  for (const category of Object.values(cardLibrary)) {
+    if (Array.isArray(category)) {
+      if (category.includes(cardId)) {
+        return { id: cardId, name: getDisplayName(cardId) };
+      }
+    } else {
+      for (const subCategory of Object.values(category)) {
+        if (subCategory.includes(cardId)) {
+          return { id: cardId, name: getDisplayName(cardId) };
+        }
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * IDから表示名を取得する（cardinfo.jsのdisplayNameから）
+ * @param {string} cardId - カードID
+ * @returns {string} 表示名（見つからない場合は「不明なカード」）
+ */
+export function getDisplayName(cardId) {
+  const card = getCard(cardId);
+  if (card && card.displayName) {
+    return card.displayName;
+  }
+  return "不明なカード";
+}
+
+/**
+ * エンティティを回復する
+ * @param {mc.Entity} entity
+ * @param {number} amount 回復量
+ */
+export function healEntity(entity, amount) {
+  /**@type {mc.EntityHealthComponent} */
+  let health = entity.getComponent(mc.EntityHealthComponent.componentId);
+  if (!health) return;
+  let newHp = Math.min(health.currentValue + amount, health.effectiveMax);
+  health.setCurrentValue(newHp);
+}
+
+/**
+ * 
+ * @param {string} itemType 
+ * @param {mc.Container} container 
+ */
+export function findItem(itemType, container) {
+  for (let i=0; i<container.size; i++) {
+    if(container.getItem(i)?.typeId == itemType) {
+      return i;
+    }
+  }
+  return undefined;
 }

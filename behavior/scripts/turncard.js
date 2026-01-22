@@ -1,8 +1,12 @@
 import * as mc from "@minecraft/server";
-import { addAct, applyDamage, hasItem, giveSword, giveItem, sendPlayerMessage, myTimeout, setObject, getObject } from "./lib";
+import { addAct, applyDamage, hasItem, getItemCount, giveSword, giveItem, sendPlayerMessage, myTimeout, setObject, getObject, createColor, lineParticle, decrementContainer, findItem } from "./lib";
 import { 
   isSameTeam, isOpponentTeam, getPlayerTeam, getOpponentTeam,
-  playCardEffect, giveItemWithMessage, getAllTeamMobs, summonMobInSlot
+  playCardEffect, giveItemWithMessage, getAllTeamMobs, summonMobInSlot,
+  getMobsInSlot,
+  getSlotTag,
+  getOpponentMobsInSlot,
+  getSlotPosition
 } from "./card-helpers";
 import { mcg } from "./system";
 
@@ -362,7 +366,200 @@ export const turnMob = {
         applyDamage(newPlayer, 4);
       }
     }
+  },
+  
+  tropicalfish: {
+    /**
+     * 熱帯魚
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if (isSameTeam(entity, newPlayer)) {
+        giveItemWithMessage(newPlayer, "minecraft:heart_of_the_sea", 1, "海洋の心");
+        sendPlayerMessage(newPlayer, "[熱帯魚] 海洋の心を獲得");
+      }
+    }
+  },
+
+  turtle: {
+    /**
+     * カメ
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {mc.Entity} entity 
+     * @returns 
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if (!isSameTeam(entity, newPlayer)) return;
+      
+      // 自分の場にオブジェクトがないならact+5
+      const playerObject = getObject(getPlayerTeam(newPlayer));
+      if (playerObject.typeId === "minecraft:air") {
+        addAct(newPlayer, 5);
+        sendPlayerMessage(newPlayer, "[カメ] act+5");
+      }
+    }
+  },
+
+  squid: {
+    /**
+     * イカ
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     * @returns
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if (!isSameTeam(entity, newPlayer)) return;
+
+      let inv = oldPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
+      let targetItems = [
+        "minecraft:white_wool",
+        "minecraft:red_wool",
+        "minecraft:yellow_wool",
+        "minecraft:pink_wool",
+        "minecraft:green_wool",
+      ];
+      while (true) {
+        let index = undefined;
+        for (let i = 0; i < targetItems.length; i++) {
+          index = findItem(targetItems[i], inv);
+          if(index !== undefined) break;
+        }
+        if (index === undefined) break;
+        inv.setItem(index, new mc.ItemStack("minecraft:black_wool", inv.getItem(index).amount));
+      }
+      mc.world.getDimension("minecraft:overworld").setBlockType(oldPlayer.hasTag("red")?mcg.const.red.wool.red:mcg.const.blue.wool.red, "minecraft:air");
+      mc.world.getDimension("minecraft:overworld").setBlockType(oldPlayer.hasTag("red")?mcg.const.red.wool.yellow:mcg.const.blue.wool.yellow, "minecraft:air");
+      mc.world.getDimension("minecraft:overworld").setBlockType(oldPlayer.hasTag("red")?mcg.const.red.wool.pink:mcg.const.blue.wool.pink, "minecraft:air");
+      mc.world.getDimension("minecraft:overworld").setBlockType(oldPlayer.hasTag("red")?mcg.const.red.wool.green:mcg.const.blue.wool.green, "minecraft:air");
+      mc.world.getDimension("minecraft:overworld").setBlockType(oldPlayer.hasTag("red")?mcg.const.red.wool.black:mcg.const.blue.wool.black, "minecraft:black_wool");
+      const color = createColor({red:0, green:0, blue:0});
+      lineParticle(entity.dimension, entity.location, oldPlayer.location, "mcg:custom_explosion_emitter", 1.0, color);
+      entity.dimension.spawnParticle("mcg:knockback_roar_particle", oldPlayer.location, color);
+      sendPlayerMessage(newPlayer, "[イカ] 相手の羊毛の色を黒に変えました");
+    }
+  },
+
+  guardian: {
+    /**
+     * ガーディアン
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     * @returns
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if (isSameTeam(entity, newPlayer)) {
+        const color = createColor(getPlayerTeam(newPlayer) === "red" ? mcg.const.rgb.red : mcg.const.rgb.blue);
+        if (entity.hasTag("slotB")) {
+          getOpponentMobsInSlot(newPlayer, "B").forEach(mob => {
+            if (!mob.hasTag("fly") && !mob.hasTag("guard")) {
+              applyDamage(mob, 5);
+              lineParticle(entity.dimension, entity.location, mob.location, "mcg:custom_explosion_emitter", 1.0, color);
+              entity.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, color);
+            }
+          })
+        } else if (entity.hasTag("slotR")) {
+          getOpponentMobsInSlot(newPlayer, "R").forEach(mob => {
+            if (!mob.hasTag("fly") && !mob.hasTag("guard")) {
+              applyDamage(mob, 5);
+              lineParticle(entity.dimension, entity.location, mob.location, "mcg:custom_explosion_emitter", 1.0, color);
+              entity.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, color);
+            }
+          })
+        } else if (entity.hasTag("slotW")) {
+          getOpponentMobsInSlot(newPlayer, "W").forEach(mob => {
+            if (!mob.hasTag("fly") && !mob.hasTag("guard")) {
+              applyDamage(mob, 5);
+              lineParticle(entity.dimension, entity.location, mob.location, "mcg:custom_explosion_emitter", 1.0, color);
+              entity.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, color);
+            }
+          })
+        }
+      } else {
+        if(getItemCount(oldPlayer, "minecraft:heart_of_the_sea") < 10) return;
+        const color = createColor(getPlayerTeam(oldPlayer) === "red" ? mcg.const.rgb.red : mcg.const.rgb.blue);
+        if (getMobsInSlot(oldPlayer, "B", {type: "minecraft:guardian"}).length > 0 && getMobsInSlot(oldPlayer, "R", {type: "minecraft:guardian"}).length > 0 && getMobsInSlot(oldPlayer, "W").length == 0) {
+          const team = getPlayerTeam(oldPlayer);
+          const position = getSlotPosition(oldPlayer, "W");
+          const slotTag = getSlotTag("W");
+            
+          decrementContainer(oldPlayer, "minecraft:heart_of_the_sea", 5);
+          sendPlayerMessage(oldPlayer, "[ガーディアン] 海洋の心×5を消費")
+          const mob = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:elder_guardian", position);
+          mob.addTag(team);
+          mob.addTag(slotTag);
+          mob.addTag("water");
+          mob.addTag("protect");
+          mob.teleport({ ...mob.location, y: mob.location.y + 1 });
+          lineParticle(entity.dimension, getSlotPosition(oldPlayer, "B"), getSlotPosition(oldPlayer, "R"), "mcg:custom_explosion_emitter", 1.0, color);
+          mob.dimension.spawnParticle("mcg:knockback_roar_particle", position, color);
+          sendPlayerMessage(oldPlayer, "[ガーディアン] エルダーガーディアンを召喚しました");
+          mob.dimension.playSound("bubble.upinside", mob.location, { volume: 10 });
+          myTimeout(20, ()=>{
+            mc.world.getPlayers().forEach(p=>{
+              p.onScreenDisplay.setTitle([(oldPlayer.hasTag("red")?"§c":"§b"), "エルダーガーディアン"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
+              p.onScreenDisplay.updateSubtitle("§3海の支配者");
+            })
+          })
+        }
+      }
+    }
+  },
+  
+  axolotl: { run: () => {} },
+  glow_squid: { run: () => {} },
+
+  dolphin: {
+    /**
+     * イルカ
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     * @returns
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if (isSameTeam(entity, newPlayer)) {
+        if (entity.hasTag("water")) {
+          entity.removeTag("water");
+          entity.addTag("fly");
+        } else if (entity.hasTag("fly")) {
+          entity.removeTag("fly");
+          entity.addTag("water");
+        }
+        sendPlayerMessage(newPlayer, "[イルカ] 属性変更");
+      }
+    }
+  },
+  drowned: {
+    /**
+     * ドラウンド
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {mc.Entity} entity
+     * @returns
+     */
+    run: (newPlayer, oldPlayer, entity) => {
+      if (isSameTeam(entity, newPlayer)) {
+        giveItemWithMessage(newPlayer, "minecraft:trident", 1, "トライデント");
+        sendPlayerMessage(newPlayer, "[ドラウンド] トライデントを獲得");
+
+        const inv = newPlayer.getComponent(mc.EntityInventoryComponent.componentId).container;
+        for (let i = 0; i < inv.size; i++) {
+          const item = inv.getItem(i);
+          if (item && item?.typeId === "minecraft:zombie_spawn_egg") {
+            let newItem = new mc.ItemStack("minecraft:drowned_spawn_egg", item.amount);
+            inv.setItem(i, newItem);
+          }
+        }
+        sendPlayerMessage(newPlayer, "[ドラウンド] ゾンビスポーンエッグをドラウンドスポーンエッグに変換");
+      }
+    }
   }
+
 };
 
 /**
@@ -478,7 +675,46 @@ export const turnObject = {
   },
   
   lit_pumpkin: { run: () => {} },
-  trapped_chest: { run: () => {} }
+  trapped_chest: { run: () => {} },
+
+  barrel: {
+    /**
+     * 樽
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {string} blockTag
+     * @returns
+     */
+    run: (newPlayer, oldPlayer, blockTag) => {
+      if (getPlayerTeam(newPlayer) !== blockTag) return;
+
+      const hearts = getItemCount(newPlayer, "minecraft:heart_of_the_sea");
+      if (hearts <= 5) {
+        giveItemWithMessage(newPlayer, "minecraft:cod", 1, "生鱈");
+        sendPlayerMessage(newPlayer, "[樽] 生鱈を獲得");
+      } else {
+        giveItemWithMessage(newPlayer, "minecraft:fishing_rod", 1, "釣り竿");
+        sendPlayerMessage(newPlayer, "[樽] 釣り竿を獲得");
+      }
+    }
+  },
+
+  cartography_table: {
+    /**
+     * 製図台
+     * @param {mc.Player} newPlayer
+     * @param {mc.Player} oldPlayer
+     * @param {string} blockTag
+     * @returns
+     */
+    run: (newPlayer, oldPlayer, blockTag) => {
+      if (getPlayerTeam(newPlayer) !== blockTag) return;
+      let hearts = getItemCount(newPlayer, "minecraft:heart_of_the_sea");
+      addAct(newPlayer, hearts * 2);
+      sendPlayerMessage(newPlayer, `[製図台] act+${hearts * 2}`);
+    }
+  },
+  
 };
 
 /**

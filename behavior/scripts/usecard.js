@@ -1,13 +1,15 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { addAct, applyDamage, changeHealthBoost, createColor, decrementContainer, decrementSlot, getAct, getCard, getObject, giveItem, giveSword, handItem, lineParticle, myTimeout, sendPlayerMessage, setAct, setObject, swordDamage, swordName } from "./lib";
+import { addAct, applyDamage, axolotlEffect, changeHealthBoost, createColor, decrementContainer, decrementSlot, getAct, getCard, getDisplayName, getItemCount, getObject, giveItem, giveSword, handItem, healEntity, lineParticle, myTimeout, sendPlayerMessage, setAct, setObject, swordDamage, swordName } from "./lib";
 import { mcg } from "./system";
 import { 
   getPlayerTeam, getOpponentTeam, getSlotFromBlock, handleSlotAction,
   getMobsInSlot, getOpponentMobsInSlot, attackSlot, attackAllSlots,
   playCardEffect, sendDamageMessage, payCost, canPayCost, getOpponentPlayers,
   summonMobInSlot, isSlotOccupied, giveItemWithMessage, getPlayerObject,
-  getAllOpponentMobs, killMobsInSlot, handleKillMobInSlots
+  getAllOpponentMobs, killMobsInSlot, handleKillMobInSlots,
+  getAllTeamMobs,
+  getOpponentObject
 } from "./card-helpers";
 import { ERROR_MESSAGES } from "./constants";
 
@@ -164,6 +166,7 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           decrementContainer(player, "minecraft:packed_ice");
           attackSlot(player, slot, damage, weaponName);
+          axolotlEffect(player, damage);
         },
         // Pスロット - プレイヤー直接攻撃
         () => {
@@ -187,6 +190,7 @@ export const useCard = {
             playCardEffect(player, enemy.location);
             applyDamage(enemy, damage / 5);
             enemy.dimension.playSound("random.glass", enemy.location, {volume: 10});
+            axolotlEffect(player, damage / 5);
           });
         }
       );
@@ -323,7 +327,7 @@ export const useCard = {
       handleSlotAction(cardBlock.typeId, player,
         // B/W/Rスロット - モブ攻撃
         (slot) => {
-          const targets = getOpponentMobsInSlot(player, slot, { excludeTags: ["guard"] });
+          const targets = getOpponentMobsInSlot(player, slot, { excludeTags: ["guard", "water"] });
           if (targets.length === 0) {
             player.sendMessage(error_slot);
             return;
@@ -338,6 +342,7 @@ export const useCard = {
             playCardEffect(player, target.location);
             applyDamage(target, 30);
           });
+          axolotlEffect(player, 30);
         },
         // Pスロット - プレイヤー直接攻撃
         () => {
@@ -414,15 +419,6 @@ export const useCard = {
       if (cardBlock.typeId !== P && cardBlock.typeId !== O) {
         player.sendMessage(error_slot);
         return;
-      }
-      
-      // オブジェクト設置の場合、クラシックモードチェックを先に実行
-      if (cardBlock.typeId === O) {
-        const eventMode = mc.world.getDynamicProperty("event");
-        if (eventMode === 2) {
-          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
-          return;
-        }
       }
       
       payCost(player, parseInt(info.Cact));
@@ -514,30 +510,26 @@ export const useCard = {
         return;
       }
       
-      // オブジェクト設置の場合、クラシックモードチェックを先に実行
-      if (cardBlock.typeId === O) {
-        const eventMode = mc.world.getDynamicProperty("event");
-        if (eventMode === 2) {
-          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
-          return;
-        }
-      }
-      
       payCost(player, parseInt(info.Cact));
       player.dimension.playSound("block.bell.hit", player.location, {volume: 10});
       
       if (cardBlock.typeId === P) {
         sendPlayerMessage(player, "鐘を使用しました");
+        let attacked = false;
         mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:item"]}).forEach(entity => {
           let info = getCard(entity.typeId);
           entity.dimension.spawnParticle("mcg:knockback_roar_particle", entity.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           if (entity.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead") || (info.attribute.includes("残虐") && !entity.hasTag("ace"))) {
             applyDamage(entity, 999, {cause: mc.EntityDamageCause.magic});
+            attacked = true;
           } else {
             if (!entity.hasTag("ace")) entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
             entity.removeTag("protect");
           }
         });
+        if (attacked) {
+          axolotlEffect(player, 999);
+        }
       } else {
         setObject(player, "minecraft:bell");
         sendPlayerMessage(player, "鐘を設置しました");
@@ -624,8 +616,7 @@ export const useCard = {
       sendPlayerMessage(player, "焼き豚を使用しました");
       player.dimension.playSound("random.eat", player.location, {volume: 10});
       player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
-      const hp = player.getComponent(mc.EntityHealthComponent.componentId);
-      hp.setCurrentValue(Math.min(hp.currentValue + 6, hp.effectiveMax));
+      healEntity(player, 6);
       sendPlayerMessage(player, "HP+6");
     }
   },
@@ -769,15 +760,6 @@ export const useCard = {
         return;
       }
       
-      // オブジェクト設置の場合、クラシックモードチェック
-      if (cardBlock.typeId === O) {
-        const eventMode = mc.world.getDynamicProperty("event");
-        if (eventMode === 2) {
-          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
-          return;
-        }
-      }
-      
       payCost(player, parseInt(info.Cact));
       player.dimension.playSound("trial_spawner.open_shutter", player.location, {volume: 10});
       
@@ -893,12 +875,6 @@ export const useCard = {
             break;
         }
       } else {
-      // オブジェクト設置の場合、クラシックモードチェック
-        const eventMode = mc.world.getDynamicProperty("event");
-        if (eventMode === 2) {
-          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
-          return;
-        }
         setObject(player, "minecraft:ender_chest");
         sendPlayerMessage(player, "エンダーチェストを設置しました");
       }
@@ -1073,12 +1049,6 @@ export const useCard = {
       }
       
       if (cardBlock.typeId === O) {
-        // クラシックモードチェック
-        const eventMode = mc.world.getDynamicProperty("event");
-        if (eventMode === 2) {
-          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
-          return;
-        }
         payCost(player, parseInt(info.Cact));
         setObject(player, "minecraft:crying_obsidian");
         sendPlayerMessage(player, "泣く黒曜石を設置しました");
@@ -1345,15 +1315,6 @@ export const useCard = {
         return;
       }
       
-      // オブジェクト設置の場合、クラシックモードチェック
-      if (cardBlock.typeId === O) {
-        const eventMode = mc.world.getDynamicProperty("event");
-        if (eventMode === 2) {
-          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
-          return;
-        }
-      }
-      
       payCost(player, parseInt(info.Cact));
       player.dimension.playSound("block.beehive.enter", player.location, {volume: 10});
       
@@ -1383,15 +1344,6 @@ export const useCard = {
       if (cardBlock.typeId !== P && cardBlock.typeId !== O) {
         player.sendMessage(error_slot);
         return;
-      }
-      
-      // オブジェクト設置の場合、クラシックモードチェック
-      if (cardBlock.typeId === O) {
-        const eventMode = mc.world.getDynamicProperty("event");
-        if (eventMode === 2) {
-          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
-          return;
-        }
       }
       
       payCost(player, parseInt(info.Cact));
@@ -1519,8 +1471,7 @@ export const useCard = {
       sendPlayerMessage(player, "卵を使用しました");
       player.dimension.playSound("random.eat", player.location, {volume: 10});
       player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
-      const hp = player.getComponent(mc.EntityHealthComponent.componentId);
-      hp.setCurrentValue(Math.min(hp.currentValue + 1, hp.effectiveMax));
+      healEntity(player, 1);
       sendPlayerMessage(player, "HP+1");
     }
   },
@@ -1768,8 +1719,7 @@ export const useCard = {
       sendPlayerMessage(player, "パンを使用しました");
       player.dimension.playSound("random.eat", player.location, {volume: 10});
       player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
-      const hp = player.getComponent(mc.EntityHealthComponent.componentId);
-      hp.setCurrentValue(Math.min(hp.currentValue + 3, hp.effectiveMax));
+      healEntity(player, 3);
       sendPlayerMessage(player, "HP+3");
     }
   },
@@ -1788,8 +1738,7 @@ export const useCard = {
       sendPlayerMessage(player, "ケーキを使用しました");
       player.dimension.playSound("random.eat", player.location, {volume: 10});
       player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
-      const hp = player.getComponent(mc.EntityHealthComponent.componentId);
-      hp.setCurrentValue(Math.min(hp.currentValue + 9, hp.effectiveMax));
+      healEntity(player, 9);
       sendPlayerMessage(player, "HP+9");
       mc.world.sendMessage("おめでとう！プレゼントもあるよ！");
       giveItem(player, new mc.ItemStack("minecraft:chest"));
@@ -1918,15 +1867,6 @@ export const useCard = {
         return;
       }
       
-      // オブジェクト設置の場合、クラシックモードチェック
-      if (cardBlock.typeId === O) {
-        const eventMode = mc.world.getDynamicProperty("event");
-        if (eventMode === 2) {
-          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
-          return;
-        }
-      }
-      
       payCost(player, parseInt(info.Cact));
       
       // オブジェクトの入れ替え
@@ -2032,12 +1972,6 @@ export const useCard = {
         giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
         player.sendMessage("[入手] ニンジン付きの棒");
       } else {
-        // オブジェクト設置の場合、クラシックモードチェック
-        const eventMode = mc.world.getDynamicProperty("event");
-        if (eventMode === 2) {
-          player.sendMessage("§cクラシックモードではオブジェクトカードは使用できません");
-          return;
-        }
         payCost(player, parseInt(info.Cact));
         player.dimension.playSound("random.chestopen", player.location, {volume: 10});
 
@@ -2308,6 +2242,10 @@ export const useCard = {
           sendPlayerMessage(player, "ラヴェジャーを召喚しました");
           mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
           applyDamage(player, 4);
+          mc.world.getPlayers().forEach(p=>{
+            p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "ラヴェジャー"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
+            p.onScreenDisplay.updateSubtitle("§3破壊に飢えた獣");
+          })
         }
       );
     }
@@ -2435,6 +2373,7 @@ export const useCard = {
             ])
             applyDamage(mob, 25);
             mob.dimension.playSound("random.glass", mob.location, {volume: 10});
+            axolotlEffect(player, 25);
           });
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["fly", "guard"]}).forEach(mob=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
@@ -2636,9 +2575,8 @@ export const useCard = {
         sendPlayerMessage(player, "治癒のポーションを使用しました");
         player.dimension.playSound("random.drink", player.location, {volume: 10});
         player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
-        /**@type {mc.EntityHealthComponent} */
-        let health = player.getComponent(mc.EntityHealthComponent.componentId);
-        health.setCurrentValue(Math.min(health.currentValue + 5, health.effectiveMax));
+        healEntity(player, 5);
+        sendPlayerMessage(player, "HP+5");
         return;
       }
       
@@ -2672,9 +2610,7 @@ export const useCard = {
         if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
           applyDamage(mob, 15, {cause:mc.EntityDamageCause.magic});
         }else{
-          /**@type {mc.EntityHealthComponent} */
-          let health = mob.getComponent(mc.EntityHealthComponent.componentId);
-          health.setCurrentValue(Math.min(health.currentValue + 15, health.effectiveMax));
+          healEntity(mob, 15);
         }
       });
     }
@@ -2819,11 +2755,10 @@ export const useCard = {
         lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(teamColor));
         mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(teamColor));
         if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
-          /**@type {mc.EntityHealthComponent} */
-          let health = mob.getComponent(mc.EntityHealthComponent.componentId);
-          health.setCurrentValue(Math.min(health.currentValue + 20, health.effectiveMax));
+          healEntity(mob, 20);
         }else{
           applyDamage(mob, 20, {cause:mc.EntityDamageCause.magic});
+          axolotlEffect(player, 20);
         }
       });
     }
@@ -2867,16 +2802,19 @@ export const useCard = {
           }
           payCost(player, parseInt(info.Cact));
           sendPlayerMessage(player, "負傷のスプラッシュポーションを使用しました");
+          let axolotl_done = false;
           mobs.forEach(mob=>{
             mob.dimension.playSound("random.glass", mob.location, {volume: 10});
             lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
             if(mob.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead")){
-              /**@type {mc.EntityHealthComponent} */
-              let health = mob.getComponent(mc.EntityHealthComponent.componentId);
-              health.setCurrentValue(Math.min(health.currentValue + 20, health.effectiveMax));
+              healEntity(mob, 20);
             }else{
               applyDamage(mob, 20, {cause:mc.EntityDamageCause.magic});
+              if(!axolotl_done){
+                axolotlEffect(player, 20);
+                axolotl_done = true;
+              }
             }
           })
           break;
@@ -2947,6 +2885,440 @@ export const useCard = {
         lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
         mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       })
+    }
+  },
+  tropical_fish_spawn_egg: {
+    /**
+     * 熱帯魚
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:tropicalfish",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob) => {
+          sendPlayerMessage(player, "熱帯魚を召喚しました");
+          mob.dimension.playSound("bubble.upinside", mob.location, {volume: 10});
+          mob.addTag("water");
+          giveItemWithMessage(player, "minecraft:grass_block", 2, "草ブロック");
+          sendPlayerMessage(player, "[熱帯魚] 草ブロックを2つ獲得");
+        }
+      );
+    }
+  },
+  turtle_spawn_egg: {
+    /**
+     * カメ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:turtle",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob) => {
+          sendPlayerMessage(player, "カメを召喚しました");
+          mob.dimension.playSound("mob.chicken.plop", mob.location, {volume: 10});
+          mob.addTag("water");
+          
+          // 海洋の心の所持数が3つ以上の時、カメの甲羅を入手
+          const heartCount = getItemCount(player, "minecraft:heart_of_the_sea");
+          if (heartCount >= 3) {
+            giveItemWithMessage(player, "minecraft:turtle_helmet", 1, "カメの甲羅");
+            sendPlayerMessage(player, "[カメ] カメの甲羅を獲得");
+          }
+        }
+      );
+    }
+  },
+  squid_spawn_egg: {
+    /**
+     * イカ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:squid",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob) => {
+          sendPlayerMessage(player, "イカを召喚しました");
+          mob.dimension.playSound("bubble.upinside", mob.location, {volume: 10});
+          mob.addTag("water");
+          mob.teleport({...mob.location, y: mob.location.y + 1});
+        }
+      )
+    }
+  },
+  barrel: {
+    /**
+     * 樽
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(!canPayCost(player, parseInt(info.Cact))){
+        player.sendMessage(error_act);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case B:
+        case W:
+        case R:
+          player.sendMessage(error_slot);
+          return;
+        case P:
+          payCost(player, parseInt(info.Cact));
+          sendPlayerMessage(player, "樽を使用しました");
+          giveItemWithMessage(player, "minecraft:fishing_rod", 1, "釣り竿");
+          giveItemWithMessage(player, "minecraft:cartography_table", 1, "製図台");
+          giveItemWithMessage(player, "minecraft:carrot_on_a_stick", 1, "ニンジン付きの棒");
+          return;
+        case O:
+          payCost(player, parseInt(info.Cact));
+          setObject(player, "minecraft:barrel");
+          sendPlayerMessage(player, "樽を設置しました");
+          return;
+      }
+    }
+  },
+  guardian_spawn_egg: {
+    /**
+     * ガーディアン
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:guardian",
+        /**
+         * @param {mc.Entity} mob
+         **/
+        (mob) => {
+          sendPlayerMessage(player, "ガーディアンを召喚しました");
+          mob.dimension.playSound("bubble.upinside", mob.location, {volume: 10});
+          mob.addTag("water");
+          mob.teleport({...mob.location, y: mob.location.y + 1});
+          giveItemWithMessage(player, "minecraft:heart_of_the_sea", 1, "海洋の心");
+          sendPlayerMessage(player, "[ガーディアン] 海洋の心を獲得");
+        }
+      );
+    }
+  },
+  axolotl_spawn_egg: {
+    /**
+     * ウーパールーパー
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:axolotl",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob) => {
+          sendPlayerMessage(player, "ウーパールーパーを召喚しました");
+          mob.dimension.playSound("bubble.upinside", mob.location, {volume: 10});
+          mob.addTag("water");
+          giveSword(player, getCard(mob.typeId).atk, "速攻効果");
+        }
+      )
+    }
+  },
+  glow_squid_spawn_egg: {
+    /**
+     * 発光するイカ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:glow_squid",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob) => {
+          sendPlayerMessage(player, "発光するイカを召喚しました");
+          mob.dimension.playSound("bubble.upinside", mob.location, {volume: 10});
+          mob.addTag("water");
+          mob.teleport({...mob.location, y: mob.location.y + 1});
+          let waterCount = getAllTeamMobs(player).filter(m => m.hasTag("water")).length;
+          if(waterCount > 0) {
+            giveItemWithMessage(player, "minecraft:diamond", waterCount, "ダイヤモンド");
+            sendPlayerMessage(player, `[発光するイカ] ダイヤモンドを${waterCount}つ獲得`);
+          }
+        }
+      );
+    }
+  },
+  dolphin_spawn_egg: {
+    /**
+     * イルカ
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:dolphin",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob) => {
+          sendPlayerMessage(player, "イルカを召喚しました");
+          mob.dimension.playSound("bubble.upinside", mob.location, {volume: 10});
+          mob.addTag("water");
+          mob.teleport({...mob.location, y: mob.location.y + 1});
+          giveSword(player, getCard(mob.typeId).atk, "速攻効果");
+          if (getItemCount(player, "minecraft:heart_of_the_sea") >= 10) {
+            addAct(player, 30);
+            sendPlayerMessage(player, "[イルカ] act+30");
+          }
+        }
+      );
+    }
+  },
+  turtle_helmet: {
+    /**
+     * カメの甲羅
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(!canPayCost(player, parseInt(info.Cact))){
+        player.sendMessage(error_act);
+        return;
+      }
+      if(cardBlock.typeId !== P) {
+        player.sendMessage(error_slot);
+        return;
+      }
+      payCost(player, parseInt(info.Cact));
+      decrementSlot(player, player.selectedSlotIndex);
+      sendPlayerMessage(player, "カメの甲羅を使用しました");
+      player.addEffect(mc.EffectTypes.get("minecraft:absorption"), 20000000, {amplifier: 1, showParticles: true});
+      player.dimension.playSound("armor.equip_leather", player.location, {volume: 10});
+      player.dimension.spawnParticle("mcg:knockback_roar_particle", player.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
+    }
+  },
+  fishing_rod: {
+    /**
+     * 釣り竿
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(!canPayCost(player, parseInt(info.Cact))){
+        player.sendMessage(error_act);
+        return;
+      }
+      if(cardBlock.typeId !== P) {
+        player.sendMessage(error_slot);
+        return;
+      }
+      payCost(player, parseInt(info.Cact));
+      decrementSlot(player, player.selectedSlotIndex);
+      sendPlayerMessage(player, "釣り竿を使用しました");
+      giveItemWithMessage(player, "minecraft:grass_block", (getItemCount(player, "minecraft:heart_of_the_sea") > 5) ? 2 : 1, "草ブロック");
+      player.dimension.playSound("random.pop", player.location, {volume: 10});
+    }
+  },
+  cartography_table: {
+    /**
+     * 製図台
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      let info = getCard(handItem(player).typeId);
+      if(!canPayCost(player, parseInt(info.Cact))){
+        player.sendMessage(error_act);
+        return;
+      }
+      if(cardBlock.typeId !== P && cardBlock.typeId !== O) {
+        player.sendMessage(error_slot);
+        return;
+      }
+      switch(cardBlock.typeId){
+        case P:
+          if (getOpponentObject(player).typeId === "minecraft:air") {
+            player.sendMessage("§c相手のオブジェクトが存在しないため使用できません。");
+            return;
+          }
+          payCost(player, parseInt(info.Cact));
+          decrementSlot(player, player.selectedSlotIndex);
+          sendPlayerMessage(player, "製図台を使用しました");
+          let OpponentObject = getOpponentObject(player);
+          giveItemWithMessage(player, OpponentObject.typeId, 1, getDisplayName(OpponentObject.typeId));
+          player.dimension.playSound("random.pop", player.location, {volume: 10});
+          return;
+
+        case O:
+          payCost(player, parseInt(info.Cact));
+          setObject(player, "minecraft:cartography_table");
+          sendPlayerMessage(player, "製図台を設置しました");
+          return;
+      }
+    }
+  },
+  cod: {
+    /**
+     * 生鱈
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      if(cardBlock.typeId === P || cardBlock.typeId === O) {
+        player.sendMessage(error_slot);
+        return;
+      }
+      let blockTag = "";
+      switch(cardBlock.typeId){
+        case B:
+          blockTag = "B";
+          break;
+        case W:
+          blockTag = "W";
+          break;
+        case R:
+          blockTag = "R";
+          break;
+      }
+      let mobs = getMobsInSlot(player, blockTag).filter(m => m.hasTag("water"));
+      if(mobs.length == 0){
+        player.sendMessage(ERROR_MESSAGES.NO_TARGET_MOB);
+        return;
+      }
+      decrementSlot(player, player.selectedSlotIndex);
+      sendPlayerMessage(player, "生鱈を使用しました");
+      mobs.forEach(mob => {
+        mob.dimension.playSound("random.pop", mob.location, {volume: 10});
+        healEntity(mob, 10);
+      });
+    }
+  },
+  cooked_cod: {
+    /**
+     * 焼き鱈
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      if(cardBlock.typeId !== P) {
+        player.sendMessage(error_slot);
+        return;
+      }
+      decrementSlot(player, player.selectedSlotIndex);
+      sendPlayerMessage(player, "焼き鱈を使用しました");
+      player.dimension.playSound("random.pop", player.location, {volume: 10});
+      healEntity(player, 3);
+      sendPlayerMessage(player, "HP+3");
+    }
+  },
+  heart_of_the_sea: {},
+  drowned_spawn_egg: {
+    /**
+     * ドラウンド
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      summonCard(cardBlock, player, "minecraft:drowned",
+        /**
+         * @param {mc.Entity} mob
+         */
+        (mob) => {
+          sendPlayerMessage(player, "ドラウンドを召喚しました");
+          mob.dimension.playSound("bubble.upinside", mob.location, {volume: 10});
+          mob.addTag("water");
+          giveItemWithMessage(player, "minecraft:grass_block", 1, "草ブロック");
+          giveItemWithMessage(player, "minecraft:trident", 1, "トライデント");
+          sendPlayerMessage(player, "[ドラウンド] 草ブロックとトライデントを獲得");
+        });
+    }
+  },
+  trident: {
+    /**
+     * トライデント
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      if(cardBlock.typeId === O) {
+        player.sendMessage(error_slot);
+        return;
+      }
+      if(getItemCount(player, "minecraft:heart_of_the_sea") < 6) {
+        player.sendMessage("§c海洋の心が6つ未満のため使用できません。");
+        return;
+      }
+      let info = getCard(handItem(player).typeId);
+      if(!canPayCost(player, parseInt(info.Cact))){
+        player.sendMessage(error_act);
+        return;
+      }
+      const drownedEffectFlag = getAllTeamMobs(player, {type:"minecraft:drowned"}).length === 3;
+      if(cardBlock.typeId === P) {
+        payCost(player, parseInt(info.Cact));
+        decrementSlot(player, player.selectedSlotIndex);
+        decrementContainer(player, "minecraft:heart_of_the_sea", 1);
+        const opponentPlayer = getOpponentPlayers(player)[0];
+        const color = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
+        lineParticle(player.dimension, player.location, opponentPlayer.location, "mcg:custom_explosion_emitter", 1.0, createColor(color));
+        player.dimension.spawnParticle("mcg:knockback_roar_particle", opponentPlayer.location, createColor(color));
+        player.dimension.playSound("item.trident.throw", player.location, {volume: 10});
+        opponentPlayer.dimension.playSound("item.trident.hit", opponentPlayer.location, {volume: 10});
+        applyDamage(opponentPlayer, 3);
+        decrementContainer(player, "minecraft:packed_ice", 1);
+        sendPlayerMessage(player, "トライデントを使用しました");
+        if(drownedEffectFlag) {
+          giveItemWithMessage(player, "minecraft:heart_of_the_sea", 1, "海洋の心");
+          sendPlayerMessage(player, "[ドラウンド] 海洋の心を獲得");
+        }
+      } else {
+        let slot = "";
+        switch(cardBlock.typeId){
+          case B:
+            slot = "B";
+            break;
+          case W:
+            slot = "W";
+            break;
+          case R:
+            slot = "R";
+            break;
+        }
+        let mobs = getOpponentMobsInSlot(player, slot, {excludeTags:["guard"]});
+        if(mobs.length == 0){
+          player.sendMessage(ERROR_MESSAGES.NO_TARGET_MOB);
+          return;
+        }
+        payCost(player, parseInt(info.Cact));
+        decrementSlot(player, player.selectedSlotIndex);
+        decrementContainer(player, "minecraft:heart_of_the_sea", 1);
+        const color = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
+        player.dimension.playSound("item.trident.throw", player.location, {volume: 10});
+        mobs.forEach(mob => {
+          lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(color));
+          mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(color));
+          mob.dimension.playSound("item.trident.hit", mob.location, {volume: 10});
+          if(mob.hasTag("water")) {
+            mob.remove();
+          } else {
+            applyDamage(mob, 30);
+            axolotlEffect(player, 30);
+          }
+        })
+        decrementContainer(player, "minecraft:packed_ice", 1);
+        sendPlayerMessage(player, "トライデントを使用しました");
+        if(drownedEffectFlag) {
+          giveItemWithMessage(player, "minecraft:heart_of_the_sea", 1, "海洋の心");
+          sendPlayerMessage(player, "[ドラウンド] 海洋の心を獲得");
+        }
+      }
     }
   },
   snowball: {
