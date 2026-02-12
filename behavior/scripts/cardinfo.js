@@ -278,10 +278,12 @@ export const cardList = [
     name:["minecraft:carved_pumpkin"],
     displayName: "くり抜かれたカボチャ",
     type: "item",
-    attribute: "アイテム",
+    attribute: "アイテム・オブジェクト",
     Cact: "2",
     text: [
       "§b使用時 / 「スノーゴーレム」、「アイアンゴーレム」を入手する。",
+      "§6オブジェクト効果 / 自分の番開始時に3actと草ブロックを獲得する。",
+      "§6その後、このオブジェクトを破壊する。",
       "§b+石炭 = ジャック・オ・ランタン"
     ],
     texture: "textures/blocks/pumpkin_face_off"
@@ -322,7 +324,7 @@ export const cardList = [
     attribute: "浮遊・速攻",
     hp: "20",
     atk: "50",
-    Sact: "40",
+    Sact: "45",
     Bact: "20",
     text: [
       "§bアレイがいる状態でドローするたびに5act獲得する。",
@@ -389,7 +391,7 @@ export const cardList = [
     attribute: "なし",
     hp: "250",
     atk: "30x2",
-    Sact: "80",
+    Sact: "70",
     Bact: "5",
     text: [
       "§b召喚時効果 / 自分の場に村人がいると40act獲得する。"
@@ -529,7 +531,7 @@ export const cardList = [
     displayName: "モンスタースポナー",
     type: "item",
     attribute: "アイテム・オブジェクト",
-    Cact: "8",
+    Cact: "10",
     text: [
       "§b使用時 / 「ハスク」、「ストレイ」、「洞窟グモ」を獲得する。",
       "§6オブジェクト効果 / 自分のターン開始時、自分のactを15増やす。"
@@ -568,13 +570,14 @@ export const cardList = [
     displayName: "エンダーチェスト",
     type: "item",
     attribute: "アイテム・オブジェクト",
-    Cact: "30",
+    Cact: "15",
     text: [
-      "§b使用時 / 相手モブ全員に10ダメージを与え、以下のカードからランダムで獲得する。",
+      "§b使用時 / 相手モブ全員に5ダメージを与え、以下のカードからランダムで獲得する。",
       "§b「エンチャントされた金のリンゴ」",
-      "§b「ストレイ」x2",
-      "§b「ハスク」x2",
-      "§b「ファントム」x2",
+      "§b「ストレイ」と「ハスク」、",
+      "§b「ハスク」と「洞窟グモ」、",
+      "§b「洞窟グモ」と「ストレイ」",
+      "§6このカードは自分のオブジェクトがチェストの場合のみ設置できる。",
       "§6オブジェクト効果 / ターン開始時に草ブロックを3つ入手する。"
     ],
     texture: "textures/blocks/ender_chest_front"
@@ -599,10 +602,10 @@ export const cardList = [
     displayName: "ストレイ",
     type: "entity",
     attribute: "速攻・貫通",
-    hp: "40",
+    hp: "35",
     atk: "-",
     Sact: "20",
-    Bact: "10",
+    Bact: "6",
     text: [
       "§b召喚時効果 / 「矢」を2つ獲得する。",
       "§bターン開始時効果 / 「矢」を2つ獲得する。"
@@ -650,7 +653,7 @@ export const cardList = [
     name:["minecraft:zombie_pigman", "minecraft:zombie_pigman_spawn_egg"],
     displayName: "ゾンビピグリン",
     type: "entity",
-    attribute: "なし",
+    attribute: "ネザー",
     hp: "20",
     atk: "20x2",
     Sact: "10",
@@ -660,18 +663,6 @@ export const cardList = [
       "§b特殊効果/装備がなくてもダメージを少し軽減する。",
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_zombified_piglin"
-  },
-  {
-    name:["minecraft:wither_skeleton", "minecraft:wither_skeleton_spawn_egg"],
-    displayName: "ウィザースケルトン",
-    type: "entity",
-    attribute: "なし",
-    hp: "60",
-    atk: "15x3",
-    Sact: "20",
-    Bact: "10",
-    text: [],
-    texture: "textures/items/spawn_eggs/spawn_egg_wither_skeleton"
   },
   {
     name:["minecraft:crying_obsidian"],
@@ -707,10 +698,22 @@ export const cardList = [
     texture: "textures/blocks/flower_wither_rose"
   },
   {
+    name:["minecraft:ancient_debris"],
+    displayName: "古代の残骸",
+    type: "item",
+    attribute: "アイテム・オブジェクト",
+    Cact: "10",
+    text: [
+      "§b使用時 / 「ネザライトの欠片」を入手する。",
+      "§6オブジェクト効果 / 自分の場のネザーモンスターに除外無効を付与する。"
+    ],
+    texture: "textures/blocks/ancient_debris_side"
+  },
+  {
     name:["minecraft:strider", "minecraft:strider_spawn_egg"],
     displayName: "ストライダー",
     type: "entity",
-    attribute: "なし",
+    attribute: "ネザー",
     hp: "32",
     atk: "0",
     Sact: "20",
@@ -732,6 +735,18 @@ export const cardList = [
     texture: "textures/items/bucket_lava"
   },
   {
+    name:["minecraft:wither_skeleton", "minecraft:wither_skeleton_spawn_egg"],
+    displayName: "ウィザースケルトン",
+    type: "entity",
+    attribute: "ネザー",
+    hp: "60",
+    atk: "15x3",
+    Sact: "20",
+    Bact: "10",
+    text: [],
+    texture: "textures/items/spawn_eggs/spawn_egg_wither_skeleton"
+  },
+  {
     name:["minecraft:potato"],
     displayName: "ジャガイモ(ブレイズ)",
     type: "item",
@@ -746,7 +761,7 @@ export const cardList = [
     name:["minecraft:blaze", "minecraft:blaze_spawn_egg"],
     displayName: "ブレイズ",
     type: "entity",
-    attribute: "浮遊・速攻",
+    attribute: "浮遊・速攻・ネザー",
     hp: "20",
     atk: "30",
     Sact: "30",
@@ -758,14 +773,24 @@ export const cardList = [
     texture: "textures/items/spawn_eggs/spawn_egg_blaze"
   },
   {
+    name: ["minecraft:netherite_scrap"],
+    displayName: "ネザライトの欠片",
+    type: "item",
+    attribute: "合成素材",
+    Cact: "-",
+    text: [
+      "§b+ダイヤモンド = ネザライトインゴット",
+    ],
+    texture: "textures/items/netherite_scrap"
+  },
+  {
     name:["minecraft:netherite_ingot"],
     displayName: "ネザライトインゴット",
     type: "item",
     attribute: "合成素材",
     Cact: "-",
     text: [
-      "§b木の剣と合成できる。",
-      "§b合成するためには20act消費する必要がある。"
+      "§b+木の剣 = ネザライトの剣",
     ],
     texture: "textures/items/netherite_ingot"
   },
@@ -849,7 +874,7 @@ export const cardList = [
     displayName: "キツネ",
     type: "entity",
     attribute: "速攻",
-    hp: "34",
+    hp: "29",
     atk: "30",
     Sact: "25",
     Bact: "12",
@@ -878,10 +903,10 @@ export const cardList = [
     displayName: "ムーシュルーム",
     type: "entity",
     attribute: "なし",
-    hp: "62",
+    hp: "35",
     atk: "15",
-    Sact: "20",
-    Bact: "11",
+    Sact: "16",
+    Bact: "9",
     text: [
       "§b召喚時効果 / 「赤いキノコ」を入手する。"
     ],
@@ -967,7 +992,7 @@ export const cardList = [
     hp: "10",
     atk: "15",
     Sact: "4",
-    Bact: "5",
+    Bact: "3",
     text: [
       "§b召喚時効果 / 自分のオブジェクトがミツバチの巣であれば",
       "§b「ハチミツ入りの瓶」を1つ入手する。",
@@ -992,7 +1017,7 @@ export const cardList = [
     displayName: "木のクワ",
     type: "item",
     attribute: "アイテム・合成素材",
-    Cact: "1",
+    Cact: "0",
     text: [
       "§b使用時 / 「小麦」を1つ入手する。",
       "§b+丸石 = 石のクワ",
@@ -1005,10 +1030,9 @@ export const cardList = [
     displayName: "石のクワ",
     type: "item",
     attribute: "アイテム",
-    Cact: "1",
+    Cact: "0",
     text: [
       "§b使用時 / 「小麦」を1つ入手する。",
-      "§b「草ブロック」を1つ入手する。",
       "§b「ポピー」「タンポポ」「桃色のチューリップ」「サボテン」の中からランダムに1つ入手する。"
     ],
     texture: "textures/items/stone_hoe"
@@ -1018,10 +1042,10 @@ export const cardList = [
     displayName: "鉄のクワ",
     type: "item",
     attribute: "アイテム",
-    Cact: "1",
+    Cact: "0",
     text: [
       "§b使用時 / 「小麦」を2つ入手する。",
-      "§b「草ブロック」を3つ入手する。",
+      "§b「草ブロック」を入手する。",
       "§b「ポピー」「タンポポ」「桃色のチューリップ」「サボテン」の中からランダムに2つ入手する。"
     ],
     texture: "textures/items/iron_hoe"
@@ -1081,7 +1105,7 @@ export const cardList = [
     displayName: "ケーキ",
     type: "item",
     attribute: "アイテム",
-    Cact: "0",
+    Cact: "3",
     text: [
       "§b使用時 / 自分のHPを9回復して「チェスト」を1つ入手する。"
     ],
@@ -1200,8 +1224,7 @@ export const cardList = [
     Cact: "0",
     text: [
       "§b使用時 / 自分の任意のモブ(浮遊を除く)にガード属性を付与する。",
-      "§b+卵+小麦 = ケーキ",
-      "§bクラフト時にactを3消費する。"
+      "§b+卵+小麦 = ケーキ"
     ],
     texture: "textures/items/bucket_milk"
   },
@@ -1210,13 +1233,13 @@ export const cardList = [
     displayName: "ボグド",
     type: "entity",
     attribute: "速攻・貫通",
-    hp: "16",
+    hp: "25",
     atk: "-",
-    Sact: "15",
+    Sact: "12",
     Bact: "10",
     text: [
       "§b召喚時効果 / 自分の場にオブジェクトがあると矢を3つ入手する。",
-      "§bターン開始時効果 / 矢を1つ入手する。"
+      "§bターン開始時効果 / 矢を2つ入手する。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_bogged"
   },
@@ -1228,12 +1251,12 @@ export const cardList = [
     attribute: "残虐・速攻",
     hp: "20",
     atk: "-",
-    Sact: "5",
-    Bact: "2",
+    Sact: "11",
+    Bact: "6",
     text: [
       "§aこのモブは§c赤スロット§aにいる§e村人§aを置き換えることで召喚できる。",
-      "§b召喚時効果 / 使用者に3ダメージ与え、草ブロックと矢を入手する。",
-      "§bターン開始時効果 / 使用者に2ダメージ与え、草ブロックと矢を入手する。"
+      "§b召喚時効果 / 使用者に3ダメージ与え、矢を入手する。",
+      "§bターン開始時効果 / 使用者に3ダメージ与え、草ブロック2つと矢を入手する。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_pillager"
   },
@@ -1257,14 +1280,14 @@ export const cardList = [
     displayName: "ヴィンディケーター",
     type: "entity",
     attribute: "残虐",
-    hp: "45",
+    hp: "40",
     atk: "-",
-    Sact: "5",
-    Bact: "2",
+    Sact: "13",
+    Bact: "6",
     text: [
       "§aこのモブは§9青スロット§aにいる§e村人§aを置き換えることで召喚できる。",
-      "§b召喚時効果 / 使用者に4ダメージ与える。",
-      "§bターン開始時効果 / 鉄の斧を入手する。使用者に2ダメージ与える。"
+      "§b召喚時効果 / 使用者に3ダメージ与える。",
+      "§bターン開始時効果 / 鉄の斧、草ブロックx2を入手する。使用者に3ダメージ与える。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_vindicator"
   },
@@ -1283,19 +1306,17 @@ export const cardList = [
     name:["minecraft:evocation_illager", "minecraft:evoker_spawn_egg"],
     displayName: "エヴォーカー",
     type: "entity",
-    attribute: "残虐・速攻",
+    attribute: "残虐",
     hp: "35",
     atk: "-",
-    Sact: "5",
-    Bact: "2",
+    Sact: "15",
+    Bact: "6",
     text: [
       "§aこのモブは§f白スロット§aにいる§e村人§aを置き換えることで召喚できる。",
-      "§b召喚時効果 / 不死のトーテムを入手する。使用者に3ダメージ与える。",
-      "§b自分の空いているスロットに「ヴェックス」を召喚する。",
-      "§b相手の赤スロットと青スロットに存在するモブに15ダメージ与える。",
+      "§b召喚時効果 / 使用者に3ダメージ与える。その後、不死のトーテムを入手する。",
       "§bターン終了時効果 / 自分の空いているスロットに「ヴェックス」を召喚する。",
-      "§bターン開始時効果 / 使用者に5ダメージ与え、",
-      "§b相手の赤スロットと青スロットに存在するモブに15ダメージ与える。"
+      "§bターン開始時効果 / 使用者に3ダメージ与え、草ブロックx2を入手する。",
+      "§b相手の全てのモブに10ダメージ与える。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_evoker"
   },
@@ -1306,7 +1327,7 @@ export const cardList = [
     attribute: "アイテム",
     Cact: "2",
     text: [
-      "§b使用時 / 使用者に3ダメージ与える。",
+      "§b使用時 / 使用者に2ダメージ与える。",
       "§bその後、指定した相手のスロットに「防具立て」を設置する。",
       "§b「防具立て」は攻撃の対象にならず、あらゆるダメージは無効化される。",
       "§b「防具立て」のあるスロットにはモブを召喚できない。",
@@ -1321,13 +1342,12 @@ export const cardList = [
     attribute: "残虐",
     hp: "80",
     atk: "50",
-    Sact: "13",
-    Bact: "4",
+    Sact: "24",
+    Bact: "6",
     text: [
-      "§aこのモブは自分の場に「残虐」カードがあるときのみ",
-      "§f白スロット§aに召喚できる。",
-      "§b召喚時効果 / 使用者に4ダメージ与える。",
-      "§bターン開始時効果 / 使用者に4ダメージ与える。"
+      "§aこのモブは自分の場に「残虐」カードがあるときのみ召喚できる。",
+      "§b召喚時効果 / 使用者に6ダメージ与える。",
+      "§bターン開始時効果 / 使用者に6ダメージ与える。"
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_ravager"
   },
@@ -1427,7 +1447,7 @@ export const cardList = [
     text: [
       "§b自分か自分の場のモブに対して使用できる。",
       "§b使用時 / 対象に15HP分の回復効果を付与する。",
-      "§bプレイヤーに対しては5HP分の回復効果を付与する。",
+      "§bプレイヤーに対しては8HP分の回復効果を付与する。",
       "§bアンデッド系モブに対しては防御力貫通の15ダメージを与える。",
       "§b+クリーパー = 治癒のスプラッシュポーション"
     ],
@@ -1483,7 +1503,7 @@ export const cardList = [
     attribute: "アイテム",
     Cact: "0",
     text: [
-      "§b使用時 / 25actを獲得する。"
+      "§b使用時 / 15actを獲得する。"
     ],
     texture: "textures/items/potion_bottle_moveSpeed"
   },
@@ -1523,7 +1543,7 @@ export const cardList = [
     hp: "30",
     atk: "0",
     Sact: "5",
-    Bact: "3",
+    Bact: "1",
     text: [
       "§b召喚時効果 / 海洋の心の所持数が3つ以上の時、カメの甲羅を1つ入手する。",
       "§bターン開始時効果 / 自分の場にオブジェクトがないならact+5",
@@ -1580,12 +1600,12 @@ export const cardList = [
     displayName: "ウーパールーパー",
     type: "entity",
     attribute: "水中・速攻",
-    hp: "45",
+    hp: "32",
     atk: "15",
     Sact: "25",
     Bact: "9",
     text: [
-      "§b特殊効果 / 自分プレイヤーが攻撃力20以上の攻撃を行うたびに「海洋の心」を1つ入手する。",
+      "§b特殊効果 / 自分プレイヤーが金の剣以上の剣で攻撃を行うたびに「海洋の心」を1つ入手する。",
     ],
     texture: "textures/items/spawn_eggs/spawn_egg_axolotl"
   },
@@ -1623,7 +1643,7 @@ export const cardList = [
   },
   {
     name:["minecraft:turtle_helmet"],
-    displayName: "タートルヘルメット",
+    displayName: "亀の甲羅",
     type: "item",
     attribute: "アイテム",
     Cact: "10",

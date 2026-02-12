@@ -33,8 +33,8 @@
         "always_show": true
       },
       "minecraft:health": {
-        "value": 16,
-        "max": 16
+        "value": 25,
+        "max": 25
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [

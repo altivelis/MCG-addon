@@ -1,12 +1,14 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
-import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline, cardInfo, createColor, lineParticle, getPlayerColoredName, setTime, getTime, progressTime, createHash, findItem } from "./lib";
+import { myTimeout, giveItem, setAct, getAct, addAct, getCard, giveSword, sendPlayerMessage, applyDamage, clearInventory, isOnline, cardInfo, createColor, lineParticle, getPlayerColoredName, setTime, getTime, progressTime, createHash, findItem, getObject } from "./lib";
 import { turnItem, turnMob, turnObject } from "./turncard";
 import { 
   GAME_CONFIG, GAME_STATUS, SUCCESS_MESSAGES, ERROR_MESSAGES, 
   SIGN_COORDS, LOBBY_COORDS, ARENA_COORDS, PARTICLE_CONFIG,
   CAMERA_ANIMATION, TITLE_CONFIG, TIMER_CONFIG, TURN_END_REMOVE_ITEMS, RAID_MODE
 } from "./constants";
+import { generateBannedDecks } from "./deck-ban";
+import { getAllTeamMobs } from "./card-helpers";
 
 export const mcg = {
   const: {
@@ -226,6 +228,29 @@ function spawnEntityAttributeParticles() {
   });
 }
 
+// ========== カード常時効果処理 ==========
+mc.system.runInterval(() => {
+  if (mc.world.getDynamicProperty("status") !== GAME_STATUS.IN_GAME) return;
+  if (getObject("red").typeId === "minecraft:ancient_debris") {
+    let owner = mc.world.getPlayers({ tags: ["red"] })[0];
+    getAllTeamMobs(owner).filter(mob => {
+      let info = getCard(mob.typeId);
+      return info && info.attribute.includes("ネザー");
+    }).forEach(mob => {
+      mob.addTag("protect");
+    })
+  }
+  if (getObject("blue").typeId === "minecraft:ancient_debris") {
+    let owner = mc.world.getPlayers({ tags: ["blue"] })[0];
+    getAllTeamMobs(owner).filter(mob => {
+      let info = getCard(mob.typeId);
+      return info && info.attribute.includes("ネザー");
+    }).forEach(mob => {
+      mob.addTag("protect");
+    })
+  }
+}, 4)
+
 // ========== プレイヤー管理 ==========
 
 mc.system.runInterval(() => {
@@ -307,6 +332,13 @@ function initialize_config() {
   mc.world.setDynamicProperty("start_act", GAME_CONFIG.START_ACT);
   mc.world.setDynamicProperty("end_act", GAME_CONFIG.END_ACT);
   mc.world.setDynamicProperty("event", GAME_CONFIG.EVENT_MODE);
+  mc.world.setDynamicProperty("deck_ban", GAME_CONFIG.DECK_BAN_COUNT);
+  mc.world.setDynamicProperty("overworld_bannable", GAME_CONFIG.OVERWORLD_BANNABLE);
+  mc.world.setDynamicProperty("cave_bannable", GAME_CONFIG.CAVE_BANNABLE);
+  mc.world.setDynamicProperty("nether_bannable", GAME_CONFIG.NETHER_BANNABLE);
+  mc.world.setDynamicProperty("animal_bannable", GAME_CONFIG.ANIMAL_BANNABLE);
+  mc.world.setDynamicProperty("genocide_bannable", GAME_CONFIG.GENOCIDE_BANNABLE);
+  mc.world.setDynamicProperty("seaworld_bannable", GAME_CONFIG.SEAWORLD_BANNABLE);
   mc.world.sendMessage(SUCCESS_MESSAGES.CONFIG_INITIALIZED);
 }
 
@@ -434,7 +466,7 @@ function initializePlayers(red, blue) {
  * @param {mc.Player} red
  * @param {mc.Player} blue
  */
-function startGameAnimation(red, blue) {
+async function startGameAnimation(red, blue) {
   // 移動禁止
   red.inputPermissions.movementEnabled = false;
   blue.inputPermissions.movementEnabled = false;
@@ -451,30 +483,13 @@ function startGameAnimation(red, blue) {
     });
   });
 
-  myTimeout(20, () => {
-    teleportPlayersToArena(red, blue);
-    startCameraSequence(red, blue);
-  });
-}
-
-/**
- * プレイヤーをアリーナにテレポート
- * @param {mc.Player} red
- * @param {mc.Player} blue
- */
-function teleportPlayersToArena(red, blue) {
+  await mc.system.waitTicks(20);
+  // プレイヤーをアリーナにテレポート
   red.teleport({ x: 15.5, y: 5.5, z: 0.5 }, { rotation: { x: 0, y: 90 } });
   blue.teleport({ x: -15.5, y: 5.5, z: 0.5 }, { rotation: { x: 0, y: -90 } });
   mc.world.setDynamicProperty("anim", true);
-}
 
-/**
- * カメラシーケンスを開始
- * @param {mc.Player} red
- * @param {mc.Player} blue
- */
-function startCameraSequence(red, blue) {
-  // カメラ上空へ
+  // カメラシーケンス開始
   red.camera.setCamera("minecraft:free", {
     location: { x: 0, y: 40, z: 0 },
     rotation: { x: 90, y: 90 }
@@ -483,32 +498,22 @@ function startCameraSequence(red, blue) {
     location: { x: 0, y: 40, z: 1 },
     rotation: { x: 90, y: -90 }
   });
+  await mc.system.waitTicks(20);
 
-  myTimeout(20, () => {
-    // カメラ降下
-    red.camera.setCamera("minecraft:free", {
-      location: { x: 0, y: 6, z: 0 },
-      rotation: { x: 0, y: 90 },
-      easeOptions: { easeTime: 2, easeType: "OutCirc" }
-    });
-    blue.camera.setCamera("minecraft:free", {
-      location: { x: 0, y: 6, z: 1 },
-      rotation: { x: 0, y: -90 },
-      easeOptions: { easeTime: 2, easeType: "OutCirc" }
-    });
-
-    myTimeout(40, () => {
-      showDuelTitle(red, blue);
-    });
+  // カメラ降下
+  red.camera.setCamera("minecraft:free", {
+    location: { x: 0, y: 6, z: 0 },
+    rotation: { x: 0, y: 90 },
+    easeOptions: { easeTime: 2, easeType: "OutCirc" }
   });
-}
+  blue.camera.setCamera("minecraft:free", {
+    location: { x: 0, y: 6, z: 1 },
+    rotation: { x: 0, y: -90 },
+    easeOptions: { easeTime: 2, easeType: "OutCirc" }
+  });
+  await mc.system.waitTicks(40);
 
-/**
- * DUELタイトルを表示
- * @param {mc.Player} red
- * @param {mc.Player} blue
- */
-function showDuelTitle(red, blue) {
+  // DUELタイトル表示
   // カメラ移動
   red.camera.setCamera("minecraft:free", {
     location: { x: -13, y: 6, z: 0 },
@@ -523,27 +528,17 @@ function showDuelTitle(red, blue) {
 
   red.playSound("apply_effect.bad_omen", { location: { x: -13, y: 6, z: 0 } });
   blue.playSound("apply_effect.bad_omen", { location: { x: 13, y: 6, z: 1 } });
+  await mc.system.waitTicks(20);
 
-  myTimeout(20, () => {
-    red.onScreenDisplay.setTitle("§oDUEL", { fadeInDuration: 0, fadeOutDuration: 20, stayDuration: 40 });
-    blue.onScreenDisplay.setTitle("§oDUEL", { fadeInDuration: 0, fadeOutDuration: 20, stayDuration: 40 });
-    red.onScreenDisplay.updateSubtitle("vs §b" + blue.nameTag);
-    blue.onScreenDisplay.updateSubtitle("vs §c" + red.nameTag);
-    mc.world.sendMessage("対戦を開始しました");
-    mc.world.sendMessage("§l§c" + red.nameTag + "§r vs §l§b" + blue.nameTag);
+  red.onScreenDisplay.setTitle("§oDUEL", { fadeInDuration: 0, fadeOutDuration: 20, stayDuration: 40 });
+  blue.onScreenDisplay.setTitle("§oDUEL", { fadeInDuration: 0, fadeOutDuration: 20, stayDuration: 40 });
+  red.onScreenDisplay.updateSubtitle("vs §b" + blue.nameTag);
+  blue.onScreenDisplay.updateSubtitle("vs §c" + red.nameTag);
+  mc.world.sendMessage("対戦を開始しました");
+  mc.world.sendMessage("§l§c" + red.nameTag + "§r vs §l§b" + blue.nameTag);
+  await mc.system.waitTicks(40);
 
-    myTimeout(40, () => {
-      endAnimationAndStartGame(red, blue);
-    });
-  });
-}
-
-/**
- * アニメーション終了とゲーム開始
- * @param {mc.Player} red
- * @param {mc.Player} blue
- */
-function endAnimationAndStartGame(red, blue) {
+  // アニメーション終了とゲーム開始
   // カメラフェード
   [red, blue].forEach(player => {
     player.camera.fade({
@@ -551,18 +546,15 @@ function endAnimationAndStartGame(red, blue) {
       fadeColor: { red: 0, green: 0, blue: 0 }
     });
   });
+  await mc.system.waitTicks(20);
 
-  myTimeout(20, () => {
-    red.camera.clear();
-    blue.camera.clear();
-    mc.world.setDynamicProperty("anim", false);
-    red.inputPermissions.movementEnabled = true;
-    blue.inputPermissions.movementEnabled = true;
-
-    myTimeout(20, () => {
-      distributeInitialItems(red, blue);
-    });
-  });
+  red.camera.clear();
+  blue.camera.clear();
+  mc.world.setDynamicProperty("anim", false);
+  red.inputPermissions.movementEnabled = true;
+  blue.inputPermissions.movementEnabled = true;
+  await mc.system.waitTicks(20);
+  distributeInitialItems(red, blue);
 }
 
 /**
@@ -573,6 +565,12 @@ function endAnimationAndStartGame(red, blue) {
 function distributeInitialItems(red, blue) {
   mc.world.setDynamicProperty("status", 2);
   mc.world.setDynamicProperty("turn", 1);
+
+  // デッキBAN決定
+  const bannedDecks = generateBannedDecks();
+  if (bannedDecks.length > 0) {
+    mc.world.sendMessage(`§c今回のゲームでは次のデッキがBANされました: §e§l${bannedDecks.join(", ")}`);
+  }
 
   // 望遠鏡とウィザー頭蓋骨配布
   [red, blue].forEach(player => {
@@ -806,7 +804,7 @@ function cleanupDroppedItems(turnPlayer) {
  */
 function applyTurnEffects(turnPlayer, notTurnPlayer) {
   // ポーション効果削除
-  turnPlayer.removeEffect(mc.EffectTypes.get("minecraft:absorption"));
+  notTurnPlayer.removeEffect(mc.EffectTypes.get("minecraft:absorption"));
 
   // 泣く黒曜石効果
   const oppositeTeam = turnPlayer.hasTag("red") ? "blue" : "red";

@@ -1,7 +1,7 @@
 import * as mc from "@minecraft/server";
 import { cardList } from "./cardinfo";
 import { mcg } from "./system";
-import { SWORD_DAMAGE_MAP, SWORD_NAMES } from "./constants";
+import { GENOCIDE_BORDER_HEALTH, SWORD_DAMAGE_MAP, SWORD_NAMES } from "./constants";
 import { getAllOpponentMobs, getAllTeamMobs, getOpponentPlayers, giveItemWithMessage } from "./card-helpers";
 import { cardLibrary } from "./cardbook";
 
@@ -366,26 +366,22 @@ export async function applyDamage(target, value, options={cause:mc.EntityDamageC
   }
   
   // ダメージを適用
-  target.applyDamage(value, options);
+  if(!target.applyDamage(value, options)) {
+    await mc.system.waitTicks(1);
+    await applyDamage(target, value, options, maxRetries - 1);
+    return;
+  }
 
   // ダメージ適用後のHP取得
   const after = healthComponent.currentValue;
   // mc.world.sendMessage(`${after.toString()}`);
   if(target instanceof mc.Player) {
-    if(after <= 15 && !target.hasTag("genocide")){
+    if(after <= GENOCIDE_BORDER_HEALTH && !target.hasTag("genocide")){
       target.addTag("genocide");
       target.sendMessage("残虐カードがドロー可能になりました");
       target.onScreenDisplay.setTitle("§c不吉な予感がする...");
       target.playSound("raid.horn", {location:target.location, volume:0.1});
     }
-  }
-  
-  // 無敵時間でダメージが入らなかった場合、再試行
-  // 条件: ダメージ値が正、HP変化量不足、対象が生存中、再試行回数が残っている
-  if(value > 0 && before-value != after && after > 0 && maxRetries > 0){
-    await mc.system.waitTicks(1);
-    await applyDamage(target, value - (before - after), options, maxRetries - 1);
-    return;
   }
 }
 

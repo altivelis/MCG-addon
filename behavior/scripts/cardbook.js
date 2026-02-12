@@ -68,17 +68,19 @@ export const cardLibrary = {
   nether: {
     low: [
       "minecraft:zombie_pigman",
-      "minecraft:wither_skeleton",
       "minecraft:crying_obsidian",
-      "minecraft:wither_rose"
+      "minecraft:wither_rose",
+      "minecraft:ancient_debris"
     ],
     high: [
       "minecraft:strider",
       "minecraft:lava_bucket",
+      "minecraft:wither_skeleton",
       "minecraft:blaze",
-      "minecraft:netherite_ingot"
     ],
     other: [
+      "minecraft:netherite_scrap",
+      "minecraft:netherite_ingot",
       "minecraft:saddle"
     ]
   },

@@ -204,7 +204,7 @@ export function sendDamageMessage(attacker, target, weaponName) {
  */
 export function giveItemWithMessage(player, itemType, amount = 1, displayName = null) {
   giveItem(player, new mc.ItemStack(itemType), amount);
-  const name = displayName || itemType.replace("minecraft:", "");
+  const name = displayName || itemType.replace("minecraft:", "").replace("mcg:", "");
   const amountText = amount > 1 ? ` x${amount}` : "";
   player.sendMessage(`[入手] ${name}${amountText}`);
 }

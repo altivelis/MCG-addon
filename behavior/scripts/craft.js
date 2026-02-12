@@ -203,6 +203,14 @@ const recipe = [
       "minecraft:zombie_spawn_egg",
       "minecraft:heart_of_the_sea"
     ]
+  },
+  {
+    item: "minecraft:netherite_ingot",
+    name: "ネザライトインゴット",
+    materials: [
+      "minecraft:diamond",
+      "minecraft:netherite_scrap"
+    ]
   }
 ]
 
@@ -223,12 +231,12 @@ mc.system.runInterval(()=>{
       let item = items.find(i=>i.getComponent(mc.EntityItemComponent.componentId).itemStack.typeId == m);
       if(item){
         switch(item.getComponent(mc.EntityItemComponent.componentId).itemStack.typeId){
-          case "minecraft:netherite_ingot":
-            craftCost += 20;
-            break;
-          case "minecraft:milk_bucket":
-            craftCost += 3;
-            break;
+          // case "minecraft:netherite_ingot":
+          //   craftCost += 20;
+          //   break;
+          // case "minecraft:milk_bucket":
+          //   craftCost += 3;
+          //   break;
         }
         foundMaterials.push(item);
       }

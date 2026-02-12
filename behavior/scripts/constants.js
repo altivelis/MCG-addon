@@ -39,7 +39,14 @@ export const GAME_CONFIG = {
   SECOND_DRAW_COUNT: 6,
   START_ACT: 5,
   END_ACT: 3,
-  EVENT_MODE: 0 // 0: なし, 1: WinterHoliday, 2: MCG-クラシック
+  EVENT_MODE: 0, // 0: なし, 1: WinterHoliday, 2: MCG-クラシック
+  DECK_BAN_COUNT: 1,
+  OVERWORLD_BANNABLE: false,
+  CAVE_BANNABLE: false,
+  NETHER_BANNABLE: true,
+  ANIMAL_BANNABLE: true,
+  GENOCIDE_BANNABLE: true,
+  SEAWORLD_BANNABLE: true,
 };
 
 // タイマー設定
@@ -206,7 +213,8 @@ export const ERROR_MESSAGES = {
   WITCH_ALREADY_ENHANCED: "§cすでに強化されているため使用できません。",
   NO_ATTACKABLE_ENEMY: "§c相手の場に攻撃可能なモブが存在しません",
   ENEMY_HAS_ATTACKABLE: "§c相手の場に攻撃可能なモブが存在するため使用できません",
-  ELDER_GUARDIAN_RESTRICTION: "§cエルダーガーディアンの効果により使用できません"
+  ELDER_GUARDIAN_RESTRICTION: "§cエルダーガーディアンの効果により使用できません",
+  OBJECT_NOT_CHEST: "§c自分の場にチェストが存在しないため使用できません。"
 };
 
 // 成功メッセージ
@@ -232,8 +240,21 @@ export const EXCLUDE_TYPES = {
   DROPPED_ITEMS: ["minecraft:item"]
 };
 
+// 残虐デッキ解放条件ボーダー
+export const GENOCIDE_BORDER_HEALTH = 14;
+
 // 解放条件メッセージ
 export const UNLOCK_CONDITIONS = {
   NETHER: "ゾンビピッグマンかウィザースケルトンを召喚すると開放",
-  GENOCIDE: "一度でもHPが15以下になると解放",
+  GENOCIDE: `一度でもHPが${GENOCIDE_BORDER_HEALTH}以下になると解放`,
 };
+
+// すべての属性
+export const ALL_ATTRIBUTES = {
+  protect: "除外無効",
+  guard: "ガード",
+  fly: "浮遊",
+  water: "水中",
+  call_pigman: "呼び声",
+  ace: "大将"
+}

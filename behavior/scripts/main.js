@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
 import { cardList } from "./cardinfo";
-import { cardInfo, getEntityDisplayName, getItemCount } from "./lib";
+import { cardInfo, getDisplayName, getEntityDisplayName, getItemCount } from "./lib";
 import "./system";
 import "./button";
 import "./craft";
@@ -8,8 +8,9 @@ import "./rulebook";
 import "./die";
 import "./commands/index";
 import { mcg } from "./system";
-import { VIEW_DISTANCE, EXCLUDE_TYPES, HP_DISPLAY, ALLOWED_ITEMS } from "./constants";
+import { VIEW_DISTANCE, EXCLUDE_TYPES, HP_DISPLAY, ALLOWED_ITEMS, ALL_ATTRIBUTES } from "./constants";
 import { DRAW_CARDS } from "./button";
+import { isDeckBanned } from "./deck-ban";
 
 /**
  * 
@@ -81,12 +82,11 @@ function displayTargetInfo(player, target) {
  */
 function getStatusTags(target) {
   const tags = [];
-  if (target.hasTag("protect")) tags.push("§2除外無効 ");
-  if (target.hasTag("guard")) tags.push("§2ガード ");
-  if (target.hasTag("fly")) tags.push("§2浮遊 ");
-  if (target.hasTag("water")) tags.push("§2水中 ");
-  if (target.hasTag("call_pigman")) tags.push("§2呼び声 ");
-  if (target.hasTag("ace")) tags.push("§2大将 ");
+  for (const [tagName, displayName] of Object.entries(ALL_ATTRIBUTES)) {
+    if (target.hasTag(tagName)) {
+      tags.push(`§2${displayName} `);
+    }
+  }
   return tags;
 }
 
@@ -181,6 +181,10 @@ function displayDrawInfo(player, block) {
   
   const drawInfo = getDrawInfo(player, block.typeId, high);
   if (drawInfo) {
+    if (isDeckBanned(DRAW_CARDS[block.typeId]?.name)) {
+      player.onScreenDisplay.setActionBar(`§c${DRAW_CARDS[block.typeId].name}デッキはBANされています`);
+      return;
+    }
     player.onScreenDisplay.setActionBar(drawInfo);
   }
 }
@@ -201,7 +205,7 @@ function getDrawInfo(player, blockType, high) {
   if (info.requiresTag && !player.hasTag(info.requiresTag)) {
     prefix = `§c${info.unlockConditions}\n`;
   }
-  return prefix + text + (high ? info.high : info.low).map(item => item.name).join("\n");
+  return prefix + text + (high ? info.high : info.low).map(item => getDisplayName(item)).join("\n");
 }
 
 /**

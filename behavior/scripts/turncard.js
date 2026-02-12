@@ -217,8 +217,8 @@ export const turnMob = {
      */
     run: (newPlayer, oldPlayer, entity) => {
       if (isSameTeam(entity, newPlayer)) {
-        giveItemWithMessage(newPlayer, "minecraft:arrow", 1, "矢");
-        sendPlayerMessage(newPlayer, "[ボグド] 矢を獲得");
+        giveItemWithMessage(newPlayer, "minecraft:arrow", 2, "矢");
+        sendPlayerMessage(newPlayer, "[ボグド] 矢を2つ獲得");
       }
     }
   },
@@ -234,12 +234,12 @@ export const turnMob = {
     run: (newPlayer, oldPlayer, entity) => {
       if (!isSameTeam(entity, newPlayer)) return;
       
-      giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
-      sendPlayerMessage(newPlayer, "[ピリジャー] 草ブロックを獲得");
+      giveItemWithMessage(newPlayer, "minecraft:grass_block", 2, "草ブロック");
+      sendPlayerMessage(newPlayer, "[ピリジャー] 草ブロックを2つ獲得");
       giveItemWithMessage(newPlayer, "minecraft:arrow", 1, "矢");
       sendPlayerMessage(newPlayer, "[ピリジャー] 矢を獲得");
       sendPlayerMessage(newPlayer, "[ピリジャー] スリップダメージ");
-      applyDamage(newPlayer, 2);
+      applyDamage(newPlayer, 3);
     }
   },
   
@@ -256,8 +256,10 @@ export const turnMob = {
       
       giveItemWithMessage(newPlayer, "minecraft:iron_axe", 1, "鉄の斧");
       sendPlayerMessage(newPlayer, "[ヴィンディケーター] 鉄の斧を獲得");
+      giveItemWithMessage(newPlayer, "minecraft:grass_block", 2, "草ブロック");
+      sendPlayerMessage(newPlayer, "[ヴィンディケーター] 草ブロックを2つ獲得");
       sendPlayerMessage(newPlayer, "[ヴィンディケーター] スリップダメージ");
-      applyDamage(newPlayer, 2);
+      applyDamage(newPlayer, 3);
     }
   },
   
@@ -320,18 +322,17 @@ export const turnMob = {
       // ターン開始プレイヤーと同じチーム → 攻撃
       else if (isSameTeam(entity, newPlayer)) {
         sendPlayerMessage(newPlayer, "[エヴォーカー] スリップダメージ");
-        applyDamage(newPlayer, 5);
+        applyDamage(newPlayer, 3);
+
+        giveItemWithMessage(newPlayer, "minecraft:grass_block", 2, "草ブロック");
+        sendPlayerMessage(newPlayer, "[エヴォーカー] 草ブロックを2つ獲得");
         
-        // 相手の青・赤スロットに攻撃
-        ["slotB", "slotR"].forEach(slot => {
-          mc.world.getDimension("minecraft:overworld")
-            .getEntities({ excludeTypes: ["minecraft:player"], tags: [opponentTeam, slot], excludeTags: ["guard", "fly"] })
-            .forEach(target => {
-              playCardEffect(entity, target.location);
-              target.dimension.playSound("mob.evocation_fangs.attack", target.location, { volume: 10 });
-              applyDamage(target, 15);
-            });
-        });
+        // 相手のモブ全体に攻撃
+        getAllTeamMobs(oldPlayer, {excludeTags: ["guard", "fly"]}).forEach(target => {
+          playCardEffect(entity, target.location);
+          target.dimension.playSound("mob.evocation_fangs.attack", target.location, { volume: 10 });
+          applyDamage(target, 10);
+        })
       }
     }
   },
@@ -363,7 +364,7 @@ export const turnMob = {
     run: (newPlayer, oldPlayer, entity) => {
       if (isSameTeam(entity, newPlayer)) {
         sendPlayerMessage(newPlayer, "[ラヴェジャー] スリップダメージ");
-        applyDamage(newPlayer, 4);
+        applyDamage(newPlayer, 6);
       }
     }
   },
@@ -568,7 +569,7 @@ export const turnMob = {
 export const turnObject = {
   chest: {
     /**
-     * 
+     * チェスト
      * @param {mc.Player} newPlayer 
      * @param {mc.Player} oldPlayer 
      * @param {string} blockTag
@@ -582,11 +583,29 @@ export const turnObject = {
     }
   },
   
-  carved_pumpkin: { run: () => {} },
+  carved_pumpkin: { 
+    /**
+     * くり抜かれたカボチャ
+     * @param {mc.Player} newPlayer 
+     * @param {mc.Player} oldPlayer 
+     * @param {string} blockTag
+     * @returns
+     */
+    run: (newPlayer, oldPlayer, blockTag) => {
+      if (getPlayerTeam(newPlayer) === blockTag) {
+        addAct(newPlayer, 3);
+        giveItemWithMessage(newPlayer, "minecraft:grass_block", 1, "草ブロック");
+        sendPlayerMessage(newPlayer, "[くり抜かれたカボチャ] act+3、草ブロックを獲得");
+        // オブジェクト破壊
+        setObject(newPlayer, "minecraft:air");
+        sendPlayerMessage(newPlayer, "[くり抜かれたカボチャ] オブジェクトを破壊");
+      }
+    } 
+  },
   
   bell: {
     /**
-     * 
+     * 鐘
      * @param {mc.Player} newPlayer 
      * @param {mc.Player} oldPlayer 
      * @param {string} blockTag
@@ -602,7 +621,7 @@ export const turnObject = {
   
   mob_spawner: {
     /**
-     * 
+     * モンスタースポナー
      * @param {mc.Player} newPlayer 
      * @param {mc.Player} oldPlayer 
      * @param {string} blockTag
@@ -618,7 +637,7 @@ export const turnObject = {
   
   ender_chest: {
     /**
-     * 
+     * エンダーチェスト
      * @param {mc.Player} newPlayer 
      * @param {mc.Player} oldPlayer 
      * @param {string} blockTag
@@ -636,7 +655,7 @@ export const turnObject = {
   
   bee_nest: {
     /**
-     * 
+     * ミツバチの巣
      * @param {mc.Player} newPlayer 
      * @param {mc.Player} oldPlayer 
      * @param {string} blockTag
@@ -652,7 +671,7 @@ export const turnObject = {
   
   composter: {
     /**
-     * 
+     * コンポスター
      * @param {mc.Player} newPlayer 
      * @param {mc.Player} oldPlayer 
      * @param {string} blockTag

@@ -30,8 +30,8 @@
         "always_show": true
       },
       "minecraft:health": {
-        "value": 34,
-        "max": 34
+        "value": 29,
+        "max": 29
       },
       "minecraft:movement": {
         "value": 0.0

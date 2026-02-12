@@ -130,8 +130,8 @@
         "always_show": true
       },
       "minecraft:health": {
-        "value": 45,
-        "max": 45
+        "value": 32,
+        "max": 32
       },
       "minecraft:damage_sensor": {
         "triggers": {

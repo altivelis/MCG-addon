@@ -190,7 +190,7 @@ export const useCard = {
             playCardEffect(player, enemy.location);
             applyDamage(enemy, damage / 5);
             enemy.dimension.playSound("random.glass", enemy.location, {volume: 10});
-            axolotlEffect(player, damage / 5);
+            axolotlEffect(player, damage);
           });
         }
       );
@@ -335,20 +335,20 @@ export const useCard = {
           
           payCost(player, cost);
           player.dimension.playSound("random.bow", player.location, { volume: 10 });
-          decrementContainer(player, "minecraft:packed_ice");
+          // decrementContainer(player, "minecraft:packed_ice");
           
           targets.forEach(target => {
             sendDamageMessage(player, target, "矢");
             playCardEffect(player, target.location);
             applyDamage(target, 30);
           });
-          axolotlEffect(player, 30);
+          // axolotlEffect(player, 30);
         },
         // Pスロット - プレイヤー直接攻撃
         () => {
           payCost(player, cost);
           player.dimension.playSound("random.bow", player.location, { volume: 10 });
-          decrementContainer(player, "minecraft:packed_ice");
+          // decrementContainer(player, "minecraft:packed_ice");
           
           const enemies = getOpponentPlayers(player);
           enemies.forEach(enemy => {
@@ -360,6 +360,7 @@ export const useCard = {
             playCardEffect(player, enemy.location);
             applyDamage(enemy, 1);
           });
+          // axolotlEffect(player, 30);
         }
       );
     }
@@ -379,8 +380,7 @@ export const useCard = {
         (mob)=>{
         sendPlayerMessage(player, "ブタを召喚しました");
         mob.dimension.playSound("mob.chicken.plop", mob.location, {volume: 10});
-        giveItem(player, new mc.ItemStack("minecraft:porkchop"));
-        player.sendMessage("[入手] 生の豚肉");
+        giveItemWithMessage(player, "minecraft:porkchop", 1, "生の豚肉");
       });
     }
   },
@@ -398,8 +398,7 @@ export const useCard = {
         (mob)=>{
         sendPlayerMessage(player, "村人を召喚しました");
         mob.dimension.playSound("mob.chicken.plop", mob.location, {volume: 10});
-        giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
-        player.sendMessage("[入手] 草ブロック x2");
+        giveItemWithMessage(player, "minecraft:grass_block", 2, "草ブロック");
       });
     }
   },
@@ -436,12 +435,9 @@ export const useCard = {
             return;
           }
         }
-        giveItem(player, new mc.ItemStack("minecraft:wooden_sword"));
-        player.sendMessage("[入手] 木の剣");
-        giveItem(player, new mc.ItemStack("minecraft:wooden_pickaxe"));
-        player.sendMessage("[入手] 木のツルハシ");
-        giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
-        player.sendMessage("[入手] ニンジン付きの棒");
+        giveItemWithMessage(player, "minecraft:wooden_sword", 1, "木の剣");
+        giveItemWithMessage(player, "minecraft:wooden_pickaxe", 1, "木のツルハシ");
+        giveItemWithMessage(player, "minecraft:carrot_on_a_stick", 1, "ニンジン付きの棒");
       } else {
         setObject(player, "minecraft:chest");
         sendPlayerMessage(player, "チェストを設置しました");
@@ -460,18 +456,21 @@ export const useCard = {
         player.sendMessage(error_act);
         return;
       }
-      if (cardBlock.typeId !== P) {
+      if (cardBlock.typeId !== P && cardBlock.typeId !== O) {
         player.sendMessage(error_slot);
         return;
       }
-      
       payCost(player, parseInt(info.Cact));
-      sendPlayerMessage(player, "くり抜かれたカボチャを使用しました");
       player.dimension.playSound("pumpkin.carve", player.location, {volume: 10});
-      giveItem(player, new mc.ItemStack("minecraft:snow_golem_spawn_egg"));
-      player.sendMessage("[入手] スノーゴーレム");
-      giveItem(player, new mc.ItemStack("minecraft:iron_golem_spawn_egg"));
-      player.sendMessage("[入手] アイアンゴーレム");
+
+      if (cardBlock.typeId === P) {
+        sendPlayerMessage(player, "くり抜かれたカボチャを使用しました");
+        giveItemWithMessage(player, "minecraft:snow_golem_spawn_egg", 1, "スノーゴーレム");
+        giveItemWithMessage(player, "minecraft:iron_golem_spawn_egg", 1, "アイアンゴーレム");
+      } else {
+        setObject(player, "minecraft:carved_pumpkin");
+        sendPlayerMessage(player, "くり抜かれたカボチャを設置しました");
+      }
     }
   },
   wolf_spawn_egg: {
@@ -515,21 +514,16 @@ export const useCard = {
       
       if (cardBlock.typeId === P) {
         sendPlayerMessage(player, "鐘を使用しました");
-        let attacked = false;
         mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player", "minecraft:item"]}).forEach(entity => {
           let info = getCard(entity.typeId);
           entity.dimension.spawnParticle("mcg:knockback_roar_particle", entity.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           if (entity.getComponent(mc.EntityTypeFamilyComponent.componentId).hasTypeFamily("undead") || (info.attribute.includes("残虐") && !entity.hasTag("ace"))) {
             applyDamage(entity, 999, {cause: mc.EntityDamageCause.magic});
-            attacked = true;
           } else {
             if (!entity.hasTag("ace")) entity.getComponent(mc.EntityHealthComponent.componentId).resetToDefaultValue();
             entity.removeTag("protect");
           }
         });
-        if (attacked) {
-          axolotlEffect(player, 999);
-        }
       } else {
         setObject(player, "minecraft:bell");
         sendPlayerMessage(player, "鐘を設置しました");
@@ -679,8 +673,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ゾンビを召喚しました");
           mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
-          player.sendMessage("[入手] 草ブロック x2");
+          giveItemWithMessage(player, "minecraft:grass_block", 2, "草ブロック");
         }
       )
     }
@@ -699,8 +692,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "スケルトンを召喚しました");
           mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:arrow"));
-          player.sendMessage("[入手] 矢");
+          giveItemWithMessage(player, "minecraft:arrow", 1, "矢");
         }
       )
     }
@@ -765,12 +757,9 @@ export const useCard = {
       
       if (cardBlock.typeId === P) {
         sendPlayerMessage(player, "モンスタースポナーを使用しました");
-        giveItem(player, new mc.ItemStack("minecraft:husk_spawn_egg"));
-        player.sendMessage("[入手] ハスク");
-        giveItem(player, new mc.ItemStack("minecraft:stray_spawn_egg"));
-        player.sendMessage("[入手] ストレイ");
-        giveItem(player, new mc.ItemStack("minecraft:cave_spider_spawn_egg"));
-        player.sendMessage("[入手] 洞窟グモ");
+        giveItemWithMessage(player, "minecraft:husk_spawn_egg", 1, "ハスク");
+        giveItemWithMessage(player, "minecraft:stray_spawn_egg", 1, "ストレイ");
+        giveItemWithMessage(player, "minecraft:cave_spider_spawn_egg", 1, "洞窟グモ");
       } else {
         setObject(player, "minecraft:mob_spawner");
         sendPlayerMessage(player, "モンスタースポナーを設置しました");
@@ -846,35 +835,41 @@ export const useCard = {
         return;
       }
       
-      payCost(player, parseInt(info.Cact));
-      player.dimension.playSound("random.enderchestopen", player.location, {volume: 10});
-      
-      if (cardBlock.typeId === P) {
+      if (cardBlock.typeId === P) {      
+        payCost(player, parseInt(info.Cact));
+        player.dimension.playSound("random.enderchestopen", player.location, {volume: 10});
+
         sendPlayerMessage(player, "エンダーチェストを使用しました");
         getAllOpponentMobs(player, { excludeTags: ["fly", "guard"] }).forEach(entity => {
           lineParticle(player.dimension, player.location, entity.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           entity.dimension.spawnParticle("mcg:knockback_roar_particle", entity.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-          applyDamage(entity, 10);
+          applyDamage(entity, 5);
         });
         switch (Math.floor(Math.random() * 4)) {
           case 0:
-            giveItem(player, new mc.ItemStack("minecraft:enchanted_golden_apple"));
-            player.sendMessage("[入手] エンチャントされた金のリンゴ");
+            giveItemWithMessage(player, "minecraft:enchanted_golden_apple", 1, "エンチャントされた金のリンゴ");
             break;
           case 1:
-            giveItem(player, new mc.ItemStack("minecraft:stray_spawn_egg"), 2);
-            player.sendMessage("[入手] ストレイ x2");
+            giveItemWithMessage(player, "minecraft:stray_spawn_egg", 1, "ストレイ");
+            giveItemWithMessage(player, "minecraft:husk_spawn_egg", 1, "ハスク");
             break;
           case 2:
-            giveItem(player, new mc.ItemStack("minecraft:husk_spawn_egg"), 2);
-            player.sendMessage("[入手] ハスク x2");
+            giveItemWithMessage(player, "minecraft:husk_spawn_egg", 1, "ハスク");
+            giveItemWithMessage(player, "minecraft:cave_spider_spawn_egg", 1, "洞窟グモ");
             break;
           case 3:
-            giveItem(player, new mc.ItemStack("minecraft:phantom_spawn_egg"), 2);
-            player.sendMessage("[入手] ファントム x2");
+            giveItemWithMessage(player, "minecraft:cave_spider_spawn_egg", 1, "洞窟グモ");
+            giveItemWithMessage(player, "minecraft:stray_spawn_egg", 1, "ストレイ");
             break;
         }
       } else {
+        if(getObject(getPlayerTeam(player))?.typeId != "minecraft:chest") {
+          player.sendMessage(ERROR_MESSAGES.OBJECT_NOT_CHEST);
+          return;
+        }
+        payCost(player, parseInt(info.Cact));
+        player.dimension.playSound("random.enderchestopen", player.location, {volume: 10});
+
         setObject(player, "minecraft:ender_chest");
         sendPlayerMessage(player, "エンダーチェストを設置しました");
       }
@@ -913,8 +908,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ストレイを召喚しました");
           mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:arrow"), 2);
-          player.sendMessage("[入手] 矢 x2");
+          giveItemWithMessage(player, "minecraft:arrow", 2, "矢");
         }
       )
     }
@@ -933,8 +927,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "洞窟グモを召喚しました");
           mob.dimension.playSound("trial_spawner.spawn_mob", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:web"));
-          player.sendMessage("[入手] クモの巣");
+          giveItemWithMessage(player, "minecraft:web", 1, "クモの巣");
         }
       )
     }
@@ -999,8 +992,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ゾンビピッグマンを召喚しました");
           mob.dimension.playSound("mob.blaze.shoot", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
-          player.sendMessage("[入手] 草ブロック x2");
+          giveItemWithMessage(player, "minecraft:grass_block", 2, "草ブロック");
           if(!player.hasTag("nether")){
             player.addTag("nether");
             player.sendMessage("ネザーカードがドロー可能になりました");
@@ -1121,12 +1113,39 @@ export const useCard = {
       player.dimension.spawnParticle("mcg:knockback_roar_particle", player.location, createColor({red:0, green:0, blue:0}));
       enemy.dimension.spawnParticle("mcg:knockback_roar_particle", enemy.location, createColor({red:0, green:0, blue:0}));
       applyDamage(player, 8, {cause:mc.EntityDamageCause.wither});
-      giveItem(player, new mc.ItemStack("minecraft:grass_block"), 3);
-      player.sendMessage("[入手] 草ブロック x3");
+      giveItemWithMessage(player, "minecraft:grass_block", 3, "草ブロック");
       enemyEntities.forEach(entity => {
         entity.dimension.spawnParticle("mcg:knockback_roar_particle", entity.location, createColor({red:0, green:0, blue:0}));
         applyDamage(entity, 20);
       });
+    }
+  },
+  ancient_debris: {
+    /**
+     * 古代の残骸
+     * @param {mc.Block} cardBlock
+     * @param {mc.Player} player
+     */
+    run: (cardBlock, player) => {
+      const info = getCard(handItem(player).typeId);
+      if (!canPayCost(player, parseInt(info.Cact))) {
+        player.sendMessage(error_act);
+        return;
+      }
+      if (cardBlock.typeId !== P && cardBlock.typeId !== O) {
+        player.sendMessage(error_slot);
+        return;
+      }
+      payCost(player, parseInt(info.Cact));
+      sendPlayerMessage(player, "古代の残骸を使用しました");
+      if (cardBlock.typeId === P) {
+        player.dimension.playSound("random.anvil_use", player.location, {volume: 10});
+        giveItemWithMessage(player, "minecraft:netherite_scrap", 1, "ネザライトのスクラップ");
+      } else {
+        setObject(player, "minecraft:ancient_debris");
+        player.dimension.playSound("block.anvil.place", player.location, {volume: 10});
+        sendPlayerMessage(player, "古代の残骸を設置しました");
+      }
     }
   },
   strider_spawn_egg: {
@@ -1143,8 +1162,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ストライダーを召喚しました");
           mob.dimension.playSound("respawn_anchor.charge", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:saddle"));
-          player.sendMessage("[入手] 鞍");
+          giveItemWithMessage(player, "minecraft:saddle", 1, "鞍");
         }
       )
     }
@@ -1251,8 +1269,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ニワトリを召喚しました");
           mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:egg"));
-          player.sendMessage("[入手] 卵");
+          giveItemWithMessage(player, "minecraft:egg", 1, "卵");
         }
       )
     }
@@ -1273,24 +1290,19 @@ export const useCard = {
           mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 10});
           mob.addTag("fly");
           mob.teleport({...mob.location, y: mob.location.y + 1});
-          giveItem(player, new mc.ItemStack("minecraft:grass_block"), 2);
-          player.sendMessage("[入手] 草ブロック x2");
+          giveItemWithMessage(player, "minecraft:grass_block", 2, "草ブロック");
           switch(Math.floor(Math.random() * 4)){
             case 0:
-              giveItem(player, new mc.ItemStack("minecraft:poppy"));
-              player.sendMessage("[入手] ポピー");
+              giveItemWithMessage(player, "minecraft:poppy", 1, "ポピー");
               break;
             case 1:
-              giveItem(player, new mc.ItemStack("minecraft:dandelion"));
-              player.sendMessage("[入手] タンポポ");
+              giveItemWithMessage(player, "minecraft:dandelion", 1, "タンポポ");
               break;
             case 2:
-              giveItem(player, new mc.ItemStack("minecraft:pink_tulip"));
-              player.sendMessage("[入手] 桃色のチューリップ");
+              giveItemWithMessage(player, "minecraft:pink_tulip", 1, "桃色のチューリップ");
               break;
             case 3:
-              giveItem(player, new mc.ItemStack("minecraft:cactus"));
-              player.sendMessage("[入手] サボテン");
+              giveItemWithMessage(player, "minecraft:cactus", 1, "サボテン");
               break;
           }
         }
@@ -1320,8 +1332,7 @@ export const useCard = {
       
       if (cardBlock.typeId === P) {
         sendPlayerMessage(player, "ミツバチの巣を使用しました");
-        giveItem(player, new mc.ItemStack("minecraft:bee_spawn_egg"), 2);
-        player.sendMessage("[入手] ミツバチ x2");
+        giveItemWithMessage(player, "minecraft:bee_spawn_egg", 2, "ミツバチ");
       } else {
         setObject(player, "minecraft:bee_nest");
         sendPlayerMessage(player, "ミツバチの巣を設置しました");
@@ -1351,12 +1362,9 @@ export const useCard = {
       
       if (cardBlock.typeId === P) {
         sendPlayerMessage(player, "コンポスターを使用しました");
-        giveItem(player, new mc.ItemStack("minecraft:wooden_pickaxe"));
-        player.sendMessage("[入手] 木のツルハシ");
-        giveItem(player, new mc.ItemStack("minecraft:wooden_hoe"));
-        player.sendMessage("[入手] 木のクワ");
-        giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
-        player.sendMessage("[入手] ニンジン付きの棒");
+        giveItemWithMessage(player, "minecraft:wooden_pickaxe", 1, "木のツルハシ");
+        giveItemWithMessage(player, "minecraft:wooden_hoe", 1, "木のクワ");
+        giveItemWithMessage(player, "minecraft:carrot_on_a_stick", 1, "ニンジン付きの棒");
       } else {
         setObject(player, "minecraft:composter");
         sendPlayerMessage(player, "コンポスターを設置しました");
@@ -1428,8 +1436,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ムーシュルームを召喚しました");
           mob.dimension.playSound("dig.grass", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:red_mushroom"));
-          player.sendMessage("[入手] 赤いキノコ");
+          giveItemWithMessage(player, "minecraft:red_mushroom", 1, "赤いキノコ");
         }
       )
     }
@@ -1577,8 +1584,7 @@ export const useCard = {
           mob.dimension.playSound("block.beehive.exit", mob.location, {volume: 10});
           giveSword(player, getCard(mob.typeId).atk, "速攻効果");
           if(getObject(player.hasTag("red")?"red":"blue").typeId == "minecraft:bee_nest"){
-            giveItem(player, new mc.ItemStack("minecraft:honey_bottle"));
-            player.sendMessage("[入手] ハチミツ入りの瓶");
+            giveItemWithMessage(player, "minecraft:honey_bottle", 1, "ハチミツ入りの瓶");
           }
         }
       )
@@ -1603,8 +1609,7 @@ export const useCard = {
       payCost(player, parseInt(info.Cact));
       sendPlayerMessage(player, "木のクワを使用しました");
       player.dimension.playSound("dig.gravel", player.location, {volume: 10});
-      giveItem(player, new mc.ItemStack("minecraft:wheat"));
-      player.sendMessage("[入手] 小麦");
+      giveItemWithMessage(player, "minecraft:wheat", 1, "小麦");
     }
   },
   stone_hoe: {
@@ -1626,15 +1631,11 @@ export const useCard = {
       payCost(player, parseInt(info.Cact));
       sendPlayerMessage(player, "石のクワを使用しました");
       player.dimension.playSound("dig.gravel", player.location, {volume: 10});
-      giveItem(player, new mc.ItemStack("minecraft:wheat"));
-      player.sendMessage("[入手] 小麦");
-      giveItem(player, new mc.ItemStack("minecraft:grass_block"));
-      player.sendMessage("[入手] 草ブロック");
+      giveItemWithMessage(player, "minecraft:wheat", 1, "小麦");
       const flowers = ["minecraft:poppy", "minecraft:dandelion", "minecraft:pink_tulip", "minecraft:cactus"];
       const flowerNames = ["ポピー", "タンポポ", "桃色のチューリップ", "サボテン"];
       const randomIndex = Math.floor(Math.random() * 4);
-      giveItem(player, new mc.ItemStack(flowers[randomIndex]));
-      player.sendMessage(`[入手] ${flowerNames[randomIndex]}`);
+      giveItemWithMessage(player, flowers[randomIndex], 1, flowerNames[randomIndex]);
     }
   },
   iron_hoe: {
@@ -1656,16 +1657,13 @@ export const useCard = {
       payCost(player, parseInt(info.Cact));
       sendPlayerMessage(player, "鉄のクワを使用しました");
       player.dimension.playSound("dig.gravel", player.location, {volume: 10});
-      giveItem(player, new mc.ItemStack("minecraft:wheat"), 2);
-      player.sendMessage("[入手] 小麦 x2");
-      giveItem(player, new mc.ItemStack("minecraft:grass_block"), 3);
-      player.sendMessage("[入手] 草ブロック x3");
+      giveItemWithMessage(player, "minecraft:wheat", 2, "小麦");
+      giveItemWithMessage(player, "minecraft:grass_block", 1, "草ブロック");
       const flowers = ["minecraft:poppy", "minecraft:dandelion", "minecraft:pink_tulip", "minecraft:cactus"];
       const flowerNames = ["ポピー", "タンポポ", "桃色のチューリップ", "サボテン"];
       for (let i = 0; i < 2; i++) {
         const randomIndex = Math.floor(Math.random() * 4);
-        giveItem(player, new mc.ItemStack(flowers[randomIndex]));
-        player.sendMessage(`[入手] ${flowerNames[randomIndex]}`);
+        giveItemWithMessage(player, flowers[randomIndex], 1, flowerNames[randomIndex]);
       }
     }
   },
@@ -1682,10 +1680,8 @@ export const useCard = {
       }
       decrementSlot(player, player.selectedSlotIndex);
       sendPlayerMessage(player, "小麦を使用しました");
-      giveItem(player, new mc.ItemStack("minecraft:cow_spawn_egg"));
-      player.sendMessage("[入手] ウシ");
-      giveItem(player, new mc.ItemStack("minecraft:sheep_spawn_egg"));
-      player.sendMessage("[入手] ヒツジ");
+      giveItemWithMessage(player, "minecraft:cow_spawn_egg", 1, "ウシ");
+      giveItemWithMessage(player, "minecraft:sheep_spawn_egg", 1, "ヒツジ");
     }
   },
   packed_ice: {
@@ -1730,10 +1726,16 @@ export const useCard = {
      * @param {mc.Player} player
      */
     run: (cardBlock, player) => {
+      const info = getCard(handItem(player).typeId);
+      if (!canPayCost(player, parseInt(info.Cact))) {
+        player.sendMessage(error_act);
+        return;
+      }
       if (cardBlock.typeId !== P) {
         player.sendMessage(error_slot);
         return;
       }
+      payCost(player, parseInt(info.Cact));
       decrementSlot(player, player.selectedSlotIndex);
       sendPlayerMessage(player, "ケーキを使用しました");
       player.dimension.playSound("random.eat", player.location, {volume: 10});
@@ -1741,8 +1743,7 @@ export const useCard = {
       healEntity(player, 9);
       sendPlayerMessage(player, "HP+9");
       mc.world.sendMessage("おめでとう！プレゼントもあるよ！");
-      giveItem(player, new mc.ItemStack("minecraft:chest"));
-      player.sendMessage("[入手] チェスト");
+      giveItemWithMessage(player, "minecraft:chest", 1, "チェスト");
     }
   },
   sheep_spawn_egg: {
@@ -1759,8 +1760,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ヒツジを召喚しました");
           mob.dimension.playSound("dig.grass", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:white_wool"));
-          player.sendMessage("[入手] 白色の羊毛");
+          giveItemWithMessage(player, "minecraft:white_wool", 1, "白色の羊毛");
         }
       )
     }
@@ -1779,8 +1779,7 @@ export const useCard = {
         (mob)=>{
           sendPlayerMessage(player, "ウシを召喚しました");
           mob.dimension.playSound("dig.grass", mob.location, {volume: 10});
-          giveItem(player, new mc.ItemStack("minecraft:milk_bucket"));
-          player.sendMessage("[入手] ミルクバケツ");
+          giveItemWithMessage(player, "minecraft:milk_bucket", 1, "ミルクバケツ");
         }
       )
     }
@@ -1827,8 +1826,7 @@ export const useCard = {
           sendPlayerMessage(player, "ボグドを召喚しました");
           mob.dimension.playSound("ominous_item_spawner.spawn_item", mob.location, {volume: 10});
           if(getObject(player.hasTag("red")?"red":"blue").typeId != "minecraft:air"){
-            giveItem(player, new mc.ItemStack("minecraft:arrow"), 3);
-            player.sendMessage("[入手] 矢 x3");
+            giveItemWithMessage(player, "minecraft:arrow", 3, "矢");
           }
         }
       )
@@ -1924,10 +1922,7 @@ export const useCard = {
       sendPlayerMessage(player, "ピリジャーを召喚しました");
       mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
       applyDamage(player, 3);
-      giveItem(player, new mc.ItemStack("minecraft:grass_block"), 1);
-      player.sendMessage("[入手] 草ブロック");
-      giveItem(player, new mc.ItemStack("minecraft:arrow"), 1);
-      player.sendMessage("[入手] 矢");
+      giveItemWithMessage(player, "minecraft:arrow", 1, "矢");
       lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
     }
@@ -1965,12 +1960,9 @@ export const useCard = {
         player.dimension.playSound("random.chestopen", player.location, {volume: 10});
         
         sendPlayerMessage(player, "トラップチェストを使用しました");
-        giveItem(player, new mc.ItemStack("minecraft:ominous_bottle"));
-        player.sendMessage("[入手] 不吉な瓶");
-        giveItem(player, new mc.ItemStack("mcg:totem"));
-        player.sendMessage("[入手] 不死のトーテム");
-        giveItem(player, new mc.ItemStack("minecraft:carrot_on_a_stick"));
-        player.sendMessage("[入手] ニンジン付きの棒");
+        giveItemWithMessage(player, "minecraft:ominous_bottle", 1, "不吉な瓶");
+        giveItemWithMessage(player, "mcg:totem", 1, "不死のトーテム");
+        giveItemWithMessage(player, "minecraft:carrot_on_a_stick", 1, "ニンジン付きの棒");
       } else {
         payCost(player, parseInt(info.Cact));
         player.dimension.playSound("random.chestopen", player.location, {volume: 10});
@@ -2021,7 +2013,7 @@ export const useCard = {
       
       sendPlayerMessage(player, "ヴィンディケーターを召喚しました");
       mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
-      applyDamage(player, 4);
+      applyDamage(player, 3);
       lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
     }
@@ -2112,53 +2104,11 @@ export const useCard = {
       sendPlayerMessage(player, "エヴォーカーを召喚しました");
       mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
       applyDamage(player, 3);
-      giveItem(player, new mc.ItemStack("mcg:totem"));
-      player.sendMessage("[入手] 不死のトーテム");
+      myTimeout(5, () => {
+        giveItemWithMessage(player, "mcg:totem", 1, "不死のトーテム");
+      });
       lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
-      
-      // ヴェックス召喚
-      const teamTag = getPlayerTeam(player);
-      const blueSlotPos = player.hasTag("red") ? mcg.const.red.slot.blue : mcg.const.blue.slot.blue;
-      const redSlotPos = player.hasTag("red") ? mcg.const.red.slot.red : mcg.const.blue.slot.red;
-      
-      if (mc.world.getDimension("minecraft:overworld").getEntities({
-        excludeTypes: ["minecraft:player"], 
-        tags: [teamTag, "slotB"]
-      }).length === 0) {
-        const mobb = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", blueSlotPos);
-        mobb.addTag(teamTag);
-        mobb.addTag("slotB");
-        mobb.addTag("fly");
-        mobb.teleport({...mobb.location, y: mobb.location.y + 1}, {facingLocation: {x:0, y:0, z:0}});
-        sendPlayerMessage(player, "ヴェックスを召喚しました");
-        mobb.dimension.playSound("apply_effect.raid_omen", mobb.location, {volume: 10});
-      }
-      
-      if (mc.world.getDimension("minecraft:overworld").getEntities({
-        excludeTypes: ["minecraft:player"], 
-        tags: [teamTag, "slotR"]
-      }).length === 0) {
-        const mobr = mc.world.getDimension("minecraft:overworld").spawnEntity("minecraft:vex", redSlotPos);
-        mobr.addTag(teamTag);
-        mobr.addTag("slotR");
-        mobr.addTag("fly");
-        mobr.teleport({...mobr.location, y: mobr.location.y + 1}, {facingLocation: {x:0, y:0, z:0}});
-        sendPlayerMessage(player, "ヴェックスを召喚しました");
-        mobr.dimension.playSound("apply_effect.raid_omen", mobr.location, {volume: 10});
-      }
-
-      // 相手の青・赤スロットに攻撃
-      const opponentTeam = getOpponentTeam(player);
-      ["slotB", "slotR"].forEach(slot => {
-        mc.world.getDimension("minecraft:overworld")
-          .getEntities({ excludeTypes: ["minecraft:player"], tags: [opponentTeam, slot], excludeTags: ["guard", "fly"] })
-          .forEach(target => {
-            playCardEffect(mob, target.location);
-            target.dimension.playSound("mob.evocation_fangs.attack", target.location, { volume: 10 });
-            applyDamage(target, 15);
-          });
-      });
     }
   },
   armor_stand: {
@@ -2206,7 +2156,7 @@ export const useCard = {
       mob.addTag("guard");
       mob.teleport(mob.location, {facingLocation: {x:0, y:0, z:0}});
       
-      applyDamage(player, 3);
+      applyDamage(player, 2);
       sendPlayerMessage(player, "防具立てを設置しました");
       lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
       mob.dimension.spawnParticle("mcg:knockback_roar_particle", mob.location, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
@@ -2219,11 +2169,6 @@ export const useCard = {
      * @param {mc.Player} player
      */
     run: (cardBlock, player) => {
-      if (cardBlock.typeId !== W) {
-        player.sendMessage(error_slot);
-        return;
-      }
-      
       const geno = mc.world.getDimension("minecraft:overworld").getEntities({
         excludeTypes: ["minecraft:player"], 
         tags: [getPlayerTeam(player)]
@@ -2241,7 +2186,7 @@ export const useCard = {
         (mob) => {
           sendPlayerMessage(player, "ラヴェジャーを召喚しました");
           mob.dimension.playSound("apply_effect.raid_omen", mob.location, {volume: 10});
-          applyDamage(player, 4);
+          applyDamage(player, 6);
           mc.world.getPlayers().forEach(p=>{
             p.onScreenDisplay.setTitle([(player.hasTag("red")?"§c":"§b"), "ラヴェジャー"], {fadeInDuration: 0, stayDuration: 40, fadeOutDuration: 20});
             p.onScreenDisplay.updateSubtitle("§3破壊に飢えた獣");
@@ -2355,6 +2300,7 @@ export const useCard = {
           }
           payCost(player, parseInt(info.Cact));
           sendPlayerMessage(player, "鉄の斧を使用しました");
+          // decrementContainer(player, "minecraft:packed_ice");
           player.dimension.playSound("mace.smash_ground", player.location, {volume: 10});
           lineParticle(player.dimension, player.location, player.hasTag("red")?mcg.const.blue.slot.white:mcg.const.red.slot.white, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
           player.dimension.spawnParticle("minecraft:smash_ground_particle", player.hasTag("red")?mcg.const.blue.slot.white:mcg.const.red.slot.white);
@@ -2373,7 +2319,7 @@ export const useCard = {
             ])
             applyDamage(mob, 25);
             mob.dimension.playSound("random.glass", mob.location, {volume: 10});
-            axolotlEffect(player, 25);
+            // axolotlEffect(player, 25);
           });
           mc.world.getDimension("minecraft:overworld").getEntities({excludeTypes:["minecraft:player"], tags:[(player.hasTag("red")?"blue":"red"), "slotR"], excludeTags:["fly", "guard"]}).forEach(mob=>{
             mc.world.sendMessage([(player.hasTag("red")?"§c":"§b") + player.nameTag + "§r=>" + (player.hasTag("red")?"§b":"§c"),
@@ -2487,8 +2433,7 @@ export const useCard = {
       });
       mobs[0].dimension.playSound("block.enchanting_table.use", mobs[0].location, {volume: 10});
       sendPlayerMessage(player, "ウィッチを強化しました");
-      giveItem(player, new mc.ItemStack("mcg:awkward_potion"), 1);
-      player.sendMessage("[入手] 奇妙なポーション");
+      giveItemWithMessage(player, "mcg:awkward_potion", 1, "奇妙なポーション");
     }
   },
   awkward_potion: {
@@ -2575,8 +2520,8 @@ export const useCard = {
         sendPlayerMessage(player, "治癒のポーションを使用しました");
         player.dimension.playSound("random.drink", player.location, {volume: 10});
         player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
-        healEntity(player, 5);
-        sendPlayerMessage(player, "HP+5");
+        healEntity(player, 8);
+        sendPlayerMessage(player, "HP+8");
         return;
       }
       
@@ -2748,7 +2693,7 @@ export const useCard = {
       
       payCost(player, parseInt(info.Cact));
       sendPlayerMessage(player, "負傷のポーションを使用しました");
-      
+
       const teamColor = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
       mobs.forEach(mob=>{
         mob.dimension.playSound("random.drink", mob.location, {volume: 10});
@@ -2758,7 +2703,6 @@ export const useCard = {
           healEntity(mob, 20);
         }else{
           applyDamage(mob, 20, {cause:mc.EntityDamageCause.magic});
-          axolotlEffect(player, 20);
         }
       });
     }
@@ -2802,7 +2746,6 @@ export const useCard = {
           }
           payCost(player, parseInt(info.Cact));
           sendPlayerMessage(player, "負傷のスプラッシュポーションを使用しました");
-          let axolotl_done = false;
           mobs.forEach(mob=>{
             mob.dimension.playSound("random.glass", mob.location, {volume: 10});
             lineParticle(player.dimension, player.location, mob.location, "mcg:custom_explosion_emitter", 1.0, createColor(player.hasTag("red")?mcg.const.rgb.red:mcg.const.rgb.blue));
@@ -2811,10 +2754,6 @@ export const useCard = {
               healEntity(mob, 20);
             }else{
               applyDamage(mob, 20, {cause:mc.EntityDamageCause.magic});
-              if(!axolotl_done){
-                axolotlEffect(player, 20);
-                axolotl_done = true;
-              }
             }
           })
           break;
@@ -2841,8 +2780,8 @@ export const useCard = {
           decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "俊敏のポーションを使用しました");
           player.dimension.playSound("random.drink", player.location, {volume: 10});
-          addAct(player, 25);
-          sendPlayerMessage(player, "act+25");
+          addAct(player, 15);
+          sendPlayerMessage(player, "act+15");
           break;
         case O:
           player.sendMessage(error_slot);
@@ -2903,7 +2842,6 @@ export const useCard = {
           mob.dimension.playSound("bubble.upinside", mob.location, {volume: 10});
           mob.addTag("water");
           giveItemWithMessage(player, "minecraft:grass_block", 2, "草ブロック");
-          sendPlayerMessage(player, "[熱帯魚] 草ブロックを2つ獲得");
         }
       );
     }
@@ -2928,7 +2866,6 @@ export const useCard = {
           const heartCount = getItemCount(player, "minecraft:heart_of_the_sea");
           if (heartCount >= 3) {
             giveItemWithMessage(player, "minecraft:turtle_helmet", 1, "カメの甲羅");
-            sendPlayerMessage(player, "[カメ] カメの甲羅を獲得");
           }
         }
       );
@@ -3004,7 +2941,6 @@ export const useCard = {
           mob.addTag("water");
           mob.teleport({...mob.location, y: mob.location.y + 1});
           giveItemWithMessage(player, "minecraft:heart_of_the_sea", 1, "海洋の心");
-          sendPlayerMessage(player, "[ガーディアン] 海洋の心を獲得");
         }
       );
     }
@@ -3048,7 +2984,6 @@ export const useCard = {
           let waterCount = getAllTeamMobs(player).filter(m => m.hasTag("water")).length;
           if(waterCount > 0) {
             giveItemWithMessage(player, "minecraft:diamond", waterCount, "ダイヤモンド");
-            sendPlayerMessage(player, `[発光するイカ] ダイヤモンドを${waterCount}つ獲得`);
           }
         }
       );
@@ -3236,7 +3171,6 @@ export const useCard = {
           mob.addTag("water");
           giveItemWithMessage(player, "minecraft:grass_block", 1, "草ブロック");
           giveItemWithMessage(player, "minecraft:trident", 1, "トライデント");
-          sendPlayerMessage(player, "[ドラウンド] 草ブロックとトライデントを獲得");
         });
     }
   },
@@ -3272,11 +3206,10 @@ export const useCard = {
         player.dimension.playSound("item.trident.throw", player.location, {volume: 10});
         opponentPlayer.dimension.playSound("item.trident.hit", opponentPlayer.location, {volume: 10});
         applyDamage(opponentPlayer, 3);
-        decrementContainer(player, "minecraft:packed_ice", 1);
+        // decrementContainer(player, "minecraft:packed_ice", 1);
         sendPlayerMessage(player, "トライデントを使用しました");
         if(drownedEffectFlag) {
           giveItemWithMessage(player, "minecraft:heart_of_the_sea", 1, "海洋の心");
-          sendPlayerMessage(player, "[ドラウンド] 海洋の心を獲得");
         }
       } else {
         let slot = "";
@@ -3309,14 +3242,13 @@ export const useCard = {
             mob.remove();
           } else {
             applyDamage(mob, 30);
-            axolotlEffect(player, 30);
+            // axolotlEffect(player, 30);
           }
         })
-        decrementContainer(player, "minecraft:packed_ice", 1);
+        // decrementContainer(player, "minecraft:packed_ice", 1);
         sendPlayerMessage(player, "トライデントを使用しました");
         if(drownedEffectFlag) {
           giveItemWithMessage(player, "minecraft:heart_of_the_sea", 1, "海洋の心");
-          sendPlayerMessage(player, "[ドラウンド] 海洋の心を獲得");
         }
       }
     }

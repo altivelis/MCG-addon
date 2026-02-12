@@ -1,102 +1,109 @@
 import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 import { mcg, turnChange } from "./system";
-import { hasItem, decrementContainer, giveItem, handItem, addAct, sendPlayerMessage, isOnline, applyDamage, cardInfo, getCard } from "./lib";
+import { hasItem, decrementContainer, giveItem, handItem, addAct, sendPlayerMessage, isOnline, applyDamage, cardInfo, getCard, getDisplayName } from "./lib";
 import { useCard } from "./usecard";
 import { ERROR_MESSAGES, SPECTATOR_COORDS, LOBBY_COORDS, UNLOCK_CONDITIONS } from "./constants";
 import { getOpponentTeam } from "./card-helpers";
+import { isDeckBanned } from "./deck-ban";
 
 // ========== ドローカードデータ ==========
 
 export const DRAW_CARDS = {
   "minecraft:grass_block": {
+    name: "現世",
     low: [
-      { item: "minecraft:pig_spawn_egg", name: "ブタ" },
-      { item: "minecraft:villager_spawn_egg", name: "村人" },
-      { item: "minecraft:chest", name: "チェスト" },
-      { item: "minecraft:carved_pumpkin", name: "くり抜かれたカボチャ" }
+      "minecraft:pig_spawn_egg",
+      "minecraft:villager_spawn_egg",
+      "minecraft:chest",
+      "minecraft:carved_pumpkin"
     ],
     high: [
-      { item: "minecraft:wolf_spawn_egg", name: "オオカミ" },
-      { item: "minecraft:bell", name: "鐘" },
-      { item: "minecraft:allay_spawn_egg", name: "アレイ" },
-      { item: "minecraft:panda_spawn_egg", name: "パンダ" }
+      "minecraft:wolf_spawn_egg",
+      "minecraft:bell",
+      "minecraft:allay_spawn_egg",
+      "minecraft:panda_spawn_egg"
     ]
   },
   "minecraft:stone": {
+    name: "洞窟",
     low: [
-      { item: "minecraft:zombie_spawn_egg", name: "ゾンビ" },
-      { item: "minecraft:skeleton_spawn_egg", name: "スケルトン" },
-      { item: "minecraft:creeper_spawn_egg", name: "クリーパー" },
-      { item: "minecraft:witch_spawn_egg", name: "ウィッチ" }
+      "minecraft:zombie_spawn_egg",
+      "minecraft:skeleton_spawn_egg",
+      "minecraft:creeper_spawn_egg",
+      "minecraft:witch_spawn_egg"
     ],
     high: [
-      { item: "minecraft:mob_spawner", name: "モンスタースポナー" },
-      { item: "minecraft:phantom_spawn_egg", name: "ファントム" },
-      { item: "minecraft:breeze_spawn_egg", name: "ブリーズ" },
-      { item: "minecraft:ender_chest", name: "エンダーチェスト" }
+      "minecraft:mob_spawner",
+      "minecraft:phantom_spawn_egg",
+      "minecraft:breeze_spawn_egg",
+      "minecraft:ender_chest"
     ]
   },
   "minecraft:hay_block": {
+    name: "アニマル",
     low: [
-      { item: "minecraft:chicken_spawn_egg", name: "ニワトリ" },
-      { item: "minecraft:parrot_spawn_egg", name: "オウム" },
-      { item: "minecraft:bee_nest", name: "ミツバチの巣" },
-      { item: "minecraft:composter", name: "コンポスター" }
+      "minecraft:chicken_spawn_egg",
+      "minecraft:parrot_spawn_egg",
+      "minecraft:bee_nest",
+      "minecraft:composter"
     ],
     high: [
-      { item: "minecraft:fox_spawn_egg", name: "キツネ" },
-      { item: "minecraft:frog_spawn_egg", name: "カエル" },
-      { item: "minecraft:mooshroom_spawn_egg", name: "ムーシュルーム" },
-      { item: "minecraft:polar_bear_spawn_egg", name: "シロクマ" }
+      "minecraft:fox_spawn_egg",
+      "minecraft:frog_spawn_egg",
+      "minecraft:mooshroom_spawn_egg",
+      "minecraft:polar_bear_spawn_egg"
     ]
   },
   "minecraft:netherrack": {
+    name: "ネザー",
     low: [
-      { item: "minecraft:zombie_pigman_spawn_egg", name: "ゾンビピッグマン" },
-      { item: "minecraft:wither_skeleton_spawn_egg", name: "ウィザースケルトン" },
-      { item: "minecraft:crying_obsidian", name: "泣く黒曜石" },
-      { item: "minecraft:wither_rose", name: "ウィザーローズ" }
+      "minecraft:zombie_pigman_spawn_egg",
+      "minecraft:crying_obsidian",
+      "minecraft:wither_rose",
+      "minecraft:ancient_debris"
     ],
     high: [
-      { item: "minecraft:strider_spawn_egg", name: "ストライダー" },
-      { item: "minecraft:lava_bucket", name: "溶岩バケツ" },
-      { item: "minecraft:potato", name: "ジャガイモ" },
-      { item: "minecraft:netherite_ingot", name: "ネザライトインゴット" }
+      "minecraft:strider_spawn_egg",
+      "minecraft:lava_bucket",
+      "minecraft:wither_skeleton_spawn_egg",
+      "minecraft:potato",
     ],
     requiresTag: "nether",
     unlockConditions: UNLOCK_CONDITIONS.NETHER,
     lockMessage: ERROR_MESSAGES.NETHER_LOCKED
   },
   "minecraft:stripped_dark_oak_log": {
+    name: "残虐",
     low: [
-      { item: "minecraft:pillager_spawn_egg", name: "ピリジャー" },
-      { item: "minecraft:trapped_chest", name: "トラップチェスト" },
-      { item: "minecraft:vindicator_spawn_egg", name: "ヴィンディケーター" },
-      { item: "mcg:goat_horn", name: "ヤギの角笛" }
+      "minecraft:pillager_spawn_egg",
+      "minecraft:trapped_chest",
+      "minecraft:vindicator_spawn_egg",
+      "mcg:goat_horn"
     ],
     high: [
-      { item: "minecraft:evoker_spawn_egg", name: "エヴォーカー" },
-      { item: "minecraft:armor_stand", name: "防具立て" },
-      { item: "minecraft:ravager_spawn_egg", name: "ラヴェジャー" },
-      { item: "minecraft:banner", name: "不吉な旗" }
+      "minecraft:evoker_spawn_egg",
+      "minecraft:armor_stand",
+      "minecraft:ravager_spawn_egg",
+      "minecraft:banner"
     ],
     requiresTag: "genocide",
     unlockConditions: UNLOCK_CONDITIONS.GENOCIDE,
     lockMessage: ERROR_MESSAGES.GENOCIDE_LOCKED
   },
   "minecraft:prismarine_bricks": {
+    name: "海洋",
     low: [
-      { item: "minecraft:tropical_fish_spawn_egg", name: "熱帯魚" },
-      { item: "minecraft:turtle_spawn_egg", name: "カメ" },
-      { item: "minecraft:squid_spawn_egg", name: "イカ" },
-      { item: "minecraft:barrel", name: "樽" }
+      "minecraft:tropical_fish_spawn_egg",
+      "minecraft:turtle_spawn_egg",
+      "minecraft:squid_spawn_egg",
+      "minecraft:barrel"
     ],
     high: [
-      { item: "minecraft:guardian_spawn_egg", name: "ガーディアン" },
-      { item: "minecraft:axolotl_spawn_egg", name: "ウーパールーパー" },
-      { item: "minecraft:glow_squid_spawn_egg", name: "発光するイカ" },
-      { item: "minecraft:dolphin_spawn_egg", name: "イルカ" }
+      "minecraft:guardian_spawn_egg",
+      "minecraft:axolotl_spawn_egg",
+      "minecraft:glow_squid_spawn_egg",
+      "minecraft:dolphin_spawn_egg"
     ]
   }
 };
@@ -144,6 +151,12 @@ function performDraw(source, drawBlock, high) {
     }
   }
 
+  // デッキBANチェック
+  if (isDeckBanned(cardData.name)) {
+    source.sendMessage(`§c${cardData.name}デッキはBANされています`);
+    return;
+  }
+
   // 解放条件チェック
   if (cardData.requiresTag && !source.hasTag(cardData.requiresTag)) {
     source.sendMessage(cardData.lockMessage);
@@ -162,8 +175,8 @@ function performDraw(source, drawBlock, high) {
   const randomIndex = Math.floor(Math.random() * cards.length);
   const selectedCard = cards[randomIndex];
 
-  giveItem(source, new mc.ItemStack(selectedCard.item));
-  source.sendMessage("ドロー: " + selectedCard.name);
+  giveItem(source, new mc.ItemStack(selectedCard));
+  source.sendMessage("ドロー: " + getDisplayName(selectedCard));
 
   // アレイボーナス
   checkAllayBonus(source);
