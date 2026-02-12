@@ -1223,7 +1223,7 @@ export const cardList = [
     attribute: "アイテム・合成素材",
     Cact: "0",
     text: [
-      "§b使用時 / 自分の任意のモブ(浮遊を除く)にガード属性を付与する。",
+      "§b使用時 / 自分の任意のモブ(浮遊・水中を除く)にガード属性を付与する。",
       "§b+卵+小麦 = ケーキ"
     ],
     texture: "textures/items/bucket_milk"
@@ -1514,7 +1514,7 @@ export const cardList = [
     attribute: "アイテム",
     Cact: "0",
     text: [
-      "§b使用時 / 自分のモブ1体(浮遊を除く)に対してガード属性を付与する。"
+      "§b使用時 / 自分のモブ1体(浮遊・水中を除く)に対してガード属性を付与する。"
     ],
     texture: "textures/items/potion_bottle_fireResistance"
   },

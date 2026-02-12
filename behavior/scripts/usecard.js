@@ -1793,7 +1793,7 @@ export const useCard = {
     run: (cardBlock, player) => {
       handleSlotAction(cardBlock.typeId, player,
         (slot) => {
-          const mobs = getMobsInSlot(player, slot, { excludeTags: ["fly", "guard"] });
+          const mobs = getMobsInSlot(player, slot, { excludeTags: ["fly", "guard", "water"] });
           if (mobs.length === 0) {
             player.sendMessage(error_slot);
             return;
@@ -2799,13 +2799,13 @@ export const useCard = {
       let mobs;
       switch(cardBlock.typeId){
         case B:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotB"], excludeTags:["fly"]});
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotB"], excludeTags:["fly", "guard", "water"]});
           break;
         case W:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotW"], excludeTags:["fly"]});
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotW"], excludeTags:["fly", "guard", "water"]});
           break;
         case R:
-          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotR"], excludeTags:["fly"]});
+          mobs = mc.world.getDimension("minecraft:overworld").getEntities({tags:[(player.hasTag("red")?"red":"blue"), "slotR"], excludeTags:["fly", "guard", "water"]});
           break;
         case P:
         case O:
