@@ -423,6 +423,7 @@ export const turnMob = {
         "minecraft:pink_wool",
         "minecraft:green_wool",
       ];
+      let changed = false;
       while (true) {
         let index = undefined;
         for (let i = 0; i < targetItems.length; i++) {
@@ -431,7 +432,9 @@ export const turnMob = {
         }
         if (index === undefined) break;
         inv.setItem(index, new mc.ItemStack("minecraft:black_wool", inv.getItem(index).amount));
+        changed = true;
       }
+      if (!changed) return;
       mc.world.getDimension("minecraft:overworld").setBlockType(oldPlayer.hasTag("red")?mcg.const.red.wool.red:mcg.const.blue.wool.red, "minecraft:air");
       mc.world.getDimension("minecraft:overworld").setBlockType(oldPlayer.hasTag("red")?mcg.const.red.wool.yellow:mcg.const.blue.wool.yellow, "minecraft:air");
       mc.world.getDimension("minecraft:overworld").setBlockType(oldPlayer.hasTag("red")?mcg.const.red.wool.pink:mcg.const.blue.wool.pink, "minecraft:air");
@@ -761,7 +764,7 @@ export function turnItem(newPlayer, oldPlayer) {
   }
   if (hasItem(newPlayer, "minecraft:black_wool")) {
     sendPlayerMessage(newPlayer, "[黒色の羊毛] スリップダメージ");
-    applyDamage(oldPlayer, 3, { cause: mc.EntityDamageCause.wither });
+    applyDamage(oldPlayer, 1, { cause: mc.EntityDamageCause.wither });
   }
   
   // 氷塊の凍結ダメージ

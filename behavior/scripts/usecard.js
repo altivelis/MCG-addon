@@ -2861,6 +2861,7 @@ export const useCard = {
           sendPlayerMessage(player, "カメを召喚しました");
           mob.dimension.playSound("mob.chicken.plop", mob.location, {volume: 10});
           mob.addTag("water");
+          mob.addTag("guard");
           
           // 海洋の心の所持数が3つ以上の時、カメの甲羅を入手
           const heartCount = getItemCount(player, "minecraft:heart_of_the_sea");
@@ -3084,7 +3085,6 @@ export const useCard = {
             return;
           }
           payCost(player, parseInt(info.Cact));
-          decrementSlot(player, player.selectedSlotIndex);
           sendPlayerMessage(player, "製図台を使用しました");
           let OpponentObject = getOpponentObject(player);
           giveItemWithMessage(player, OpponentObject.typeId, 1, getDisplayName(OpponentObject.typeId));

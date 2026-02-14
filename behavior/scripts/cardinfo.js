@@ -1212,7 +1212,7 @@ export const cardList = [
     Cact: "-",
     text: [
       "§bこのカードは使用できない。",
-      "§bこのカードを所持しているプレイヤーはターン開始時に相手プレイヤーに3ダメージを与える。"
+      "§bこのカードを所持しているプレイヤーはターン開始時に相手プレイヤーに1ダメージを与える。"
     ],
     texture: "textures/blocks/wool_colored_black"
   },
@@ -1527,7 +1527,7 @@ export const cardList = [
     hp: "10",
     atk: "0",
     Sact: "3",
-    Bact: "9",
+    Bact: "4",
     text: [
       "§b召喚時効果 / 草ブロックを2つ入手する。",
       "§bターン開始時効果 / 海洋の心を1つ入手する。",
@@ -1539,7 +1539,7 @@ export const cardList = [
     name:["minecraft:turtle", "minecraft:turtle_spawn_egg"],
     displayName: "カメ",
     type: "entity",
-    attribute: "水中",
+    attribute: "水中・ガード",
     hp: "30",
     atk: "0",
     Sact: "5",
@@ -1558,7 +1558,7 @@ export const cardList = [
     hp: "21",
     atk: "0",
     Sact: "4",
-    Bact: "6",
+    Bact: "3",
     text: [
       "§bターン開始時効果 / 相手プレイヤーの所持している羊毛はすべて黒色の羊毛になる。",
     ],

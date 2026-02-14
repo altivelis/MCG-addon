@@ -71,7 +71,7 @@ export const HP_DISPLAY = {
 export const LOBBY_COORDS = {
   SPAWN: { x: -66.5, y: -44, z: -20.5 },
   LOBBY: { x: -63, y: -53, z: -13 },
-  SPECTATOR: { x: 0.5, y: 11, z: 0.5 },
+  SPECTATOR: { x: 0.5, y: 9, z: 0.5 },
   WINNER_RETURN: { x: -62.5, y: -53, z: -12.5 }
 };
 
