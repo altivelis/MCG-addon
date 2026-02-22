@@ -140,7 +140,7 @@ export function canPayCost(player, cost, allowOvercost = true) {
 }
 
 /**
- * actコストを支払う
+ * actコストを支払い、カードを消費する
  * @param {mc.Player} player
  * @param {number} cost
  */

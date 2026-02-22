@@ -1736,7 +1736,6 @@ export const useCard = {
         return;
       }
       payCost(player, parseInt(info.Cact));
-      decrementSlot(player, player.selectedSlotIndex);
       sendPlayerMessage(player, "ケーキを使用しました");
       player.dimension.playSound("random.eat", player.location, {volume: 10});
       player.dimension.spawnParticle("minecraft:crop_growth_area_emitter", player.location);
@@ -3032,7 +3031,6 @@ export const useCard = {
         return;
       }
       payCost(player, parseInt(info.Cact));
-      decrementSlot(player, player.selectedSlotIndex);
       sendPlayerMessage(player, "カメの甲羅を使用しました");
       player.addEffect(mc.EffectTypes.get("minecraft:absorption"), 20000000, {amplifier: 1, showParticles: true});
       player.dimension.playSound("armor.equip_leather", player.location, {volume: 10});
@@ -3056,7 +3054,6 @@ export const useCard = {
         return;
       }
       payCost(player, parseInt(info.Cact));
-      decrementSlot(player, player.selectedSlotIndex);
       sendPlayerMessage(player, "釣り竿を使用しました");
       giveItemWithMessage(player, "minecraft:grass_block", (getItemCount(player, "minecraft:heart_of_the_sea") > 5) ? 2 : 1, "草ブロック");
       player.dimension.playSound("random.pop", player.location, {volume: 10});
@@ -3197,7 +3194,6 @@ export const useCard = {
       const drownedEffectFlag = getAllTeamMobs(player, {type:"minecraft:drowned"}).length === 3;
       if(cardBlock.typeId === P) {
         payCost(player, parseInt(info.Cact));
-        decrementSlot(player, player.selectedSlotIndex);
         decrementContainer(player, "minecraft:heart_of_the_sea", 1);
         const opponentPlayer = getOpponentPlayers(player)[0];
         const color = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
@@ -3230,7 +3226,6 @@ export const useCard = {
           return;
         }
         payCost(player, parseInt(info.Cact));
-        decrementSlot(player, player.selectedSlotIndex);
         decrementContainer(player, "minecraft:heart_of_the_sea", 1);
         const color = player.hasTag("red") ? mcg.const.rgb.red : mcg.const.rgb.blue;
         player.dimension.playSound("item.trident.throw", player.location, {volume: 10});

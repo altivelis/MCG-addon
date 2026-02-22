@@ -328,6 +328,13 @@ function form_system(player){
 
 let patch_list = [
   {
+    ver: "1.7.1",
+    description: [
+      "-不具合の修正",
+      "--一部カードの使用時にカードが2枚消費される不具合を修正しました。"
+    ]
+  },
+  {
     ver: "1.7.0",
     description: [
       "§l§b海洋アップデート§r",
