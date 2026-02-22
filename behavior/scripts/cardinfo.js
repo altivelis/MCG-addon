@@ -1249,7 +1249,7 @@ export const cardList = [
     displayName: "ピリジャー",
     type: "entity",
     attribute: "残虐・速攻",
-    hp: "20",
+    hp: "30",
     atk: "-",
     Sact: "11",
     Bact: "6",

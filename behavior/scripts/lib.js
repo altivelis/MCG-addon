@@ -323,7 +323,7 @@ export function getObject(tag){
 export async function applyDamage(target, value, options={cause:mc.EntityDamageCause.entityAttack}, maxRetries = 100){
   // エンティティの有効性チェック
   if(!target || !target.isValid) return;
-  if(target.getDynamicProperty("lastDamageTick") !== undefined && target.getDynamicProperty("lastDamageTick") > mc.system.currentTick - 10 && maxRetries > 0) {
+  if(target?.lastDamageTick !== undefined && target?.lastDamageTick > mc.system.currentTick - 10 && maxRetries > 0) {
     await mc.system.waitTicks(1);
     await applyDamage(target, value, options, maxRetries - 1);
     return;
@@ -371,6 +371,8 @@ export async function applyDamage(target, value, options={cause:mc.EntityDamageC
     await applyDamage(target, value, options, maxRetries - 1);
     return;
   }
+
+  target.lastDamageTick = mc.system.currentTick;
 
   // ダメージ適用後のHP取得
   const after = healthComponent.currentValue;
